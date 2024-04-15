@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterBody } from './input/register.input';
+import { LoginBody, RegisterBody } from '@/modules/auth/input';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
@@ -11,5 +11,10 @@ export class AuthController {
   @Post('/register')
   async register(@Body() body: RegisterBody) {
     return await this.authSrv.register(body);
+  }
+
+  @Post('/login')
+  async regsiter(@Body() body: LoginBody) {
+    return await this.authSrv.login(body);
   }
 }

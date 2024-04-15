@@ -6,3 +6,8 @@ export class RegisterBody implements EUser {
   firstName?: string;
   lastName?: string;
 }
+
+export class LoginBody implements EUser{
+  email: string;
+  password: string;
+}

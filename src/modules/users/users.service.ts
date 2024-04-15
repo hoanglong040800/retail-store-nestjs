@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepo } from './users.repo';
 import { EUser } from 'src/entities';
+import { FindOneOptions } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,18 @@ export class UsersService {
     return this.usersRepo.findOne({
       where: {
         id,
+      },
+    });
+  }
+
+  async findByEmail(
+    email: string,
+    options?: FindOneOptions<EUser>,
+  ): Promise<EUser | null> {
+    return await this.usersRepo.findOne({
+      ...(options || {}),
+      where: {
+        email,
       },
     });
   }

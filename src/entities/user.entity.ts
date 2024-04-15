@@ -9,7 +9,7 @@ export class EUser extends EBase {
     length: 100,
     nullable: false,
   })
-  email: string;
+  email?: string;
 
   @Column({
     name: "first_name",
@@ -32,7 +32,7 @@ export class EUser extends EBase {
     nullable: false,
     select: false,
   })
-  password: string;
+  password?: string;
 
   @Column({
     name: "refresh_token",
