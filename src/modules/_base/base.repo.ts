@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EUser } from 'src/entities';
+import { EUser } from '@/entities';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
 
 @Injectable()
@@ -8,7 +8,7 @@ export abstract class BaseRepo<T> {
 
   abstract findOne(options?: FindOneOptions<T>): Promise<T | null>;
 
-  abstract create(createDto: any, auditUser: EUser): Promise<T>;
+  abstract save(createDto: any, auditUser: EUser): Promise<T>;
 
   abstract update(
     id: string,

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './modules/users/users.module';
 import { AppConfigModule, DbModule } from './config';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -9,7 +10,9 @@ import { AppConfigModule, DbModule } from './config';
     DbModule,
 
     // route
-    UsersModule],
+    UsersModule,
+
+    AuthModule],
   controllers: [],
   providers: [],
 })

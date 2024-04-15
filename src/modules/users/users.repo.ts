@@ -6,11 +6,12 @@ import {
   Repository,
   UpdateResult,
 } from 'typeorm';
-import { EUser } from 'src/entities';
+import { EUser } from '@/entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseRepo, TryCatch } from 'src/modules/_base';
+import { BaseRepo, TryCatch } from '@/modules/_base';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto';
+import { DEFAULT_USER_ID } from '@/constants';
 
 @Injectable()
 export class UsersRepo extends BaseRepo<EUser> {
@@ -36,8 +37,12 @@ export class UsersRepo extends BaseRepo<EUser> {
   }
 
   @TryCatch()
-  async create(createDto: CreateUserDto, auditUser: EUser): Promise<EUser> {
-    return this.repo.create(createDto);
+  async save(createDto: CreateUserDto): Promise<EUser> {
+    return this.repo.save({
+      ...createDto,
+      createdBy: DEFAULT_USER_ID,
+      updatedBy: DEFAULT_USER_ID,
+    });
   }
 
   @TryCatch()
