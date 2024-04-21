@@ -2,6 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginBody, RegisterBody } from '@/modules/auth/input';
 import { ApiTags } from '@nestjs/swagger';
+import { LoginDto } from './dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -14,7 +15,7 @@ export class AuthController {
   }
 
   @Post('/login')
-  async regsiter(@Body() body: LoginBody) {
+  async regsiter(@Body() body: LoginBody): Promise<LoginDto> {
     return await this.authSrv.login(body);
   }
 }

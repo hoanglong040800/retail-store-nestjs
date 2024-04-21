@@ -5,8 +5,9 @@ import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { EUser } from '@/entities';
-import { ENV } from '@/constants';
-import { LoginDto } from './dto';
+import { LoginDto, TokenDto, JwtTokenType } from './dto';
+import { calculateExpireTime } from './auth.util';
+import { ENV, JwtTokenUnit } from '@/constants';
 
 @Injectable()
 export class AuthService {
@@ -17,25 +18,30 @@ export class AuthService {
 
   genJwtToken(
     user: Pick<EUser, 'id' | 'email' | 'firstName' | 'lastName'>,
-    type: 'access' | 'refresh',
-  ): string {
+    type: JwtTokenType,
+  ): TokenDto {
     if (!user) {
-      return '';
+      throw new Error(`Missing user when generate JWT Token`);
     }
 
-    const token = ENV.jwt[type];
+    const envToken = ENV.jwt[type];
 
-    return sign({ user }, token.secret, {
-      expiresIn: token.expire,
+    const token = sign({ user }, envToken.secret, {
+      expiresIn: `${envToken.expire}${JwtTokenUnit}`,
     });
+
+    return {
+      token,
+      expireAt: calculateExpireTime(envToken.expire),
+    };
   }
 
-  async genRefreshToken(userId: string): Promise<string> {
+  async genRefreshToken(userId: string): Promise<TokenDto> {
     const refreshToken = this.genJwtToken({ id: userId }, 'refresh');
 
     await this.usersRepo.update(
       userId,
-      { refreshToken },
+      { refreshToken: refreshToken.token },
       { updatedBy: userId },
     );
 

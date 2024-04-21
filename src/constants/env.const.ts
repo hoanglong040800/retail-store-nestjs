@@ -15,15 +15,16 @@ export const ENV = {
     database: process.env.POSTGRES_DB,
   },
 
+  // default expire unit is minute
   jwt: {
     access: {
       secret: process.env.ACCESS_SECRET || '',
-      expire: process.env.ACCESS_EXPIRATION_TIME || '10m',
+      expire: process.env.ACCESS_EXPIRATION_TIME || '10',
     },
 
     refresh: {
       secret: process.env.REFRESH_SECRET || '',
-      expire: process.env.REFRESH_EXPIRATION_TIME || '30d',
+      expire: process.env.REFRESH_EXPIRATION_TIME || '43200',
     },
   },
 };
