@@ -3,7 +3,7 @@ import { LoginBody, RegisterBody } from './input/auth.input';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
-import { sign, verify } from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 import { EUser } from '@/entities';
 import { ENV } from '@/constants';
 import { LoginDto } from './dto';
@@ -58,7 +58,9 @@ export class AuthService {
   }
 
   async login({ email, password }: LoginBody): Promise<LoginDto> {
-    const existUser = await this.usersSrv.findByEmail(email, {select: ['id','password', 'email', 'firstName', 'lastName']});
+    const existUser = await this.usersSrv.findByEmail(email, {
+      select: ['id', 'password', 'email', 'firstName', 'lastName'],
+    });
 
     if (!existUser?.password || !existUser?.id) {
       throw new Error(`User not exist`);

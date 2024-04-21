@@ -1,5 +1,4 @@
-import { EUser } from "@/entities";
-
+import { EUser } from '@/entities';
 
 export class CreateUserDto implements EUser {
   email: string;
@@ -7,4 +6,3 @@ export class CreateUserDto implements EUser {
   firstName?: string;
   lastName?: string;
 }
-

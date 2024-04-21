@@ -1,33 +1,33 @@
-import { Entity, Column } from "typeorm";
-import { EBase } from "./base.entity";
+import { Entity, Column } from 'typeorm';
+import { EBase } from './base.entity';
 
-@Entity("users")
+@Entity('users')
 export class EUser extends EBase {
   @Column({
-    name: "email",
-    type: "varchar",
+    name: 'email',
+    type: 'varchar',
     length: 100,
     nullable: false,
   })
   email?: string;
 
   @Column({
-    name: "first_name",
-    type: "varchar",
+    name: 'first_name',
+    type: 'varchar',
     length: 50,
   })
   firstName?: string;
 
   @Column({
-    name: "last_name",
-    type: "varchar",
+    name: 'last_name',
+    type: 'varchar',
     length: 50,
   })
   lastName?: string;
 
   @Column({
-    name: "password",
-    type: "varchar",
+    name: 'password',
+    type: 'varchar',
     length: 100,
     nullable: false,
     select: false,
@@ -35,8 +35,8 @@ export class EUser extends EBase {
   password?: string;
 
   @Column({
-    name: "refresh_token",
-    type: "varchar",
+    name: 'refresh_token',
+    type: 'varchar',
     length: 200,
     nullable: true,
     select: false,

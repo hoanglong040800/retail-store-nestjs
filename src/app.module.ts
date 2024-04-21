@@ -12,7 +12,8 @@ import { AuthModule } from './modules/auth/auth.module';
     // route
     UsersModule,
 
-    AuthModule],
+    AuthModule,
+  ],
   controllers: [],
   providers: [],
 })

@@ -10,11 +10,7 @@ export abstract class BaseRepo<T> {
 
   abstract save(createDto: any, auditUser: EUser): Promise<T>;
 
-  abstract update(
-    id: string,
-    updateDto: any,
-    auditUser: EUser,
-  ): Promise<T>;
+  abstract update(id: string, updateDto: any, auditUser: EUser): Promise<T>;
 
   abstract delete(id: string, auditUser?: EUser): Promise<boolean>;
 }
