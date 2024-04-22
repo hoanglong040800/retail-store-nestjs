@@ -3,32 +3,37 @@ import { LoginBody, RegisterBody } from './input/auth.input';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
 import { EUser } from '@/entities';
 import { LoginDto, TokenDto, JwtTokenType } from './dto';
 import { calculateExpireTime } from './auth.util';
-import { ENV, JwtTokenUnit } from '@/constants';
+import { ENV } from '@/constants';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepo: UsersRepo,
     private readonly usersSrv: UsersService,
+    private readonly jwtSrv: JwtService,
   ) {}
 
-  genJwtToken(
+  async genJwtToken(
     user: Pick<EUser, 'id' | 'email' | 'firstName' | 'lastName'>,
     type: JwtTokenType,
-  ): TokenDto {
+  ): Promise<TokenDto> {
     if (!user) {
       throw new Error(`Missing user when generate JWT Token`);
     }
 
     const envToken = ENV.jwt[type];
 
-    const token = sign({ user }, envToken.secret, {
-      expiresIn: `${envToken.expire}${JwtTokenUnit}`,
-    });
+    const token = await this.jwtSrv.signAsync(
+      { user },
+      {
+        secret: envToken.secret,
+        expiresIn: `999999d`,
+      },
+    );
 
     return {
       token,
@@ -37,7 +42,7 @@ export class AuthService {
   }
 
   async genRefreshToken(userId: string): Promise<TokenDto> {
-    const refreshToken = this.genJwtToken({ id: userId }, 'refresh');
+    const refreshToken = await this.genJwtToken({ id: userId }, 'refresh');
 
     await this.usersRepo.update(
       userId,
@@ -76,7 +81,7 @@ export class AuthService {
       throw new Error(`Password is incorrect`);
     }
 
-    const accessToken = this.genJwtToken(existUser, 'access');
+    const accessToken = await this.genJwtToken(existUser, 'access');
     const refreshToken = await this.genRefreshToken(existUser.id);
 
     return {

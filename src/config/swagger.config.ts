@@ -5,6 +5,8 @@ const swaggerConfig = new DocumentBuilder()
   .setTitle('Retail Store')
   .setDescription('Retail Store swagger document')
   .setVersion('1.0')
+  .addBearerAuth()
+  .addSecurityRequirements('bearer')
   .build();
 
 export const createSwaggerDocument = (app: INestApplication<any>) => {
