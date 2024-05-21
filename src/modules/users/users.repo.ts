@@ -6,7 +6,7 @@ import {
   Repository,
   UpdateResult,
 } from 'typeorm';
-import { EUser } from '@/entities';
+import { EUser } from '@/db/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepo, TryCatch } from '@/modules/_base';
 import { CreateUserDto } from './dto/create-user.dto';

@@ -3,7 +3,7 @@ import { LoginBody, RegisterBody } from './input/auth.input';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
-import { EUser } from '@/entities';
+import { EUser } from '@/db/entities';
 import { LoginDto, TokenDto, JwtTokenType } from './dto';
 import { calculateExpireTime } from './auth.util';
 import { ENV } from '@/constants';

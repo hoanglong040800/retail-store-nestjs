@@ -9,8 +9,9 @@ import { ENV } from '../constants';
       ...ENV.db,
 
       // related
-      entities: [__dirname + '/../entities/*.entity{.ts,.js}'], //ext .js because get from ./dist
-      migrations: [__dirname + '/../entities/*.entity{.ts,.js}'],
+      entities: [__dirname + '/../db/entities/*.entity{.ts,.js}'], //ext .js because get from ./dist
+      migrations: [__dirname + '/../db/migrations/data/*.ts'], // TODO long.t change to env path for dynamic migration
+      migrationsTableName: 'migrations',
 
       // settings
       synchronize: true,

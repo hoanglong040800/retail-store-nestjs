@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepo } from './users.repo';
-import { EUser } from 'src/entities';
+import { EUser } from '@/db/entities';
 import { FindOneOptions } from 'typeorm';
 
 @Injectable()
