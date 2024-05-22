@@ -1,13 +1,13 @@
-import { EUser } from '@/db/entities';
+import { IUser } from '@/db/interface';
 
-export class RegisterBody implements EUser {
+export class RegisterBody implements IUser {
   email: string;
   password: string;
   firstName?: string;
   lastName?: string;
 }
 
-export class LoginBody implements EUser {
+export class LoginBody implements IUser {
   email: string;
   password: string;
 }

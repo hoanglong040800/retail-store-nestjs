@@ -1,15 +1,16 @@
 import { Entity, Column } from 'typeorm';
 import { EBase } from './base.entity';
+import { IUser } from '../interface';
 
 @Entity('users')
-export class EUser extends EBase {
+export class EUser extends EBase implements IUser {
   @Column({
     name: 'email',
     type: 'varchar',
     length: 100,
     nullable: false,
   })
-  email?: string;
+  email: string;
 
   @Column({
     name: 'first_name',
@@ -32,7 +33,7 @@ export class EUser extends EBase {
     nullable: false,
     select: false,
   })
-  password?: string;
+  password: string;
 
   @Column({
     name: 'refresh_token',
@@ -42,4 +43,8 @@ export class EUser extends EBase {
     select: false,
   })
   refreshToken?: string;
+}
+
+export class AuditUser implements IUser {
+  id: string;
 }

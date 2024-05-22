@@ -6,7 +6,7 @@ import {
   Repository,
   UpdateResult,
 } from 'typeorm';
-import { EUser } from '@/db/entities';
+import { AuditUser, EUser } from '@/db/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepo, TryCatch } from '@/modules/_base';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -49,7 +49,7 @@ export class UsersRepo extends BaseRepo<EUser> {
   async update(
     id: string,
     updateDto: UpdateUserDto,
-    auditUser: EUser,
+    auditUser: AuditUser,
   ): Promise<EUser> {
     const updateResult: UpdateResult = await this.repo.update(id, {
       ...updateDto,
