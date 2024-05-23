@@ -3,6 +3,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AppConfigModule, DbModule } from './config';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoryModule } from './modules/categories/categories.module';
+import { ConfigModule } from './modules/config/config.module';
 
 @Module({
   imports: [
@@ -16,6 +17,8 @@ import { CategoryModule } from './modules/categories/categories.module';
     AuthModule,
 
     CategoryModule,
+
+    ConfigModule,
   ],
   controllers: [],
   providers: [],
