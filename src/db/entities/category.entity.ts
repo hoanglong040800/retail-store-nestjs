@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { EBase } from './base.entity';
 import { ICategory } from '../interface';
 
@@ -45,5 +45,11 @@ export class ECategory extends EBase implements ICategory {
 
   @ManyToOne(() => ECategory, (category) => category.id, { nullable: true })
   @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
-  parentId?: string;
+  parentCategories?: ECategory;
+
+  @OneToMany(() => ECategory, (category) => category.parentCategories, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'id', referencedColumnName: 'parent_id' })
+  childCategories?: ECategory[];
 }
