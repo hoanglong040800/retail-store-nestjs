@@ -6,7 +6,7 @@ const twoLevelCategories = [
   {
     name: 'Thịt, cá, trứng, hải sản',
     icon: 'thit-ca-trung-hai-san-202205261517459292.png',
-
+    id: '8686',
     children: [
       {
         name: 'Thịt heo',
@@ -33,7 +33,7 @@ const twoLevelCategories = [
   {
     name: 'Rau, củ, nấm, trái cây',
     icon: 'rau-cu-trai-cay-202205261519146845.png',
-
+    id: '10298',
     children: [
       {
         name: 'Trái cây',
@@ -64,7 +64,7 @@ const twoLevelCategories = [
   {
     name: 'Dầu ăn, nước chấm, gia vị',
     icon: 'dau-an-nuoc-cham-gia-vi-202205261526194836.png',
-
+    id: '7148',
     children: [
       {
         name: 'Dầu ăn',
@@ -119,7 +119,7 @@ const twoLevelCategories = [
   {
     name: 'Kem, thực phẩm đông mát',
     icon: 'hang-dong-mat-202205261526078709.png',
-
+    id: '10798',
     children: [
       {
         name: 'Bánh bao, bánh mì, pizza',
@@ -198,7 +198,7 @@ const twoLevelCategories = [
   {
     name: 'Mì, miến, cháo, phở',
     icon: 'mi-mien-chao-pho-202205261523011374.png',
-
+    id: '7147',
     children: [
       {
         name: 'Mì ăn liền',
@@ -241,7 +241,7 @@ const twoLevelCategories = [
   {
     name: 'Gạo, bột, đồ khô',
     icon: 'gao-bot-do-kho-202205261527028047.png',
-
+    id: '7149',
     children: [
       {
         name: 'Gạo các loại',
@@ -320,7 +320,7 @@ const twoLevelCategories = [
   {
     name: 'Bia, nước giải khát',
     icon: 'bia-nuoc-giai-khat-202205261528134559.png',
-
+    id: '2488',
     children: [
       {
         name: 'Bia, nước có cồn',
@@ -387,7 +387,7 @@ const twoLevelCategories = [
   {
     name: 'Sữa các loại',
     icon: 'sua-cac-loai-202205261527388484.png',
-
+    id: '7091',
     children: [
       {
         name: 'Sữa tươi',
@@ -430,7 +430,7 @@ const twoLevelCategories = [
   {
     name: 'Bánh kẹo các loại',
     icon: 'banh-keo-cac-loai-202205261518436969.png',
-
+    id: '7143',
     children: [
       {
         name: 'Bánh gạo',
@@ -513,7 +513,7 @@ const twoLevelCategories = [
   {
     name: 'Chăm sóc cá nhân',
     icon: 'cham-soc-ca-nhan-202312151410200332.png',
-
+    id: '2515',
     children: [
       {
         name: 'Dầu gội',
@@ -636,7 +636,7 @@ const twoLevelCategories = [
   {
     name: 'Sản phẩm cho mẹ và bé',
     icon: 'san-pham-me-va-be-202205261527159118.png',
-
+    id: '8679',
     children: [
       {
         name: 'Tắm gội cho bé',
@@ -679,7 +679,7 @@ const twoLevelCategories = [
   {
     name: 'Vệ sinh nhà cửa',
     icon: 've-sinh-nha-cua-202205261522333668.png',
-
+    id: '7160',
     children: [
       {
         name: 'Nước giặt',
@@ -730,7 +730,7 @@ const twoLevelCategories = [
   {
     name: 'Đồ dùng gia đình',
     icon: 'do-dung-gia-dinh-202205270959286675.png',
-
+    id: '3185',
     children: [
       {
         name: 'Túi đựng rác',
@@ -824,7 +824,7 @@ export class InitCateData1716300161672 implements MigrationInterface {
   ): Promise<ECategory> {
     const newL1Cate: ICategory = {
       name: cate.name,
-      icon: cate.icon,
+      icon: `https://cdn.tgdd.vn/Products/Images/${cate.id}/bhx/${cate.icon}`,
       level: 1,
       isLeaf: false,
       displayOrder: index,

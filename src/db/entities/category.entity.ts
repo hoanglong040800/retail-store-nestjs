@@ -41,6 +41,13 @@ export class ECategory extends EBase implements ICategory {
   })
   displayOrder?: number;
 
+  @Column({
+    name: 'parent_id',
+    type: 'uuid',
+    nullable: true,
+  })
+  parentId?: string;
+
   // ------------- REFERENCE ------------
 
   @ManyToOne(() => ECategory, (category) => category.id, { nullable: true })
