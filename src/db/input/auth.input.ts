@@ -1,4 +1,4 @@
-import { IUser } from '@/db/interface';
+import { IUser } from '../interface';
 
 export class RegisterBody implements IUser {
   email: string;

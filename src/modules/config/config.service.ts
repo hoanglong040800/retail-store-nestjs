@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CategoriesService } from '@/modules/categories';
-import { GetGlobalConfigDto } from './dto';
+import { GetGlobalConfigDto } from '@/db/dto';
 
 @Injectable()
 export class ConfigService {

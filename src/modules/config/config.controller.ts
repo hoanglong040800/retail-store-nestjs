@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from './config.service';
 import { ApiTags } from '@nestjs/swagger';
-import { GetGlobalConfigDto } from './dto';
+import { GetGlobalConfigDto } from '@/db/dto';
 
 @Controller('config')
 @ApiTags('Config')
