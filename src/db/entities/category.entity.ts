@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { EBase } from './base.entity';
 import { ICategory } from '../interface';
+import { EProduct } from './product.entity';
 
 @Entity('categories')
 export class ECategory extends EBase implements ICategory {
@@ -59,4 +60,8 @@ export class ECategory extends EBase implements ICategory {
   })
   @JoinColumn({ name: 'id', referencedColumnName: 'parent_id' })
   childCategories?: ECategory[];
+
+  @OneToMany(() => EProduct, (product) => product.category)
+  @JoinColumn({ name: 'id', referencedColumnName: 'leaf_category_id' })
+  products?: EProduct[];
 }
