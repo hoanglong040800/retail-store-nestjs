@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CategoriesRepo } from './categories.repo';
 import { ECategory } from '@/db/entities';
 import { TryCatch } from '../_base';
+import { ICategory } from '@/db/interface';
 
 @Injectable()
 export class CategoriesService {
@@ -16,6 +17,25 @@ export class CategoriesService {
       },
 
       relations: ['childCategories'],
+      order: {
+        displayOrder: 'ASC',
+
+        childCategories: {
+          displayOrder: 'ASC',
+        },
+      },
+    });
+  }
+
+  async findOneByOptions({ id, isLeaf }: ICategory): Promise<ECategory> {
+    return this.cateRepo.findOne({
+      relations: ['childCategories', 'products', 'childCategories.products'],
+
+      where: {
+        id,
+        isLeaf,
+      },
+
       order: {
         displayOrder: 'ASC',
 

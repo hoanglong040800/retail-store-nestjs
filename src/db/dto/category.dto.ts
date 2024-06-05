@@ -1,5 +1,6 @@
 import { ICategory } from '../interface';
 import { BaseDto } from './base.dto';
+import { ProductDto } from './product.dto';
 
 export class CategoryDto extends BaseDto implements ICategory {
   name?: string;
@@ -7,7 +8,8 @@ export class CategoryDto extends BaseDto implements ICategory {
   icon?: string;
   isLeaf: boolean;
   displayOrder?: number;
-  parentId?: string;
+
   parentCategories?: CategoryDto;
   childCategories?: CategoryDto[];
+  products?: ProductDto[];
 }

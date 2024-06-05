@@ -6,7 +6,7 @@ import { FindManyOptions, FindOneOptions } from 'typeorm';
 export abstract class BaseRepo<T> {
   find?(options?: FindManyOptions<T>): Promise<T[]>;
 
-  findOne?(options?: FindOneOptions<T>): Promise<T | null>;
+  findOne?(options: FindOneOptions<T>): Promise<T | null>;
 
   save?(createDto: any, auditUser: AuditUser): Promise<T>;
 
