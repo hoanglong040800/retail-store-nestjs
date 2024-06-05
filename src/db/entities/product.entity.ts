@@ -49,6 +49,14 @@ export class EProduct extends EBase implements IProduct {
   })
   image?: string;
 
+  // add reference column to insert data
+  @Column({
+    name: 'leaf_category_id',
+    type: 'uuid',
+    nullable: false,
+  })
+  leafCategoryId: string;
+
   //  ------------ REFERENCES --------
 
   @ManyToOne(() => ECategory, (category) => category.id, {
