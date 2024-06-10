@@ -53,9 +53,9 @@ export class ECategory extends EBase implements ICategory {
 
   @ManyToOne(() => ECategory, (category) => category.id, { nullable: true })
   @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
-  parentCategories?: ECategory;
+  parentCategory?: ECategory;
 
-  @OneToMany(() => ECategory, (category) => category.parentCategories, {
+  @OneToMany(() => ECategory, (category) => category.parentCategory, {
     nullable: true,
   })
   @JoinColumn({ name: 'id', referencedColumnName: 'parent_id' })

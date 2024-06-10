@@ -11,7 +11,7 @@ export class CategoriesService {
   @TryCatch()
   async findAllByOptions(): Promise<ECategory[]> {
     return this.cateRepo.find({
-      select: ['name', 'icon', 'displayOrder'],
+      select: ['id', 'name', 'icon', 'displayOrder'],
       where: {
         level: 1,
       },

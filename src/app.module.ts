@@ -4,6 +4,7 @@ import { AppConfigModule, DbModule } from './config';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoryModule } from './modules/categories/categories.module';
 import { ConfigModule } from './modules/config/config.module';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
@@ -19,6 +20,8 @@ import { ConfigModule } from './modules/config/config.module';
     CategoryModule,
 
     ConfigModule,
+
+    ProductsModule,
   ],
   controllers: [],
   providers: [],

@@ -9,7 +9,7 @@ export class CategoryDto extends BaseDto implements ICategory {
   isLeaf: boolean;
   displayOrder?: number;
 
-  parentCategories?: CategoryDto;
+  parentCategory?: CategoryDto;
   childCategories?: CategoryDto[];
   products?: ProductDto[];
 }
