@@ -6,12 +6,11 @@ import {
   Repository,
   UpdateResult,
 } from 'typeorm';
-import { EUser } from '@/entities';
+import { AuditUser, EUser } from '@/db/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepo, TryCatch } from '@/modules/_base';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto';
 import { DEFAULT_USER_ID } from '@/constants';
+import { CreateUserDto, UpdateUserDto } from '@/db/dto';
 
 @Injectable()
 export class UsersRepo extends BaseRepo<EUser> {
@@ -28,12 +27,17 @@ export class UsersRepo extends BaseRepo<EUser> {
   }
 
   @TryCatch()
-  async findOne(options: FindOneOptions<EUser>): Promise<EUser | null> {
+  async findOne(options: FindOneOptions<EUser>): Promise<EUser> {
     if (!options) {
       throw new Error('Options is empty');
     }
 
-    return this.repo.findOne(options);
+    const user = await this.repo.findOne(options);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
   }
 
   @TryCatch()
@@ -49,7 +53,7 @@ export class UsersRepo extends BaseRepo<EUser> {
   async update(
     id: string,
     updateDto: UpdateUserDto,
-    auditUser: EUser,
+    auditUser: AuditUser,
   ): Promise<EUser> {
     const updateResult: UpdateResult = await this.repo.update(id, {
       ...updateDto,

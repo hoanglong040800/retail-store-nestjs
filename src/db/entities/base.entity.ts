@@ -1,12 +1,13 @@
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { IBase } from '../interface';
 
-export abstract class EBase {
+export abstract class EBase implements IBase {
   @Column({
     name: 'created_at',
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt?: Date;
+  createdAt: Date;
 
   @Column({
     name: 'created_by',
@@ -20,7 +21,7 @@ export abstract class EBase {
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  updatedAt?: Date;
+  updatedAt: Date;
 
   @Column({
     name: 'updated_by',
@@ -32,5 +33,5 @@ export abstract class EBase {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
   })
-  id?: string;
+  id: string;
 }

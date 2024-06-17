@@ -1,9 +1,9 @@
-import { EUser } from '@/entities';
+import { UserDto } from './user.dto';
 
 export class LoginDto {
   accessToken: TokenDto;
   refreshToken: TokenDto;
-  user: Pick<EUser, 'id' | 'email' | 'firstName' | 'lastName'>;
+  user: Pick<UserDto, 'id' | 'email' | 'firstName' | 'lastName'>;
 }
 
 export class TokenDto {

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { LoginBody, RegisterBody } from './input/auth.input';
+import { LoginBody, RegisterBody } from '@/db/input';
+import { LoginDto, TokenDto, JwtTokenType } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
-import { EUser } from '@/entities';
-import { LoginDto, TokenDto, JwtTokenType } from './dto';
 import { calculateExpireTime } from './auth.util';
 import { ENV } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
+import { IUser } from '@/db/interface';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
   ) {}
 
   async genJwtToken(
-    user: Pick<EUser, 'id' | 'email' | 'firstName' | 'lastName'>,
+    user: Pick<IUser, 'id' | 'email' | 'firstName' | 'lastName'>,
     type: JwtTokenType,
   ): Promise<TokenDto> {
     if (!user) {
@@ -47,13 +47,13 @@ export class AuthService {
     await this.usersRepo.update(
       userId,
       { refreshToken: refreshToken.token },
-      { updatedBy: userId },
+      { id: userId },
     );
 
     return refreshToken;
   }
 
-  async register(body: RegisterBody) {
+  async register(body: RegisterBody): Promise<void> {
     const { email, password } = body;
 
     const existUser = await this.usersSrv.findByEmail(email);
