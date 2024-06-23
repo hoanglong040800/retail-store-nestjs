@@ -1,16 +1,20 @@
-steps:
-# Build the container image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/symmetric-flow-427302-v2/nestjs_builder', '.']
-
-# Push the container image to Container Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/symmetric-flow-427302-v2/nestjs_builder']
-
-# Deploy container image to Cloud Run
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
-  args: ['run', 'deploy', 'retail-store-nestjs', '--image', 'gcr.io/symmetric-flow-427302-v2/nestjs_builder', '--region', 'asia-southeast1-a']
-
-images:
-- gcr.io/symmetric-flow-427302-v2/nestjs_builder
+  steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/SERVICE_NAME', '.']
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/SERVICE_NAME']
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+    - 'run'
+    - 'deploy'
+    - 'SERVICE_NAME'
+    - '--image'
+    - 'gcr.io/$PROJECT_ID/SERVICE_NAME'
+    - '--region'
+    - '${_SERVICE_REGION}'
+  images:
+  - 'gcr.io/$PROJECT_ID/SERVICE_NAME'
