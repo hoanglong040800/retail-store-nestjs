@@ -1,11 +1,24 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/${_DOCKER_IMAGE_NAME}', '.']
+    args:
+      [
+        'buildx',
+        'build',
+        '--platform',
+        'linux/amd64',
+        '-t',
+        'asia-southeast1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE_NAME}',
+        '.',
+      ]
 
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/${_DOCKER_IMAGE_NAME}']
+    args:
+      [
+        'push',
+        'asia-southeast1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE_NAME}',
+      ]
 
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -13,14 +26,14 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - '${_DOCKER_IMAGE_NAME}'
+      - '${_IMAGE_NAME}'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/${_DOCKER_IMAGE_NAME}'
+      - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE_NAME}'
       - '--region'
       - '${_SERVICE_REGION}'
 
 images:
-  - 'gcr.io/$PROJECT_ID/${_DOCKER_IMAGE_NAME}'
+  - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE_NAME}'
 
 options:
   logging: CLOUD_LOGGING_ONLY
