@@ -26,7 +26,7 @@
     "mig-dt:gen": "cd ./src/db/migrations/data && typeorm migration:create",
     "mig-dt:up": "yarn mig migration:run -d src/config/data-source.ts",
     "mig-dt:down": "yarn mig migration:revert -d src/config/data-source.ts",
-    "postinstall": "husky init",
+    "postinstall": "node -e \"process.env.NODE_ENV != 'production' && process.exit(1)\" || husky init",
     "prepare": "husky"
   },
   "lint-staged": {
