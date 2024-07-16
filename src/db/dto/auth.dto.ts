@@ -1,5 +1,9 @@
 import { UserDto } from './user.dto';
 
+export class RegisterDto {
+  result: boolean;
+}
+
 export class LoginDto {
   accessToken: TokenDto;
   refreshToken: TokenDto;

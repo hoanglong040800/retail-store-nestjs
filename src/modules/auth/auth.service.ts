@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LoginBody, RegisterBody } from '@/db/input';
-import { LoginDto, TokenDto, JwtTokenType } from '@/db/dto';
+import { LoginDto, TokenDto, JwtTokenType, RegisterDto } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
@@ -53,7 +53,7 @@ export class AuthService {
     return refreshToken;
   }
 
-  async register(body: RegisterBody): Promise<void> {
+  async register(body: RegisterBody): Promise<RegisterDto> {
     const { email, password } = body;
 
     const existUser = await this.usersSrv.findByEmail(email);
@@ -66,6 +66,8 @@ export class AuthService {
       ...body,
       password: encryptString(password),
     });
+
+    return { result: true };
   }
 
   async login({ email, password }: LoginBody): Promise<LoginDto> {

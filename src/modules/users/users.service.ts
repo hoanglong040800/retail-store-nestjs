@@ -23,11 +23,15 @@ export class UsersService {
     email: string,
     options?: FindOneOptions<EUser>,
   ): Promise<EUser | null> {
-    return await this.usersRepo.findOne({
-      ...(options || {}),
-      where: {
-        email,
-      },
-    });
+    try {
+      return await this.usersRepo.findOne({
+        ...(options || {}),
+        where: {
+          email,
+        },
+      });
+    } catch (error) {
+      return null;
+    }
   }
 }

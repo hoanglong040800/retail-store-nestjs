@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { LoginDto } from '@/db/dto';
+import { LoginDto, RegisterDto } from '@/db/dto';
 import { LoginBody, RegisterBody } from '@/db/input';
 
 @Controller('auth')
@@ -10,7 +10,7 @@ export class AuthController {
   constructor(private readonly authSrv: AuthService) {}
 
   @Post('/register')
-  async register(@Body() body: RegisterBody) {
+  async register(@Body() body: RegisterBody): Promise<RegisterDto> {
     return await this.authSrv.register(body);
   }
 
