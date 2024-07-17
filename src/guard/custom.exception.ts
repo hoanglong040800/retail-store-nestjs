@@ -5,7 +5,7 @@ export class CustomException extends HttpException {
   errorCode: ExceptionCode;
 
   constructor(
-    errorCode: ExceptionCode = ExceptionCode.INTERNAL_SERVER_ERROR,
+    errorCode: ExceptionCode = 'INTERNAL_SERVER_ERROR',
     statusCode = HttpStatus.INTERNAL_SERVER_ERROR,
     message: string = '',
   ) {

@@ -8,8 +8,7 @@ import { calculateExpireTime } from './auth.util';
 import { ENV } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from '@/db/interface';
-import { CustomException } from '../_base';
-import { ExceptionCode } from '@/db/enum';
+import { CustomException } from '@/guard';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +23,7 @@ export class AuthService {
     type: JwtTokenType,
   ): Promise<TokenDto> {
     if (!user) {
-      throw new Error(`Missing user when generate JWT Token`);
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     const envToken = ENV.jwt[type];
@@ -61,7 +60,7 @@ export class AuthService {
     const existUser = await this.usersSrv.findByEmail(email);
 
     if (existUser) {
-      throw new CustomException(ExceptionCode.USER_EXISTS, HttpStatus.CONFLICT);
+      throw new CustomException('USER_EXISTS', HttpStatus.CONFLICT);
     }
 
     await this.usersRepo.save({
@@ -78,11 +77,11 @@ export class AuthService {
     });
 
     if (!existUser?.password || !existUser?.id) {
-      throw new Error(`User not exist`);
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     if (!compareSync(password, existUser.password)) {
-      throw new Error(`Password is incorrect`);
+      throw new CustomException('INCORRECT_PASSWORD', HttpStatus.BAD_REQUEST);
     }
 
     const accessToken = await this.genJwtToken(existUser, 'access');
