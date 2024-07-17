@@ -1,0 +1,4 @@
+export enum ExceptionCode {
+  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
+  USER_EXISTS = 'USER_EXISTS',
+}

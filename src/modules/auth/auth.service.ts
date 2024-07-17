@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { LoginBody, RegisterBody } from '@/db/input';
 import { LoginDto, TokenDto, JwtTokenType, RegisterDto } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
@@ -8,6 +8,8 @@ import { calculateExpireTime } from './auth.util';
 import { ENV } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from '@/db/interface';
+import { CustomException } from '../_base';
+import { ExceptionCode } from '@/db/enum';
 
 @Injectable()
 export class AuthService {
@@ -59,7 +61,7 @@ export class AuthService {
     const existUser = await this.usersSrv.findByEmail(email);
 
     if (existUser) {
-      throw new Error('User already exist');
+      throw new CustomException(ExceptionCode.USER_EXISTS, HttpStatus.CONFLICT);
     }
 
     await this.usersRepo.save({
