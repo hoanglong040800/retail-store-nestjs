@@ -1,14 +1,20 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { LoginBody, RegisterBody } from '@/db/input';
-import { LoginDto, TokenDto, JwtTokenType, RegisterDto } from '@/db/dto';
+import { LoginBody, RefreshTokenBody, RegisterBody } from '@/db/input';
+import {
+  LoginDto,
+  TokenDto,
+  JwtTokenType,
+  RegisterDto,
+  RefreshTokenDto,
+} from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
 import { calculateExpireTime } from './auth.util';
 import { ENV } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
-import { IUser } from '@/db/interface';
 import { CustomException } from '@/guard';
+import { SignedTokenData, SignedTokenUser } from './auth.type';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +25,7 @@ export class AuthService {
   ) {}
 
   async genJwtToken(
-    user: Pick<IUser, 'id' | 'email' | 'firstName' | 'lastName'>,
+    user: SignedTokenUser,
     type: JwtTokenType,
   ): Promise<TokenDto> {
     if (!user) {
@@ -32,7 +38,7 @@ export class AuthService {
       { user },
       {
         secret: envToken.secret,
-        expiresIn: `999999d`,
+        expiresIn: `30d`,
       },
     );
 
@@ -52,6 +58,33 @@ export class AuthService {
     );
 
     return refreshToken;
+  }
+
+  async extractAndValdiateAccessToken(
+    accessToken: TokenDto,
+  ): Promise<SignedTokenData> {
+    if (!accessToken?.token) {
+      throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    const payload: SignedTokenData = await this.jwtSrv.verifyAsync(
+      accessToken.token,
+      {
+        secret: ENV.jwt.access.secret,
+      },
+    );
+
+    if (!payload?.user?.id) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    const user = await this.usersSrv.findOne(payload.user.id);
+
+    if (!user) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    return payload;
   }
 
   async register(body: RegisterBody): Promise<RegisterDto> {
@@ -90,7 +123,26 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user: existUser,
+      user: existUser, // TODO not return password
+    };
+  }
+
+  async refreshToken({
+    accessToken,
+  }: RefreshTokenBody): Promise<RefreshTokenDto> {
+    const accessPayload = await this.extractAndValdiateAccessToken(accessToken);
+
+    if (!accessPayload) {
+      throw new CustomException('INVALID_TOKEN', HttpStatus.BAD_REQUEST);
+    }
+
+    const newAccessToken: TokenDto = await this.genJwtToken(
+      accessPayload.user,
+      'access',
+    );
+
+    return {
+      accessToken: newAccessToken,
     };
   }
 }
