@@ -38,7 +38,7 @@ export class AuthService {
       { user },
       {
         secret: envToken.secret,
-        expiresIn: `30d`,
+        expiresIn: `1s`,
       },
     );
 
@@ -67,11 +67,8 @@ export class AuthService {
       throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    const payload: SignedTokenData = await this.jwtSrv.verifyAsync(
+    const payload: SignedTokenData = await this.jwtSrv.decode(
       accessToken.token,
-      {
-        secret: ENV.jwt.access.secret,
-      },
     );
 
     if (!payload?.user?.id) {
