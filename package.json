@@ -14,7 +14,7 @@
     "dev": "nest start --watch",
     "dev:docker": "yarn start:docker && (sleep 5 && yarn dev)",
     "dev:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "test": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
