@@ -1,13 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { LoginBody, RegisterBody } from '@/db/input';
-import { LoginDto, TokenDto, JwtTokenType } from '@/db/dto';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { LoginBody, RefreshTokenBody, RegisterBody } from '@/db/input';
+import {
+  LoginDto,
+  TokenDto,
+  JwtTokenType,
+  RegisterDto,
+  RefreshTokenDto,
+} from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
 import { calculateExpireTime } from './auth.util';
 import { ENV } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
-import { IUser } from '@/db/interface';
+import { CustomException } from '@/guard';
+import { SignedTokenData, SignedTokenUser } from './auth.type';
 
 @Injectable()
 export class AuthService {
@@ -18,11 +25,11 @@ export class AuthService {
   ) {}
 
   async genJwtToken(
-    user: Pick<IUser, 'id' | 'email' | 'firstName' | 'lastName'>,
+    user: SignedTokenUser,
     type: JwtTokenType,
   ): Promise<TokenDto> {
     if (!user) {
-      throw new Error(`Missing user when generate JWT Token`);
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     const envToken = ENV.jwt[type];
@@ -31,7 +38,7 @@ export class AuthService {
       { user },
       {
         secret: envToken.secret,
-        expiresIn: `999999d`,
+        expiresIn: `1s`,
       },
     );
 
@@ -53,19 +60,45 @@ export class AuthService {
     return refreshToken;
   }
 
-  async register(body: RegisterBody): Promise<void> {
+  async extractAndValdiateAccessToken(
+    accessToken: TokenDto,
+  ): Promise<SignedTokenData> {
+    if (!accessToken?.token) {
+      throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    const payload: SignedTokenData = await this.jwtSrv.decode(
+      accessToken.token,
+    );
+
+    if (!payload?.user?.id) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    const user = await this.usersSrv.findOne(payload.user.id);
+
+    if (!user) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    return payload;
+  }
+
+  async register(body: RegisterBody): Promise<RegisterDto> {
     const { email, password } = body;
 
     const existUser = await this.usersSrv.findByEmail(email);
 
     if (existUser) {
-      throw new Error('User already exist');
+      throw new CustomException('USER_EXISTS', HttpStatus.CONFLICT);
     }
 
     await this.usersRepo.save({
       ...body,
       password: encryptString(password),
     });
+
+    return { result: true };
   }
 
   async login({ email, password }: LoginBody): Promise<LoginDto> {
@@ -74,11 +107,11 @@ export class AuthService {
     });
 
     if (!existUser?.password || !existUser?.id) {
-      throw new Error(`User not exist`);
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     if (!compareSync(password, existUser.password)) {
-      throw new Error(`Password is incorrect`);
+      throw new CustomException('INCORRECT_PASSWORD', HttpStatus.BAD_REQUEST);
     }
 
     const accessToken = await this.genJwtToken(existUser, 'access');
@@ -87,7 +120,26 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user: existUser,
+      user: existUser, // TODO not return password
+    };
+  }
+
+  async refreshToken({
+    accessToken,
+  }: RefreshTokenBody): Promise<RefreshTokenDto> {
+    const accessPayload = await this.extractAndValdiateAccessToken(accessToken);
+
+    if (!accessPayload) {
+      throw new CustomException('INVALID_TOKEN', HttpStatus.BAD_REQUEST);
+    }
+
+    const newAccessToken: TokenDto = await this.genJwtToken(
+      accessPayload.user,
+      'access',
+    );
+
+    return {
+      accessToken: newAccessToken,
     };
   }
 }

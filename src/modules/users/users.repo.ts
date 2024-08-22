@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import {
   DeleteResult,
   FindManyOptions,
@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepo, TryCatch } from '@/modules/_base';
 import { DEFAULT_USER_ID } from '@/constants';
 import { CreateUserDto, UpdateUserDto } from '@/db/dto';
+import { CustomException } from '@/guard';
 
 @Injectable()
 export class UsersRepo extends BaseRepo<EUser> {
@@ -29,12 +30,16 @@ export class UsersRepo extends BaseRepo<EUser> {
   @TryCatch()
   async findOne(options: FindOneOptions<EUser>): Promise<EUser> {
     if (!options) {
-      throw new Error('Options is empty');
+      throw new CustomException(
+        'INVALID_DATA',
+        HttpStatus.BAD_REQUEST,
+        'options is empty',
+      );
     }
 
     const user = await this.repo.findOne(options);
     if (!user) {
-      throw new Error('User not found');
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     return user;
@@ -61,7 +66,7 @@ export class UsersRepo extends BaseRepo<EUser> {
     });
 
     if (!updateResult.affected) {
-      throw new Error(`Entity is not available`);
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     const updatedRecord = await this.findOne({
@@ -71,7 +76,7 @@ export class UsersRepo extends BaseRepo<EUser> {
     });
 
     if (!updatedRecord) {
-      throw new Error(`Record is not available`);
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     return updatedRecord;
