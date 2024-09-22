@@ -4,7 +4,7 @@ import { CustomException } from '@/guard';
 import { HttpStatus } from '@nestjs/common';
 
 export function calculateExpireTime(
-  expiresIn: string,
+  expiresIn: string | number,
   unit: moment.unitOfTime.DurationConstructor = JwtTokenUnit,
 ): Date {
   if (isNaN(+expiresIn)) {

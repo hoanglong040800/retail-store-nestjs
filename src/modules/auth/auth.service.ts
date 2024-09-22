@@ -6,6 +6,7 @@ import {
   JwtTokenType,
   RegisterDto,
   RefreshTokenDto,
+  LoginUserDto,
 } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
@@ -49,6 +50,14 @@ export class AuthService {
   }
 
   async genRefreshToken(userId: string): Promise<TokenDto> {
+    if (!userId) {
+      throw new CustomException(
+        'PARAMS_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+        'userId empty',
+      );
+    }
+
     const refreshToken = await this.genJwtToken({ id: userId }, 'refresh');
 
     await this.usersRepo.update(
@@ -117,10 +126,17 @@ export class AuthService {
     const accessToken = await this.genJwtToken(existUser, 'access');
     const refreshToken = await this.genRefreshToken(existUser.id);
 
+    const loginUser: LoginUserDto = {
+      id: existUser.id,
+      email: existUser.email,
+      firstName: existUser.firstName,
+      lastName: existUser.lastName,
+    };
+
     return {
       accessToken,
       refreshToken,
-      user: existUser, // TODO not return password
+      user: loginUser,
     };
   }
 
