@@ -7,6 +7,9 @@ export const ENV = {
     port: process.env.SERVER_PORT || 3000,
   },
 
+  // DEFAULT MUST BE SCHEMA or else BREAK YARN COMMAND
+  migrateFolder: process.env.MIGRATE_FOLDER || 'schema',
+
   db: {
     host: process.env.POSTGRES_HOST,
     port: +(process.env.POSTGRES_PORT || 1433),
