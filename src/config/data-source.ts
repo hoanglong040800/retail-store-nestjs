@@ -12,7 +12,7 @@ export const postgresOrmOptions: TypeOrmModuleOptions = {
   migrationsTableName: 'migrations',
 
   // settings
-  synchronize: true,
+  synchronize: false,
   logging: false,
   extra: {
     trustServerCertificate: true,

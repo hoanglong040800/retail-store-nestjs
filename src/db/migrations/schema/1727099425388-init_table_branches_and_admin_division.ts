@@ -10,9 +10,13 @@ export class InitTableBranchesAndAdminDivision1727099425388
 
     await queryRunner.query(`
             CREATE TABLE admin_division_hierarchy (
+                created_at timestamp with time zone NOT NULL DEFAULT now(),
+                created_by uuid,
+                updated_at timestamp with time zone NOT NULL DEFAULT now(),
+                updated_by uuid,
                 id uuid PRIMARY KEY,
                 type admin_division_type_enum NOT NULL,
-                name varchar NOT NULL,
+                name varchar(100) NOT NULL,
                 fullname varchar(150) NOT NULL,
                 code int,
                 area_code int,
@@ -24,6 +28,10 @@ export class InitTableBranchesAndAdminDivision1727099425388
 
     await queryRunner.query(`
             CREATE TABLE branches (
+                created_at timestamp with time zone NOT NULL DEFAULT now(),
+                created_by uuid,
+                updated_at timestamp with time zone NOT NULL DEFAULT now(),
+                updated_by uuid,
                 id uuid PRIMARY KEY,
                 is_active boolean NOT NULL DEFAULT true,
                 ward_id uuid NOT NULL,
