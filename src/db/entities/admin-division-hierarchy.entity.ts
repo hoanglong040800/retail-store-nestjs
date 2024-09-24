@@ -37,17 +37,29 @@ export class EAdminDivisionHierarchy
   })
   code?: number;
 
+  // add parent id for inserting
   @Column({
-    name: 'area_code',
-    type: 'int',
+    name: 'parent_id',
+    type: 'uuid',
     nullable: true,
   })
-  areaCode?: number;
+  parentId?: string;
 
   // -------- REFERENCES --------
-  @ManyToOne(() => EAdminDivisionHierarchy, (ward) => ward.parent)
+
+  // EXAMPLE OF HIERARCHY ORM
+  @ManyToOne(() => EAdminDivisionHierarchy, (division) => division.id, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
-  parent: EAdminDivisionHierarchy;
+  parentDivision: EAdminDivisionHierarchy;
+
+  @OneToMany(
+    () => EAdminDivisionHierarchy,
+    (division) => division.parentDivision,
+  )
+  @JoinColumn({ name: 'id', referencedColumnName: 'parent_id' })
+  childDivisions: EAdminDivisionHierarchy[];
 
   @OneToMany(() => EBranch, (branch) => branch.ward)
   branches: EBranch[];
