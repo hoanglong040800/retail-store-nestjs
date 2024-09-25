@@ -5,10 +5,7 @@ import { IAdminDivisionHierarchy } from '../interface';
 import { AdminDivisionType } from '../enum';
 
 @Entity('admin_division_hierarchy')
-export class EAdminDivisionHierarchy
-  extends EBase
-  implements IAdminDivisionHierarchy
-{
+export class EAdminDivision extends EBase implements IAdminDivisionHierarchy {
   @Column({
     name: 'type',
     type: 'enum',
@@ -48,18 +45,15 @@ export class EAdminDivisionHierarchy
   // -------- REFERENCES --------
 
   // EXAMPLE OF HIERARCHY ORM
-  @ManyToOne(() => EAdminDivisionHierarchy, (division) => division.id, {
+  @ManyToOne(() => EAdminDivision, (division) => division.id, {
     nullable: true,
   })
   @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
-  parentDivision: EAdminDivisionHierarchy;
+  parentDivision: EAdminDivision;
 
-  @OneToMany(
-    () => EAdminDivisionHierarchy,
-    (division) => division.parentDivision,
-  )
+  @OneToMany(() => EAdminDivision, (division) => division.parentDivision)
   @JoinColumn({ name: 'id', referencedColumnName: 'parent_id' })
-  childDivisions: EAdminDivisionHierarchy[];
+  childDivisions: EAdminDivision[];
 
   @OneToMany(() => EBranch, (branch) => branch.ward)
   branches: EBranch[];

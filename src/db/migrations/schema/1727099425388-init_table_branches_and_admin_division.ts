@@ -26,16 +26,20 @@ export class InitTableBranchesAndAdminDivision1727099425388
         `);
 
     await queryRunner.query(`
-            CREATE TABLE branches (
+              CREATE TABLE branches (
                 created_at timestamp with time zone NOT NULL DEFAULT now(),
                 created_by uuid,
                 updated_at timestamp with time zone NOT NULL DEFAULT now(),
                 updated_by uuid,
                 id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
                 is_active boolean NOT NULL DEFAULT true,
+                name varchar(100),
                 ward_id uuid NOT NULL,
-                
-                FOREIGN KEY (ward_id) REFERENCES admin_division_hierarchy(id)
+                district_id uuid NOT NULL,
+                province_id uuid NOT NULL,
+                FOREIGN KEY (ward_id) REFERENCES admin_division_hierarchy(id),
+                FOREIGN KEY (district_id) REFERENCES admin_division_hierarchy(id),
+                FOREIGN KEY (province_id) REFERENCES admin_division_hierarchy(id)
             )
         `);
 

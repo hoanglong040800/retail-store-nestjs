@@ -2,7 +2,10 @@ import { IBase } from './base.interface';
 
 export interface IBranch extends IBase {
   isActive?: boolean;
+  name?: string;
 
   // ---------- REFERENCE --------
-  wardId?: boolean;
+  wardId?: string;
+  districtId?: string;
+  provinceId?: string;
 }

@@ -1,17 +1,17 @@
-import { EAdminDivisionHierarchy } from '@/db/entities';
+import { EAdminDivision } from '@/db/entities';
 import { AdminDivisionType } from '@/db/enum';
 import { IAdminDivisionHierarchy } from '@/db/interface';
 import { MigrationInterface, QueryRunner, Repository } from 'typeorm';
 import ADMIN_DIVISION_DATA from '../dataset/admin_division_hierarchy.json';
 
 export class InitDataAdminDivision1727106134071 implements MigrationInterface {
-  adminDivRepo: Repository<EAdminDivisionHierarchy>;
+  adminDivRepo: Repository<EAdminDivision>;
 
   async insertAdminData(
     provinceData: any,
     type: AdminDivisionType,
     parentId?: string,
-  ): Promise<EAdminDivisionHierarchy> {
+  ): Promise<EAdminDivision> {
     const adminDivisionItem: IAdminDivisionHierarchy = {
       type,
       name: provinceData.Name,
@@ -67,16 +67,12 @@ export class InitDataAdminDivision1727106134071 implements MigrationInterface {
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    this.adminDivRepo = queryRunner.connection.getRepository(
-      EAdminDivisionHierarchy,
-    );
+    this.adminDivRepo = queryRunner.connection.getRepository(EAdminDivision);
 
     await this.insertProvinces();
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.connection
-      .getRepository(EAdminDivisionHierarchy)
-      .delete({});
+    await queryRunner.connection.getRepository(EAdminDivision).delete({});
   }
 }
