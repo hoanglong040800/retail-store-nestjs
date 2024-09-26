@@ -3,8 +3,9 @@ import HCM_BRANCHES from '../dataset/branches-hcm.json';
 import { EAdminDivision, EBranch } from '@/db/entities';
 import { AdminDivisionType } from '@/db/enum';
 
-type DistrictKey = keyof typeof HCM_BRANCHES;
-type WardKey = keyof (typeof HCM_BRANCHES)[DistrictKey];
+type ProvinceKey = keyof typeof HCM_BRANCHES;
+type DistrictKey = keyof (typeof HCM_BRANCHES)[ProvinceKey];
+type WardKey = keyof (typeof HCM_BRANCHES)[ProvinceKey][DistrictKey];
 
 export class InitBranchesDataAtHcm1727142818416 implements MigrationInterface {
   branchRepo: Repository<EBranch>;
@@ -17,14 +18,30 @@ export class InitBranchesDataAtHcm1727142818416 implements MigrationInterface {
       provinceId,
       wardId,
     }: { districtId: string; provinceId: string; wardId: string },
-  ): Promise<EBranch> {
-    return this.branchRepo.save({
-      name: branchData.Name,
-      districtId,
-      provinceId,
+  ): Promise<any> {
+    const finalName = branchData.displayStoreName.replace(/BHX /g, '');
+
+    await this.branchRepo.insert({
+      name: finalName,
       wardId,
-      isActive: true,
+      provinceId,
+      districtId,
     });
+  }
+
+  async insertMultipleBranches(
+    branchesData: any[],
+    adminDivisionIds: {
+      districtId: string;
+      provinceId: string;
+      wardId: string;
+    },
+  ) {
+    const promises = branchesData.map(async (item) =>
+      this.insertBranchData(item, adminDivisionIds),
+    );
+
+    return await Promise.all(promises);
   }
 
   async handleWardData(
@@ -32,8 +49,8 @@ export class InitBranchesDataAtHcm1727142818416 implements MigrationInterface {
     provinceDiv: EAdminDivision,
   ): Promise<void> {
     const wardNames = Object.keys(
-      HCM_BRANCHES[provinceDiv.name as DistrictKey][
-        districtDiv.name as WardKey
+      HCM_BRANCHES[provinceDiv.name as ProvinceKey][
+        districtDiv.name as DistrictKey
       ],
     );
 
@@ -42,19 +59,24 @@ export class InitBranchesDataAtHcm1727142818416 implements MigrationInterface {
     });
 
     const promises = wardAdDivs?.map(async (wardDiv) => {
-      return this.insertBranchData(wardDiv, {
-        provinceId: provinceDiv.id,
+      const branchesData =
+        HCM_BRANCHES[provinceDiv.name as ProvinceKey][
+          districtDiv.name as DistrictKey
+        ][wardDiv.name as WardKey];
+
+      return this.insertMultipleBranches(branchesData, {
         districtId: districtDiv.id,
+        provinceId: provinceDiv.id,
         wardId: wardDiv.id,
       });
     });
 
-    Promise.all(promises);
+    await Promise.all(promises);
   }
 
   async handleDistrictData(provinceDiv: EAdminDivision): Promise<any> {
     const districtNames = Object.keys(
-      HCM_BRANCHES[provinceDiv.name as DistrictKey],
+      HCM_BRANCHES[provinceDiv.name as ProvinceKey],
     );
 
     const districtAdDivs = await this.adminDivRepo.find({
@@ -66,7 +88,7 @@ export class InitBranchesDataAtHcm1727142818416 implements MigrationInterface {
       return this.handleWardData(districtDiv, provinceDiv);
     });
 
-    return promises;
+    await Promise.all(promises);
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -80,11 +102,9 @@ export class InitBranchesDataAtHcm1727142818416 implements MigrationInterface {
       where: { type: AdminDivisionType.province, name: In(provincesName) },
     });
 
-    // const promises = provinceAdminDivisions?.map((provinceDiv) =>
-    //   this.handleDistrictData(provinceDiv),
-    // );
-
-    const promises = provinceAdminDivisions?.map(this.handleDistrictData);
+    const promises = provinceAdminDivisions?.map((provinceDiv) =>
+      this.handleDistrictData(provinceDiv),
+    );
 
     await Promise.all(promises);
   }

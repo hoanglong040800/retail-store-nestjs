@@ -1,6 +1,6 @@
 import { EAdminDivision } from '@/db/entities';
 import { AdminDivisionType } from '@/db/enum';
-import { IAdminDivisionHierarchy } from '@/db/interface';
+import { IAdminDivision } from '@/db/interface';
 import { MigrationInterface, QueryRunner, Repository } from 'typeorm';
 import ADMIN_DIVISION_DATA from '../dataset/admin_division_hierarchy.json';
 
@@ -12,7 +12,7 @@ export class InitDataAdminDivision1727106134071 implements MigrationInterface {
     type: AdminDivisionType,
     parentId?: string,
   ): Promise<EAdminDivision> {
-    const adminDivisionItem: IAdminDivisionHierarchy = {
+    const adminDivisionItem: IAdminDivision = {
       type,
       name: provinceData.Name,
       fullname: provinceData.FullName,

@@ -1,11 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { EBranch } from './branch.entity';
 import { EBase } from './base.entity';
-import { IAdminDivisionHierarchy } from '../interface';
+import { IAdminDivision } from '../interface';
 import { AdminDivisionType } from '../enum';
 
 @Entity('admin_division_hierarchy')
-export class EAdminDivision extends EBase implements IAdminDivisionHierarchy {
+export class EAdminDivision extends EBase implements IAdminDivision {
   @Column({
     name: 'type',
     type: 'enum',
@@ -49,12 +49,13 @@ export class EAdminDivision extends EBase implements IAdminDivisionHierarchy {
     nullable: true,
   })
   @JoinColumn({ name: 'parent_id', referencedColumnName: 'id' })
-  parentDivision: EAdminDivision;
+  parentDivision?: EAdminDivision;
 
   @OneToMany(() => EAdminDivision, (division) => division.parentDivision)
   @JoinColumn({ name: 'id', referencedColumnName: 'parent_id' })
-  childDivisions: EAdminDivision[];
+  childDivisions?: EAdminDivision[];
 
   @OneToMany(() => EBranch, (branch) => branch.ward)
-  branches: EBranch[];
+  @JoinColumn({ name: 'id', referencedColumnName: 'ward_id' })
+  branches?: EBranch[];
 }

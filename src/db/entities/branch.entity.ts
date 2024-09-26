@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { EBase } from './base.entity';
 import { IBranch } from '../interface';
 import { EAdminDivision } from './admin-division-hierarchy.entity';
@@ -20,6 +20,7 @@ export class EBranch extends EBase implements IBranch {
   })
   name?: string;
 
+  // need define wardId so we can run migration
   @Column({
     name: 'ward_id',
     type: 'uuid',
@@ -40,12 +41,16 @@ export class EBranch extends EBase implements IBranch {
   provinceId: string;
 
   // -------- REFERENCE --------
-  @ManyToOne(() => EAdminDivision, (ward) => ward.branches)
-  ward: EAdminDivision;
+  // MUST JOIN COLUMN or else TYPEORM will understand column as wardId
+  @ManyToOne(() => EAdminDivision, (adminDivision) => adminDivision.branches)
+  @JoinColumn({ name: 'ward_id', referencedColumnName: 'id' })
+  ward?: EAdminDivision;
 
-  @ManyToOne(() => EAdminDivision, (ward) => ward.branches)
-  district: EAdminDivision;
+  @ManyToOne(() => EAdminDivision, (adminDivision) => adminDivision.branches)
+  @JoinColumn({ name: 'district_id', referencedColumnName: 'id' })
+  district?: EAdminDivision;
 
-  @ManyToOne(() => EAdminDivision, (ward) => ward.branches)
-  province: EAdminDivision;
+  @ManyToOne(() => EAdminDivision, (adminDivision) => adminDivision.branches)
+  @JoinColumn({ name: 'province_id', referencedColumnName: 'id' })
+  province?: EAdminDivision;
 }
