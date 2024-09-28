@@ -24,12 +24,14 @@ export class EBranch extends EBase implements IBranch {
   @Column({
     name: 'ward_id',
     type: 'uuid',
+    nullable: false,
   })
   wardId: string;
 
   @Column({
     name: 'district_id',
     type: 'uuid',
+    nullable: false,
   })
   districtId: string;
 

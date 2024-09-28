@@ -6,26 +6,28 @@ import { BranchesRlt } from '@/constants';
 @Injectable()
 export class BranchesService {
   constructor(private readonly branchRepo: BranchesRepo) {}
-
   async findByFilter({
     provinceId,
     districtId,
     wardId,
+    isActive,
     ...rest
   }: FindBranchesByFilterQuery) {
     return await this.branchRepo.find({
+      select: ['id', 'name', 'ward'],
       relations: [
         BranchesRlt.ward,
         BranchesRlt.wardDistrict,
         BranchesRlt.wardDistrictProvince,
-        BranchesRlt.district,
-        BranchesRlt.districtProvince,
       ],
+
       where: {
+        // assign undefined because admin division never null
         provinceId: provinceId || undefined,
         districtId: districtId || undefined,
         wardId: wardId || undefined,
-        ...rest,
+        isActive: isActive || true,
+        ...(rest || {}),
       },
     });
   }
