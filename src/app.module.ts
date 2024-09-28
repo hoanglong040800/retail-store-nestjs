@@ -12,14 +12,15 @@ import { BranchesModule } from './modules/branches';
     // core
     AppConfigModule,
     DbModule,
-    ConfigModule,
 
-    // route
-    UsersModule,
+    // route. should order by name -> swagger show based on name
+    BranchesModule,
+
     AuthModule,
+    ConfigModule,
     CategoryModule,
     ProductsModule,
-    BranchesModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],

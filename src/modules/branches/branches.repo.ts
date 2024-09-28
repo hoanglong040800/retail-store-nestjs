@@ -1,7 +1,7 @@
 import { EBranch } from '@/db/entities';
 import { BaseRepo } from '../_base';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 
 export class BranchesRepo extends BaseRepo<EBranch> {
   constructor(
@@ -9,5 +9,9 @@ export class BranchesRepo extends BaseRepo<EBranch> {
     private readonly repo: Repository<EBranch>,
   ) {
     super();
+  }
+
+  find(options?: FindManyOptions<EBranch> | undefined): Promise<EBranch[]> {
+    return this.repo.find(options);
   }
 }
