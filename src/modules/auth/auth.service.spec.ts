@@ -9,6 +9,14 @@ import { SignedTokenData, SignedTokenUser } from './auth.type';
 import { LoginDto, TokenDto } from '@/db/dto';
 import * as bcrypt from 'bcrypt';
 
+jest.mock('bcrypt', () => ({
+  compareSync: jest.fn().mockImplementation(() => true),
+}));
+
+jest.mock('../../utils/crypt.utils', () => ({
+  encryptString: jest.fn(() => 'encryptedString'),
+}));
+
 describe('AuthService', () => {
   let srv: AuthService;
   let usersRepo: Repository<EUser>;
@@ -182,6 +190,8 @@ describe('AuthService', () => {
         id: '1',
         password: 'incorrect',
       });
+
+      jest.spyOn(bcrypt, 'compareSync').mockReturnValueOnce(false);
 
       await expect(srv.login(body)).rejects.toThrow(CustomException);
     });

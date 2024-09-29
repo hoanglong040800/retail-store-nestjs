@@ -8,11 +8,11 @@ export const postgresOrmOptions: TypeOrmModuleOptions = {
 
   // related
   entities: [__dirname + '/../db/entities/*.entity{.ts,.js}'], //ext .js because get from ./dist
-  migrations: [__dirname + '/../db/migrations/data/*.ts'], // TODO long.t change to env path for dynamic migration
+  migrations: [__dirname + `/../db/migrations/${ENV.migrateFolder}/*.ts`],
   migrationsTableName: 'migrations',
 
   // settings
-  synchronize: true,
+  synchronize: false,
   logging: false,
   extra: {
     trustServerCertificate: true,

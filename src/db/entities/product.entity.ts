@@ -62,6 +62,6 @@ export class EProduct extends EBase implements IProduct {
   @ManyToOne(() => ECategory, (category) => category.id, {
     nullable: false,
   })
-  @JoinColumn({ name: 'leaf_category_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'leaf_category_id', referencedColumnName: 'id' }) // use @JoinColumb when field define different from table column
   category: ECategory;
 }

@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { JwtTokenUnit } from '@/constants';
 import { CustomException } from '@/guard';
 import { HttpStatus } from '@nestjs/common';
