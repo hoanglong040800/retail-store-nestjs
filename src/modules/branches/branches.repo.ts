@@ -2,7 +2,9 @@ import { EBranch } from '@/db/entities';
 import { BaseRepo } from '../_base';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class BranchesRepo extends BaseRepo<EBranch> {
   constructor(
     @InjectRepository(EBranch)
