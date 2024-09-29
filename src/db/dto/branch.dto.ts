@@ -6,6 +6,4 @@ export class BranchDto extends BaseDto implements IBranch {
   isActive?: boolean;
   name?: string;
   ward?: AdminDivisionDto;
-  district?: AdminDivisionDto;
-  province?: AdminDivisionDto;
 }

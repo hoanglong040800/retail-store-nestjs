@@ -1,6 +1,5 @@
-import { IsBoolean, IsUUID } from 'class-validator';
+import { IsBoolean, IsUUID, IsOptional } from 'class-validator';
 import { IBranch } from '../interface';
-import { IsOptional } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class FindBranchesByFilterQuery implements IBranch {
