@@ -6,6 +6,8 @@ import { CategoryModule } from './modules/categories/categories.module';
 import { ConfigModule } from './modules/config/config.module';
 import { ProductsModule } from './modules/products/products.module';
 import { BranchesModule } from './modules/branches';
+import { AdminDivisionsModule } from './modules/admin-divisions';
+import { BranchesAdminDivisionModule } from './modules/branches-admin-divisions';
 
 @Module({
   imports: [
@@ -14,13 +16,14 @@ import { BranchesModule } from './modules/branches';
     DbModule,
 
     // route. should order by name -> swagger show based on name
-    BranchesModule,
-
-    AuthModule,
     ConfigModule,
+    AdminDivisionsModule,
+    AuthModule,
+    BranchesModule,
     CategoryModule,
     ProductsModule,
     UsersModule,
+    BranchesAdminDivisionModule,
   ],
   controllers: [],
   providers: [],

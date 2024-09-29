@@ -13,6 +13,7 @@ export const AdminDivisionRlt = {
   parentDivision: 'parentDivision',
   twoLvParentDivision: 'parentDivision.parentDivision',
   childDivisions: 'childDivisions',
+  twoLvChilDivisions: 'childDivisions.childDivisions',
 };
 
 export const BranchesRlt = {
