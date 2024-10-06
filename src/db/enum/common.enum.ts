@@ -14,12 +14,13 @@ export enum ProductUnitEnum {
 }
 
 export enum OrderStatusEnum {
-  pending = 'pending',
-  awaitingFulfillment = 'awaiting_fulfillment',
-  awaitingPayment = 'awaiting_payment',
-  awaitingShipment = 'awaiting_shipment',
-  shipped = 'shipped',
-  done = 'done',
+  pending = 'pending', // DEFAULT
+  awaitingFulfillment = 'awaiting_fulfillment', // wait for store clerks to prepare order
+  awaitingPayment = 'awaiting_payment', // wait for customer to pay in order to process. Its depend on delivery type
+  awaitingShipment = 'awaiting_shipment', // finish fulfillment, wait for delivery. Customer may or may not need to pay at this step
+  shipped = 'shipped', // order is delivered or customer pickup at store
+  done = 'done', // order is delivered and paid
+  cancelled = 'cancelled', // order is either cancelled by store or customer
 }
 
 export enum DeliveryTypeEnum {

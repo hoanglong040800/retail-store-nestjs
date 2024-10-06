@@ -6,3 +6,4 @@ export * from './branch.entity';
 export * from './admin-division-hierarchy.entity';
 export * from './cart.entity';
 export * from './order.entity';
+export * from './cart-item.entity';

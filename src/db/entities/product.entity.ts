@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { IProduct } from '../interface';
 import { EBase } from './base.entity';
 import { ECategory } from './category.entity';
 import { ProductUnitEnum } from '../enum';
+import { ECartItem } from './cart-item.entity';
 
 @Entity('products')
 export class EProduct extends EBase implements IProduct {
@@ -73,4 +74,9 @@ export class EProduct extends EBase implements IProduct {
   })
   @JoinColumn({ name: 'leaf_category_id', referencedColumnName: 'id' }) // use @JoinColumb when field define different from table column
   category: ECategory;
+
+  @OneToMany(() => ECartItem, (cartItem) => cartItem.product, {
+    nullable: true,
+  })
+  cartItems?: ECartItem[];
 }

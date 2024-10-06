@@ -9,7 +9,7 @@ export class InitCartsOrdersAlterProducts1727966021298
     `);
 
     await queryRunner.query(`
-        CREATE TYPE order_status_enum as ENUM ('pending', 'awaiting_fulfillment', 'awaiting_payment', 'awaiting_shipment', 'shipped', 'done' )
+        CREATE TYPE order_status_enum as ENUM ('pending', 'awaiting_fulfillment', 'awaiting_payment', 'awaiting_shipment', 'shipped', 'done', 'cancelled' )
     `);
 
     await queryRunner.query(`
