@@ -1,6 +1,8 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { EBase } from './base.entity';
 import { IUser } from '../interface';
+import { ECart } from './cart.entity';
+import { EOrder } from './order.entity';
 
 @Entity('users')
 export class EUser extends EBase implements IUser {
@@ -43,6 +45,13 @@ export class EUser extends EBase implements IUser {
     select: false,
   })
   refreshToken?: string;
+
+  // ------ RELATIONS ------
+  @OneToMany(() => ECart, (cart) => cart.user)
+  carts: ECart[];
+
+  @OneToMany(() => EOrder, (order) => order.user)
+  orders: EOrder[];
 }
 
 export class AuditUser implements IUser {

@@ -3,6 +3,9 @@ import { IOrder } from '../interface';
 import { DeliveryTypeEnum, OrderStatusEnum } from '../enum';
 import { ECart } from './cart.entity';
 import { EBase } from './base.entity';
+import { EUser } from './user.entity';
+import { EBranch } from './branch.entity';
+import { EAdminDivision } from './admin-division-hierarchy.entity';
 
 @Entity('orders')
 export class EOrder extends EBase implements IOrder {
@@ -29,12 +32,15 @@ export class EOrder extends EBase implements IOrder {
   deliveryType?: DeliveryTypeEnum;
 
   // ------- Relationships -------
-  userId: string;
+  @OneToOne(() => EUser, (user) => user.id, { nullable: false })
+  user?: EUser;
 
   @OneToOne(() => ECart, (cart) => cart.id, { nullable: false })
-  cartId?: string;
+  cart?: ECart;
 
-  branchId: string;
+  @OneToOne(() => EBranch, (branch) => branch.orders, { nullable: false })
+  branch: EBranch;
 
-  deliveryWardId?: string;
+  @OneToOne(() => EAdminDivision, (adminDivision) => adminDivision.orders)
+  deliveryWard?: EAdminDivision;
 }

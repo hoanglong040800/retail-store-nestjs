@@ -3,6 +3,7 @@ import { EBranch } from './branch.entity';
 import { EBase } from './base.entity';
 import { IAdminDivision } from '../interface';
 import { AdminDivisionType } from '../enum';
+import { EOrder } from './order.entity';
 
 @Entity('admin_division_hierarchy')
 export class EAdminDivision extends EBase implements IAdminDivision {
@@ -58,4 +59,7 @@ export class EAdminDivision extends EBase implements IAdminDivision {
   @OneToMany(() => EBranch, (branch) => branch.ward)
   @JoinColumn({ name: 'id', referencedColumnName: 'ward_id' })
   branches?: EBranch[];
+
+  @OneToMany(() => EOrder, (order) => order.deliveryWard)
+  orders: EOrder[];
 }
