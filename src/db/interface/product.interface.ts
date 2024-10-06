@@ -1,3 +1,4 @@
+import { ProductUnitEnum } from '../enum';
 import { IBase } from './base.interface';
 
 export interface IProduct extends IBase {
@@ -7,6 +8,7 @@ export interface IProduct extends IBase {
   active?: boolean;
   price?: number;
   image?: string;
+  unit?: ProductUnitEnum;
 
   // REFERENCES
   leafCategoryId?: string;

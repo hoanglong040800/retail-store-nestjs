@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { IProduct } from '../interface';
 import { EBase } from './base.entity';
 import { ECategory } from './category.entity';
+import { ProductUnitEnum } from '../enum';
 
 @Entity('products')
 export class EProduct extends EBase implements IProduct {
@@ -48,6 +49,14 @@ export class EProduct extends EBase implements IProduct {
     nullable: true,
   })
   image?: string;
+
+  @Column({
+    name: 'unit',
+    type: 'enum',
+    enum: ProductUnitEnum,
+    nullable: true,
+  })
+  unit?: ProductUnitEnum;
 
   // add reference column to insert data
   @Column({
