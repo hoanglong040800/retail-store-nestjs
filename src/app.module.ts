@@ -9,6 +9,7 @@ import { BranchesModule } from './modules/branches';
 import { AdminDivisionsModule } from './modules/admin-divisions';
 import { BranchesAdminDivisionModule } from './modules/branches-admin-divisions';
 import { CartsModule } from './modules/carts/carts.module';
+import { CartItemsModule } from './modules/cart-items/cart-items.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CartsModule } from './modules/carts/carts.module';
     ProductsModule,
     UsersModule,
     BranchesAdminDivisionModule,
+    CartItemsModule,
   ],
   controllers: [],
   providers: [],
