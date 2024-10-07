@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { ICartItem } from '../interface';
 import { EBase } from './base.entity';
 import { ECart } from './cart.entity';
@@ -20,10 +20,11 @@ export class ECartItem extends EBase implements ICartItem {
 
   // ---------- RELATION ---------
 
-  @OneToMany(() => ECart, (cart) => cart.cartItems, { nullable: false })
+  @ManyToOne(() => ECart, (c) => c.cartItems, { nullable: false })
+  @JoinColumn({ name: 'cart_id', referencedColumnName: 'id' })
   cart?: ECart;
 
-  @ManyToOne(() => EProduct, (product) => product.cartItems, {
+  @ManyToOne(() => EProduct, (p) => p.cartItems, {
     nullable: false,
   })
   product?: string;

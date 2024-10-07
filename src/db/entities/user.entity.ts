@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, JoinColumn } from 'typeorm';
 import { EBase } from './base.entity';
 import { IUser } from '../interface';
 import { ECart } from './cart.entity';
@@ -48,6 +48,7 @@ export class EUser extends EBase implements IUser {
 
   // ------ RELATIONS ------
   @OneToMany(() => ECart, (cart) => cart.user)
+  @JoinColumn({ name: 'id', referencedColumnName: 'user_id' })
   carts: ECart[];
 
   @OneToMany(() => EOrder, (order) => order.user)

@@ -27,3 +27,8 @@ export enum DeliveryTypeEnum {
   delivery = 'delivery',
   pickup = 'pickup',
 }
+
+export enum CartStatusEnum {
+  new = 'new', // DEFAULT. not checkout yet, can add item
+  checkout = 'checkout', // already checkouted, CAN'T alter cart items or cart
+}

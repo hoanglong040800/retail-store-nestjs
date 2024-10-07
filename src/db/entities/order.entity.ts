@@ -35,7 +35,7 @@ export class EOrder extends EBase implements IOrder {
   @OneToOne(() => EUser, (user) => user.id, { nullable: false })
   user?: EUser;
 
-  @OneToOne(() => ECart, (cart) => cart.id, { nullable: false })
+  @OneToOne(() => ECart, (cart) => cart.order, { nullable: false })
   cart?: ECart;
 
   @OneToOne(() => EBranch, (branch) => branch.orders, { nullable: false })

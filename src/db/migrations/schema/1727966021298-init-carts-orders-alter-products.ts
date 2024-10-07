@@ -13,6 +13,10 @@ export class InitCartsOrdersAlterProducts1727966021298
     `);
 
     await queryRunner.query(`
+        CREATE TYPE cart_status_enum as ENUM ('new', 'checkout')
+    `);
+
+    await queryRunner.query(`
         CREATE TYPE delivery_type_enum as ENUM ('delivery', 'pickup')    
     `);
 
@@ -29,6 +33,7 @@ export class InitCartsOrdersAlterProducts1727966021298
             updated_by uuid,
             id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
             user_id uuid NOT NULL,
+            status cart_status_enum NOT NULL DEFAULT 'new',
             
             FOREIGN KEY (user_id) REFERENCES users(id)
         )    
@@ -90,6 +95,7 @@ export class InitCartsOrdersAlterProducts1727966021298
         DROP TYPE product_unit_enum;
         DROP TYPE order_status_enum;
         DROP TYPE delivery_type_enum;
+        DROP TYPE cart_status_enum;
     `);
   }
 }

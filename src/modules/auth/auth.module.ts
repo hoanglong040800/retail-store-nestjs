@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '@/modules/users';
 import { JwtModule } from '@nestjs/jwt';
+import { CartsModule } from '@/modules/carts';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
 
     UsersModule,
+    CartsModule,
   ],
   providers: [AuthService],
   controllers: [AuthController],

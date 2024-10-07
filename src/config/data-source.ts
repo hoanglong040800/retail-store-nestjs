@@ -14,6 +14,7 @@ export const postgresOrmOptions: TypeOrmModuleOptions = {
   // settings
   synchronize: false,
   logging: false,
+  migrationsTransactionMode: 'each',
   extra: {
     trustServerCertificate: true,
   },
