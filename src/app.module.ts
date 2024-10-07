@@ -8,6 +8,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { BranchesModule } from './modules/branches';
 import { AdminDivisionsModule } from './modules/admin-divisions';
 import { BranchesAdminDivisionModule } from './modules/branches-admin-divisions';
+import { CartsModule } from './modules/carts/carts.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { BranchesAdminDivisionModule } from './modules/branches-admin-divisions'
     DbModule,
 
     // route. should order by name -> swagger show based on name
+    CartsModule,
     ConfigModule,
     AdminDivisionsModule,
     AuthModule,
