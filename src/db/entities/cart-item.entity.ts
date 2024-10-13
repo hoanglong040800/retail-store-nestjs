@@ -27,5 +27,6 @@ export class ECartItem extends EBase implements ICartItem {
   @ManyToOne(() => EProduct, (p) => p.cartItems, {
     nullable: false,
   })
-  product?: string;
+  @JoinColumn({ name: 'product_id', referencedColumnName: 'id' })
+  product?: EProduct;
 }

@@ -78,5 +78,6 @@ export class EProduct extends EBase implements IProduct {
   @OneToMany(() => ECartItem, (cartItem) => cartItem.product, {
     nullable: true,
   })
+  @JoinColumn({ name: 'id', referencedColumnName: 'product_id' })
   cartItems?: ECartItem[];
 }

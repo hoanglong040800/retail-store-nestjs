@@ -1,5 +1,6 @@
 export type ExceptionCode =
   | 'CATEGORY_NOT_FOUND'
+  | 'CART_ITEM_NOT_FOUND'
   | 'INTERNAL_SERVER_ERROR'
   | 'INVALID_DATA'
   | 'INVALID_TOKEN'

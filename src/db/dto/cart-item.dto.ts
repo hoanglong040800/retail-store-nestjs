@@ -6,5 +6,5 @@ export class CartItemDto extends BaseDto implements ICartItem {
   quantity?: number;
   price?: number;
 
-  product: EProduct;
+  product?: EProduct;
 }
