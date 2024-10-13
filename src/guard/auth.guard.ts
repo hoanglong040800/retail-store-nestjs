@@ -1,4 +1,5 @@
 import { ENV } from '@/constants';
+import { SignedTokenData } from '@/modules/auth';
 import {
   CanActivate,
   ExecutionContext,
@@ -28,9 +29,12 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException();
       }
 
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: ENV.jwt.access.secret,
-      });
+      const payload: SignedTokenData = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: ENV.jwt.access.secret,
+        },
+      );
 
       request['user'] = payload.user;
       return true;

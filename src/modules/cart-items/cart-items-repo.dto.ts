@@ -1,12 +1,16 @@
-import { AddCartItemBody } from '@/db/input';
+import { MutateCartItem } from '@/db/input';
 import { ICartItem } from '@/db/interface';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 
 export class CreateUpdateCartItemDto
-  extends AddCartItemBody
+  extends MutateCartItem
   implements ICartItem
 {
   @IsUUID()
   @IsNotEmpty()
   cartId: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  price: number;
 }

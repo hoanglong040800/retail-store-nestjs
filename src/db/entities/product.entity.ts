@@ -36,6 +36,7 @@ export class EProduct extends EBase implements IProduct {
   })
   active: boolean;
 
+  // TODO resolve numeric return string issue
   @Column({
     name: 'price',
     type: 'numeric',

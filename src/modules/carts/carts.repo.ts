@@ -4,7 +4,7 @@ import { FindOneOptions, Repository } from 'typeorm';
 import { BaseRepo } from '@/modules/_base';
 import { CartStatusEnum } from '@/db/enum';
 import { Injectable } from '@nestjs/common';
-import { CreateCartDto } from './carts-repo.dto';
+import { CreateCartDto } from './shared/carts-repo.dto';
 
 @Injectable()
 export class CartsRepo extends BaseRepo<ECart> {

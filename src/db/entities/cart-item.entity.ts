@@ -18,9 +18,25 @@ export class ECartItem extends EBase implements ICartItem {
   })
   price?: number;
 
+  @Column({
+    name: 'cart_id',
+    type: 'uuid',
+    nullable: false,
+  })
+  cartId?: string;
+
+  @Column({
+    name: 'product_id',
+    type: 'uuid',
+    nullable: false,
+  })
+  productId?: string;
+
   // ---------- RELATION ---------
 
-  @ManyToOne(() => ECart, (c) => c.cartItems, { nullable: false })
+  @ManyToOne(() => ECart, (c) => c.cartItems, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'cart_id', referencedColumnName: 'id' })
   cart?: ECart;
 
