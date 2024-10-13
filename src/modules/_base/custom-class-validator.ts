@@ -1,4 +1,5 @@
 import {
+  ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
@@ -6,11 +7,11 @@ import {
 // TODO implement custom validation
 @ValidatorConstraint({ name: 'IsNotNegative' })
 export class IsNotNegative implements ValidatorConstraintInterface {
-  validate(numbers: number[]): boolean {
-    return numbers.every((n) => !isNaN(n) && n >= 0);
+  validate(number: number): boolean {
+    return !isNaN(number) && number >= 0;
+  }
+
+  defaultMessage(valArg?: ValidationArguments): string {
+    return `${valArg?.targetName} must be greater than or equal to 0`;
   }
 }
-
-export const customValMsg = {
-  isNotNegative: 'Must be greater than or equal to 0',
-};

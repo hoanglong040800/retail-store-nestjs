@@ -1,16 +1,15 @@
 import {
+  IsArray,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsUUID,
   Validate,
+  ValidateNested,
 } from 'class-validator';
 import { ICartItem } from '../interface';
-import { IsNotNegative, customValMsg } from '@/modules/_base';
-
-export class AddCartItemBody {
-  mutateCartItems: MutateCartItem[];
-}
+import { IsNotNegative } from '@/modules/_base';
+import { Type } from 'class-transformer';
 
 export class MutateCartItem implements ICartItem {
   @IsOptional()
@@ -19,10 +18,18 @@ export class MutateCartItem implements ICartItem {
 
   @IsNotEmpty()
   @IsNumber()
-  @Validate(IsNotNegative, { message: customValMsg.isNotNegative })
+  @Validate(IsNotNegative)
   quantity: number;
 
   @IsUUID()
   @IsNotEmpty()
   productId: string;
+}
+
+export class AddCartItemBody {
+  @IsNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => MutateCartItem)
+  mutateCartItems: MutateCartItem[];
 }

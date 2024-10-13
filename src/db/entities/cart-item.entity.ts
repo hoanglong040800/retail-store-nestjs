@@ -8,13 +8,13 @@ import { EProduct } from './product.entity';
 export class ECartItem extends EBase implements ICartItem {
   @Column({
     name: 'quantity',
-    type: 'int',
+    type: 'smallint',
   })
   quantity?: number; // 0 < x <= 100
 
   @Column({
     name: 'price',
-    type: 'float',
+    type: 'integer',
   })
   price?: number;
 
