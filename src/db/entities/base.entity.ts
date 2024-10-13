@@ -6,6 +6,7 @@ export abstract class EBase implements IBase {
     name: 'created_at',
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
+    select: false,
   })
   createdAt: Date;
 
@@ -13,6 +14,7 @@ export abstract class EBase implements IBase {
     name: 'created_by',
     type: 'uuid',
     nullable: true,
+    select: false,
   })
   createdBy?: string;
 
@@ -20,6 +22,7 @@ export abstract class EBase implements IBase {
     name: 'updated_at',
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
+    select: false,
   })
   updatedAt: Date;
 
@@ -27,6 +30,7 @@ export abstract class EBase implements IBase {
     name: 'updated_by',
     type: 'uuid',
     nullable: true,
+    select: false,
   })
   updatedBy?: string;
 

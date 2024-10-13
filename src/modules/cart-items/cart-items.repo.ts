@@ -4,6 +4,7 @@ import { AuditUser, ECartItem } from '@/db/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DeleteResult,
+  FindManyOptions,
   FindOneOptions,
   Repository,
   UpdateResult,
@@ -29,6 +30,10 @@ export class CartItemsRepo extends BaseRepo<ECartItem> {
       createdBy: auditUser.id,
       updatedBy: auditUser.id,
     });
+  }
+
+  find(options?: FindManyOptions<ECartItem>): Promise<ECartItem[]> {
+    return this.repo.find(options);
   }
 
   findOne(options: FindOneOptions<ECartItem>): Promise<ECartItem | null> {

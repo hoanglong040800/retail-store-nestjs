@@ -122,4 +122,23 @@ export class CartItemsService {
 
     return finalPrice;
   }
+
+  async getCartItemsByCartId(cartId: string): Promise<ECartItem[]> {
+    if (!cartId) {
+      throw new CustomException(
+        'PARAMS_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+        `param cartId: ${cartId} not found`,
+      );
+    }
+
+    return this.repo.find({
+      relations: {
+        product: true,
+      },
+      where: {
+        cartId,
+      },
+    });
+  }
 }

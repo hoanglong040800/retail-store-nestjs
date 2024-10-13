@@ -6,7 +6,7 @@ export const addCartItemsParamOptions: ApiParamOptions = {
   name: 'cartId',
   examples: {
     'Valid Cart Id': {
-      value: '1096ac51-d290-4ee9-83c7-d997dbe07893',
+      value: '5e98d597-637e-484c-b945-422753963b19',
     },
   },
 };

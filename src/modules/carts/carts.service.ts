@@ -94,10 +94,13 @@ export class CartsService {
 
     await this.cartItemSrv.addMultiCartItems(cartItemInputs, userCart, user);
 
-    // TODO return cart items
+    const latestAllCartItems = await this.cartItemSrv.getCartItemsByCartId(
+      userCart.id,
+    );
+
     const resultCart: CartDto = {
       ...userCart,
-      cartItems: [],
+      cartItems: latestAllCartItems,
     };
 
     return resultCart;

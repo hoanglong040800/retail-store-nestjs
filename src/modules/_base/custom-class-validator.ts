@@ -4,7 +4,6 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-// TODO implement custom validation
 @ValidatorConstraint({ name: 'IsNotNegative' })
 export class IsNotNegative implements ValidatorConstraintInterface {
   validate(number: number): boolean {
