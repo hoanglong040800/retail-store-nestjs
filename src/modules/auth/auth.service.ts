@@ -12,7 +12,7 @@ import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
 import { calculateExpireTime } from './auth.util';
-import { ENV } from '@/constants';
+import { ENV, JwtTokenUnit } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
 import { CustomException } from '@/guard';
 import { SignedTokenData, SignedTokenUser } from './auth.type';
@@ -41,7 +41,7 @@ export class AuthService {
       { user },
       {
         secret: envToken.secret,
-        expiresIn: `1s`,
+        expiresIn: `${envToken.expire}${JwtTokenUnit}`,
       },
     );
 
