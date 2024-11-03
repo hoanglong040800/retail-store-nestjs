@@ -15,8 +15,9 @@ export class ECartItem extends EBase implements ICartItem {
   @Column({
     name: 'price',
     type: 'integer',
+    nullable: false,
   })
-  price?: number;
+  price: number;
 
   @Column({
     name: 'cart_id',

@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { RequestType } from '@/modules/_base';
 import { AuthGuard } from '@/guard';
 import { CartDto } from '@/db/dto';
 import { addCartItemsBodyOptions, addCartItemsParamOptions } from './shared';
-import { AddCartItemBody } from '@/db/input';
+import { AddCartItemBody, GetCartByIdQuery } from '@/db/input';
 
 @Controller('carts')
 @ApiTags('Carts')
@@ -21,8 +22,17 @@ export class CartsController {
   constructor(private readonly service: CartsService) {}
 
   @Get(':cartId')
-  getCartById(@Param('cartId') cartId: string): Promise<CartDto> {
-    return this.service.getCartById(cartId);
+  @UseGuards(AuthGuard)
+  getCartById(
+    @Param('cartId') cartId: string,
+    @Query() query: GetCartByIdQuery,
+    @Request() req: RequestType,
+  ): Promise<CartDto> {
+    return this.service.getCartById(
+      cartId,
+      { deliveryType: query.deliveryType },
+      req.user,
+    );
   }
 
   @Post(':cartId/items')

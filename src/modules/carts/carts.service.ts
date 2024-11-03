@@ -1,12 +1,17 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CartsRepo } from './carts.repo';
-import { ECart } from '@/db/entities';
-import { CartStatusEnum } from '@/db/enum';
+import { ECart, ECartItem } from '@/db/entities';
+import { CartStatusEnum, DeliveryTypeEnum } from '@/db/enum';
 import { MutateCartItem } from '@/db/input/cart.input';
 import { SignedTokenUser } from '../auth/auth.type';
 import { CustomException } from '@/guard';
 import { CartItemsService } from '../cart-items';
-import { CartDto } from '@/db/dto';
+import { CartCalculationDto, CartDto } from '@/db/dto';
+import {
+  calculateCartTotalAmount,
+  calculateShippingFee,
+  calculateSubTotal,
+} from './shared';
 
 @Injectable()
 export class CartsService {
@@ -106,7 +111,11 @@ export class CartsService {
     return resultCart;
   }
 
-  async getCartById(cartId: string): Promise<CartDto> {
+  async getCartById(
+    cartId: string,
+    { deliveryType }: { deliveryType: DeliveryTypeEnum },
+    user: SignedTokenUser,
+  ): Promise<CartDto> {
     if (!cartId) {
       throw new CustomException(
         'PARAMS_NOT_FOUND',
@@ -124,6 +133,9 @@ export class CartsService {
 
       where: {
         id: cartId,
+        user: {
+          id: user.id,
+        },
       },
     });
 
@@ -135,6 +147,39 @@ export class CartsService {
       );
     }
 
-    return cart;
+    const resultCart: CartDto = {
+      ...cart,
+      calculation: this.calculateCart(cart.cartItems, {
+        deliveryType,
+      }),
+    };
+
+    return resultCart;
+  }
+
+  calculateCart(
+    cartItems: ECartItem[] | undefined,
+    { deliveryType }: { deliveryType: DeliveryTypeEnum },
+  ): CartCalculationDto {
+    if (!cartItems) {
+      return {
+        subTotal: 0,
+        shippingFee: 0,
+        totalAmount: 0,
+      };
+    }
+
+    const subTotal = calculateSubTotal(cartItems);
+    const shippingFee = calculateShippingFee(deliveryType);
+    const totalAmount = calculateCartTotalAmount({
+      subTotal,
+      shippingFee,
+    });
+
+    return {
+      subTotal,
+      shippingFee,
+      totalAmount,
+    };
   }
 }

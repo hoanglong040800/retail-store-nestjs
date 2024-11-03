@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -11,6 +12,8 @@ import {
 import { ICartItem, IProduct } from '../interface';
 import { IsNotNegative } from '@/modules/_base';
 import { Type } from 'class-transformer';
+import { DeliveryTypeEnum } from '../enum';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class MutateCartItemProduct implements IProduct {
   @IsOptional()
@@ -48,4 +51,11 @@ export class AddCartItemBody {
   @ValidateNested({ each: true })
   @Type(() => MutateCartItem)
   mutateCartItems: MutateCartItem[];
+}
+
+export class GetCartByIdQuery {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(DeliveryTypeEnum)
+  deliveryType: DeliveryTypeEnum;
 }
