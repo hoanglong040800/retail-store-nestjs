@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BranchesRepo } from './branches.repo';
 import { FindBranchesByFilterQuery } from '@/db/input';
-import { BranchesRlt } from '@/constants';
 
 @Injectable()
 export class BranchesService {
@@ -15,11 +14,14 @@ export class BranchesService {
   }: FindBranchesByFilterQuery) {
     return await this.branchRepo.find({
       select: ['id', 'name', 'ward'],
-      relations: [
-        BranchesRlt.ward,
-        BranchesRlt.wardDistrict,
-        BranchesRlt.wardDistrictProvince,
-      ],
+
+      relations: {
+        ward: {
+          parentDivision: {
+            parentDivision: true,
+          },
+        },
+      },
 
       where: {
         // assign undefined because admin division never null

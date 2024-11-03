@@ -16,7 +16,9 @@ export class CategoriesService {
         level: 1,
       },
 
-      relations: ['childCategories'],
+      relations: {
+        childCategories: true,
+      },
       order: {
         displayOrder: 'ASC',
 
@@ -29,7 +31,13 @@ export class CategoriesService {
 
   async findOneByOptions({ id, isLeaf }: ICategory): Promise<ECategory> {
     return this.cateRepo.findOne({
-      relations: ['childCategories', 'products', 'childCategories.products'],
+      relations: {
+        childCategories: {
+          products: true,
+        },
+
+        products: true,
+      },
 
       where: {
         id,

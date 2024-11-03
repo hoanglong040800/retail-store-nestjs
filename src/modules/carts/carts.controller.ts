@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   Request,
@@ -18,6 +19,11 @@ import { AddCartItemBody } from '@/db/input';
 @ApiTags('Carts')
 export class CartsController {
   constructor(private readonly service: CartsService) {}
+
+  @Get(':cartId')
+  getCartById(@Param('cartId') cartId: string): Promise<CartDto> {
+    return this.service.getCartById(cartId);
+  }
 
   @Post(':cartId/items')
   @UseGuards(AuthGuard)

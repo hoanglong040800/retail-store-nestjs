@@ -105,4 +105,36 @@ export class CartsService {
 
     return resultCart;
   }
+
+  async getCartById(cartId: string): Promise<CartDto> {
+    if (!cartId) {
+      throw new CustomException(
+        'PARAMS_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+        `param cartId: ${cartId} not found`,
+      );
+    }
+
+    const cart = await this.repo.findOne({
+      relations: {
+        cartItems: {
+          product: true,
+        },
+      },
+
+      where: {
+        id: cartId,
+      },
+    });
+
+    if (!cart) {
+      throw new CustomException(
+        'USER_CART_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+        `cartId: ${cartId}`,
+      );
+    }
+
+    return cart;
+  }
 }
