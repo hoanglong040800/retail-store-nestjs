@@ -1,5 +1,6 @@
-import { AddCartItemBody } from '@/db/input';
-import { ApiParamOptions } from '@nestjs/swagger';
+import { DeliveryTypeEnum } from '@/db/enum';
+import { AddCartItemBody, CheckoutBody } from '@/db/input';
+import { ApiBodyOptions, ApiParamOptions } from '@nestjs/swagger';
 
 export const addCartItemsParamOptions: ApiParamOptions = {
   type: String,
@@ -31,6 +32,19 @@ export const addCartItemsBodyOptions: ApiParamOptions = {
             productId: 'a2d305ee-0ae6-432d-90d2-d7866627013b',
           },
         ],
+      },
+    },
+  },
+};
+
+export const checkoutBodyOptions: ApiBodyOptions = {
+  type: CheckoutBody,
+  examples: {
+    'Delivery + Q1': {
+      value: {
+        deliveryType: DeliveryTypeEnum.delivery,
+        address: '123 Bob Street',
+        deliveryWardId: 'aaf69b41-12e9-4daa-ba61-946e1bd227a4',
       },
     },
   },

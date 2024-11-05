@@ -7,6 +7,7 @@ import {
   IsString,
   IsUUID,
   Validate,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { ICartItem, IProduct } from '../interface';
@@ -58,4 +59,17 @@ export class GetCartByIdQuery {
   @IsNotEmpty()
   @IsEnum(DeliveryTypeEnum)
   deliveryType: DeliveryTypeEnum;
+}
+
+export class CheckoutBody {
+  @IsEnum(DeliveryTypeEnum)
+  deliveryType: DeliveryTypeEnum;
+
+  @ValidateIf((o) => o.deliveryType === DeliveryTypeEnum.delivery)
+  @IsNotEmpty()
+  @IsString()
+  address?: string;
+
+  @IsUUID()
+  deliveryWardId: string;
 }

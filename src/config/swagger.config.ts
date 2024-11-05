@@ -11,5 +11,10 @@ const swaggerConfig = new DocumentBuilder()
 
 export const createSwaggerDocument = (app: INestApplication<any>) => {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('swagger', app, document, {
+    swaggerOptions: {
+      // keep token after refreshing
+      persistAuthorization: true,
+    },
+  });
 };

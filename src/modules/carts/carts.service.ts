@@ -2,11 +2,11 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CartsRepo } from './carts.repo';
 import { ECart, ECartItem } from '@/db/entities';
 import { CartStatusEnum, DeliveryTypeEnum } from '@/db/enum';
-import { MutateCartItem } from '@/db/input/cart.input';
+import { CheckoutBody, MutateCartItem } from '@/db/input/cart.input';
 import { SignedTokenUser } from '../auth/auth.type';
 import { CustomException } from '@/guard';
 import { CartItemsService } from '../cart-items';
-import { CartCalculationDto, CartDto } from '@/db/dto';
+import { CartCalculationDto, CartDto, CheckoutDto } from '@/db/dto';
 import {
   calculateCartTotalAmount,
   calculateShippingFee,
@@ -180,6 +180,16 @@ export class CartsService {
       subTotal,
       shippingFee,
       totalAmount,
+    };
+  }
+
+  async checkout(
+    cartId: string,
+    body: CheckoutBody,
+    user: SignedTokenUser,
+  ): Promise<CheckoutDto> {
+    return {
+      order: { id: 'random' },
     };
   }
 }

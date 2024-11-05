@@ -2,6 +2,7 @@ import { CartStatusEnum } from '../enum';
 import { ICart } from '../interface';
 import { BaseDto } from './base.dto';
 import { CartItemDto } from './cart-item.dto';
+import { OrderDto } from './order.dto';
 
 export class CartCalculationDto {
   subTotal?: number; // total cost of all items without any discount/tax
@@ -16,4 +17,8 @@ export class CartDto extends BaseDto implements ICart {
   cartItems?: CartItemDto[];
 
   calculation?: CartCalculationDto; // extra field to display calculation
+}
+
+export class CheckoutDto {
+  order: OrderDto;
 }
