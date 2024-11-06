@@ -2,16 +2,6 @@ import { DeliveryTypeEnum } from '@/db/enum';
 import { AddCartItemBody, CheckoutBody } from '@/db/input';
 import { ApiBodyOptions, ApiParamOptions } from '@nestjs/swagger';
 
-export const addCartItemsParamOptions: ApiParamOptions = {
-  type: String,
-  name: 'cartId',
-  examples: {
-    'Valid Cart Id': {
-      value: '5e98d597-637e-484c-b945-422753963b19',
-    },
-  },
-};
-
 export const addCartItemsBodyOptions: ApiParamOptions = {
   type: AddCartItemBody,
   name: 'body',

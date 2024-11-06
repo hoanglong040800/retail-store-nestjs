@@ -46,8 +46,10 @@ export class InitCartsOrdersAlterProducts1727966021298
             updated_at timestamp with time zone NOT NULL DEFAULT now(),
             updated_by uuid,
             id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+            base_price integer NOT NULL,
             quantity smallint NOT NULL CHECK (quantity >= 1 and quantity <= 100),
-            price integer NOT NULL,
+            total_price integer NOT NULL,
+
             cart_id uuid NOT NULL,
             product_id uuid NOT NULL,
 

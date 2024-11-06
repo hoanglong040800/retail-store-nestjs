@@ -8,12 +8,12 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { CartsService } from './carts.service';
 import { RequestType } from '@/modules/_base';
 import { AuthGuard } from '@/guard';
 import { CartDto, CheckoutDto } from '@/db/dto';
-import { addCartItemsBodyOptions, addCartItemsParamOptions, checkoutBodyOptions } from './shared';
+import { addCartItemsBodyOptions, checkoutBodyOptions } from './shared';
 import { AddCartItemBody, CheckoutBody, GetCartByIdQuery } from '@/db/input';
 
 @Controller('carts')
@@ -37,7 +37,6 @@ export class CartsController {
 
   @Post(':cartId/items')
   @UseGuards(AuthGuard)
-  @ApiParam(addCartItemsParamOptions)
   @ApiBody(addCartItemsBodyOptions)
   addCartItems(
     @Param('cartId') cartId: string,
