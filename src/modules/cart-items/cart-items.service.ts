@@ -98,7 +98,8 @@ export class CartItemsService {
     const cartItemPayload: CreateUpdateCartItemDto = {
       ...cartItem,
       cartId: cart.id,
-      price: this.calculateCartItem(cartItem, product),
+      basePrice: product.price,
+      totalPrice: this.calculateCartItem(cartItem, product),
     };
 
     if (existingCartItem) {

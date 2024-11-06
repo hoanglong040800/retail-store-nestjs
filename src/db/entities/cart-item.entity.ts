@@ -13,11 +13,18 @@ export class ECartItem extends EBase implements ICartItem {
   quantity?: number; // 0 < x <= 100
 
   @Column({
-    name: 'price',
+    name: 'base_price',
     type: 'integer',
     nullable: false,
   })
-  price: number;
+  basePrice: number;
+
+  @Column({
+    name: 'total_price',
+    type: 'integer',
+    nullable: false,
+  })
+  totalPrice: number;
 
   @Column({
     name: 'cart_id',

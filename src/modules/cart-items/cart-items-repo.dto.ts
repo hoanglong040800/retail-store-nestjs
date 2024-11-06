@@ -12,5 +12,14 @@ export class CreateUpdateCartItemDto
 
   @IsNotEmpty()
   @IsNumber()
-  price: number;
+  basePrice: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  quantity: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  totalPrice: number;
+
 }

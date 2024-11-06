@@ -4,11 +4,11 @@ import { DeliveryTypeEnum } from '@/db/enum';
 
 export const calculateSubTotal = (cartItems: ECartItem[]): number => {
   const subTotal: number = cartItems.reduce((prev, cartItem) => {
-    if (isNaN(cartItem.price)) {
+    if (isNaN(cartItem.totalPrice)) {
       return prev;
     }
 
-    return prev + cartItem.price;
+    return prev + cartItem.totalPrice;
   }, 0);
 
   return subTotal;

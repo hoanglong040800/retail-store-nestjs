@@ -1,8 +1,10 @@
 import { IBase } from './base.interface';
 
 export interface ICartItem extends IBase {
+  basePrice?: number;
   quantity?: number;
-  price?: number;
+  totalPrice?:number;
+
   cartId?: string;
   productId?: string;
 }

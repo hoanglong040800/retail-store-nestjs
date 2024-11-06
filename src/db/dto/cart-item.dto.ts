@@ -4,7 +4,8 @@ import { ProductDto } from './product.dto';
 
 export class CartItemDto extends BaseDto implements ICartItem {
   quantity?: number;
-  price?: number;
+  basePrice?: number;
+  totalPrice?: number;
 
   product?: ProductDto;
 }
