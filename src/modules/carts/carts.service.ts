@@ -11,6 +11,7 @@ import {
   calculateCartTotalAmount,
   calculateShippingFee,
   calculateSubTotal,
+  convertCartItemsToMutateCartItems,
 } from './shared';
 
 @Injectable()
@@ -188,57 +189,64 @@ export class CartsService {
     body: CheckoutBody,
     user: SignedTokenUser,
   ): Promise<CheckoutDto> {
-    if (!cartId) {
-      throw new CustomException(
-        'PARAMS_NOT_FOUND',
-        HttpStatus.NOT_FOUND,
-        `param cartId: ${cartId} not found`,
-      );
-    }
+    try {
+      if (!cartId) {
+        throw new CustomException(
+          'PARAMS_NOT_FOUND',
+          HttpStatus.NOT_FOUND,
+          `param cartId: ${cartId} not found`,
+        );
+      }
 
-    if (!body) {
-      throw new CustomException(
-        'PARAMS_NOT_FOUND',
-        HttpStatus.NOT_FOUND,
-        `param body: ${body} not found`,
-      );
-    }
+      if (!body) {
+        throw new CustomException(
+          'PARAMS_NOT_FOUND',
+          HttpStatus.NOT_FOUND,
+          `param body: ${body} not found`,
+        );
+      }
 
-    if (!user?.id) {
-      throw new CustomException(
-        'PARAMS_NOT_FOUND',
-        HttpStatus.NOT_FOUND,
-        `param user not found`,
-      );
-    }
+      if (!user?.id) {
+        throw new CustomException(
+          'PARAMS_NOT_FOUND',
+          HttpStatus.NOT_FOUND,
+          `param user not found`,
+        );
+      }
 
-    const userCart = await this.repo.findOne({
-      relations: {
-        cartItems: {
-          product: true,
+      const userCart = await this.repo.findOne({
+        relations: {
+          cartItems: {
+            product: true,
+          },
         },
-      },
 
-      where: {
-        id: cartId,
-        user: {
-          id: user.id,
+        where: {
+          id: cartId,
+          user: {
+            id: user.id,
+          },
         },
-      },
-    });
+      });
 
-    if (!userCart) {
-      throw new CustomException(
-        'USER_CART_NOT_FOUND',
-        HttpStatus.NOT_FOUND,
-        `userId: ${user.id}, cartId: ${cartId}`,
-      );
+      if (!userCart) {
+        throw new CustomException(
+          'USER_CART_NOT_FOUND',
+          HttpStatus.NOT_FOUND,
+          `userId: ${user.id}, cartId: ${cartId}`,
+        );
+      }
+
+      const mutateCartItems: MutateCartItem[] =
+        convertCartItemsToMutateCartItems(userCart.cartItems);
+
+      await this.cartItemSrv.addMultiCartItems(mutateCartItems, userCart, user);
+
+      return {
+        order: { id: 'random' },
+      };
+    } catch (err) {
+      throw err;
     }
-
-    
-
-    return {
-      order: { id: 'random' },
-    };
   }
 }

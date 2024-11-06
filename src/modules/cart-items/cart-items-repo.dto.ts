@@ -21,5 +21,4 @@ export class CreateUpdateCartItemDto
   @IsNotEmpty()
   @IsNumber()
   totalPrice: number;
-
 }

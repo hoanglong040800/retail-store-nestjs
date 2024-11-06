@@ -142,31 +142,4 @@ export class CartItemsService {
       },
     });
   }
-
-  async calculateCartItems(
-    cartItems: ECartItem[] | MutateCartItem[],
-  ): Promise<ECartItem[]> {
-    if (!cartItems || cartItems.length === 0) {
-      return [];
-    }
-
-    const parsedCartItems: MutateCartItem[] = cartItems.reduce((prev, cur) => {
-      if (!cur.id || !cur.product?.id || !cur.quantity) {
-        return prev;
-      }
-
-      const mutateCartItem: MutateCartItem = {
-        id: cur.id,
-        productId: cur.product.id,
-        quantity: cur.quantity,
-      };
-
-      return [...prev, mutateCartItem];
-    }, []);
-
-    const productsGroupById: Record<string, EProduct> =
-      await this.getProductsOfCartItems(parsedCartItems);
-
-    return [];
-  }
 }

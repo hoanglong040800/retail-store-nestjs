@@ -1,6 +1,7 @@
 import { CartCalculationDto } from '@/db/dto';
 import { ECartItem } from '@/db/entities';
 import { DeliveryTypeEnum } from '@/db/enum';
+import { MutateCartItem } from '@/db/input';
 
 export const calculateSubTotal = (cartItems: ECartItem[]): number => {
   const subTotal: number = cartItems.reduce((prev, cartItem) => {
@@ -34,4 +35,32 @@ export const calculateCartTotalAmount = ({
   shippingFee,
 }: Pick<Required<CartCalculationDto>, 'subTotal' | 'shippingFee'>) => {
   return subTotal + shippingFee;
+};
+
+export const convertCartItemsToMutateCartItems = (
+  cartItems: ECartItem[] | undefined,
+): MutateCartItem[] => {
+  if (!cartItems) {
+    return [];
+  }
+
+  const mutateCartItems: MutateCartItem[] = cartItems.reduce(
+    (prev: MutateCartItem[], cur) => {
+      if (!cur.productId || !cur.quantity) {
+        return prev;
+      }
+
+      const mutateCartItem: MutateCartItem = {
+        id: cur.id,
+        productId: cur.productId,
+        quantity: cur.quantity,
+      };
+
+      return [...prev, mutateCartItem];
+    },
+
+    [],
+  );
+
+  return mutateCartItems;
 };
