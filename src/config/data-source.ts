@@ -1,6 +1,11 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { ENV } from '../constants';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import {
+  StorageDriver,
+  addTransactionalDataSource,
+  initializeTransactionalContext,
+} from 'typeorm-transactional';
 
 export const postgresOrmOptions: TypeOrmModuleOptions = {
   type: 'postgres',
@@ -13,7 +18,7 @@ export const postgresOrmOptions: TypeOrmModuleOptions = {
 
   // settings
   synchronize: false,
-  logging: false,
+  logging: true,
   migrationsTransactionMode: 'each',
   extra: {
     trustServerCertificate: true,
@@ -21,5 +26,10 @@ export const postgresOrmOptions: TypeOrmModuleOptions = {
 };
 
 const AppDataSource = new DataSource(postgresOrmOptions as DataSourceOptions);
+initializeTransactionalContext({
+  storageDriver: StorageDriver.ASYNC_LOCAL_STORAGE,
+});
+addTransactionalDataSource(AppDataSource);
+AppDataSource.initialize();
 
 export default AppDataSource;
