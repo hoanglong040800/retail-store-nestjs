@@ -13,7 +13,7 @@ import {
   calculateSubTotal,
   convertCartItemsToMutateCartItems,
 } from './shared';
-import { IsolationLevel, Transactional } from 'typeorm-transactional';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class CartsService {
@@ -186,59 +186,52 @@ export class CartsService {
     };
   }
 
-  @Transactional({
-    isolationLevel: IsolationLevel.SERIALIZABLE,
-  })
+  // GUIDE: MUST not use try catch because transactional already have try catch to rollback
+  @Transactional()
   async checkout(
     cartId: string,
     body: CheckoutBody,
     user: SignedTokenUser,
   ): Promise<CheckoutDto> {
-    try {
-      if (!cartId || !body || !user?.id) {
-        throw new CustomException(
-          'PARAMS_NOT_FOUND',
-          HttpStatus.NOT_FOUND,
-          `param cartId, body or user: ${user} not found`,
-        );
-      }
-
-      const userCart = await this.repo.findOne({
-        relations: {
-          cartItems: {
-            product: true,
-          },
-        },
-
-        where: {
-          id: cartId,
-          user: {
-            id: user.id,
-          },
-        },
-      });
-
-      if (!userCart) {
-        throw new CustomException(
-          'USER_CART_NOT_FOUND',
-          HttpStatus.NOT_FOUND,
-          `userId: ${user.id}, cartId: ${cartId}`,
-        );
-      }
-
-      const mutateCartItems: MutateCartItem[] =
-        convertCartItemsToMutateCartItems(userCart.cartItems);
-
-      await this.cartItemSrv.addMultiCartItems(mutateCartItems, userCart, user);
-
-      return {
-        order: { id: 'random' },
-      };
-    } catch (err) {
-      return {
-        order: { id: 'random' },
-      };
-    } finally {
+    if (!cartId || !body || !user?.id) {
+      throw new CustomException(
+        'PARAMS_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+        `param cartId, body or user: ${user} not found`,
+      );
     }
+
+    const userCart = await this.repo.findOne({
+      relations: {
+        cartItems: {
+          product: true,
+        },
+      },
+
+      where: {
+        id: cartId,
+        user: {
+          id: user.id,
+        },
+      },
+    });
+
+    if (!userCart) {
+      throw new CustomException(
+        'USER_CART_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+        `userId: ${user.id}, cartId: ${cartId}`,
+      );
+    }
+
+    const mutateCartItems: MutateCartItem[] = convertCartItemsToMutateCartItems(
+      userCart.cartItems,
+    );
+
+    await this.cartItemSrv.addMultiCartItems(mutateCartItems, userCart, user);
+
+    return {
+      order: { id: 'random' },
+    };
   }
 }

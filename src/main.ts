@@ -3,8 +3,11 @@ import { AppModule } from './app.module';
 import { createSwaggerDocument } from './config';
 import { GlobalExceptionFilter } from './guard';
 import { ValidationPipe } from '@nestjs/common';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
+  // must called before init app
+  initializeTransactionalContext();
   const app = await NestFactory.create(AppModule);
 
   createSwaggerDocument(app);
