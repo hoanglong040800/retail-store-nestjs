@@ -1,4 +1,5 @@
 export type ExceptionCode =
+  | 'BRANCH_NOT_FOUND'
   | 'CATEGORY_NOT_FOUND'
   | 'CART_ITEM_NOT_FOUND'
   | 'INTERNAL_SERVER_ERROR'

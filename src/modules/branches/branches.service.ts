@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { BranchesRepo } from './branches.repo';
 import { FindBranchesByFilterQuery } from '@/db/input';
+import { EBranch } from '@/db/entities';
+import { CustomException } from '@/guard';
 
 @Injectable()
 export class BranchesService {
   constructor(private readonly branchRepo: BranchesRepo) {}
+
   async findByFilter({
     provinceId,
     districtId,
@@ -32,5 +35,19 @@ export class BranchesService {
         ...(rest || {}),
       },
     });
+  }
+
+  async getBranchByWardId(wardId: string): Promise<EBranch> {
+    const branch = await this.branchRepo.findOne({
+      where: {
+        wardId: wardId,
+      },
+    });
+
+    if (!branch) {
+      throw new CustomException('BRANCH_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    return branch;
   }
 }

@@ -1,11 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CartsRepo } from './carts.repo';
-import { ECart, ECartItem } from '@/db/entities';
+import { EBranch, ECart, ECartItem } from '@/db/entities';
 import { CartStatusEnum, DeliveryTypeEnum } from '@/db/enum';
 import { CheckoutBody, MutateCartItem } from '@/db/input/cart.input';
 import { SignedTokenUser } from '../auth/auth.type';
 import { CustomException } from '@/guard';
-import { CartItemsRepo, CartItemsService } from '../cart-items';
+import { CartItemsService } from '../cart-items';
 import { CartCalculationDto, CartDto, CheckoutDto } from '@/db/dto';
 import {
   calculateCartTotalAmount,
@@ -14,13 +14,14 @@ import {
   convertCartItemsToMutateCartItems,
 } from './shared';
 import { Transactional } from 'typeorm-transactional';
+import { BranchesService } from '../branches';
 
 @Injectable()
 export class CartsService {
   constructor(
     private readonly repo: CartsRepo,
     private readonly cartItemSrv: CartItemsService,
-    private readonly cartItemsRepo: CartItemsRepo,
+    private readonly branchesSrv: BranchesService,
   ) {}
 
   // only use this function to get/create user cart -> avoid dup cart
@@ -229,6 +230,14 @@ export class CartsService {
     );
 
     await this.cartItemSrv.addMultiCartItems(mutateCartItems, userCart, user);
+
+    this.calculateCart(userCart.cartItems, {
+      deliveryType: body.deliveryType,
+    });
+
+    const deliveryBranch: EBranch = await this.branchesSrv.getBranchByWardId(
+      body.deliveryWardId,
+    );
 
     return {
       order: { id: 'random' },

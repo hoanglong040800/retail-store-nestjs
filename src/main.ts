@@ -8,7 +8,9 @@ import { initializeTransactionalContext } from 'typeorm-transactional';
 async function bootstrap() {
   // must called before init app
   initializeTransactionalContext();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log'],
+  });
 
   createSwaggerDocument(app);
   app.enableCors();
