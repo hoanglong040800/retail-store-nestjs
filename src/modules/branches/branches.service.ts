@@ -38,6 +38,7 @@ export class BranchesService {
   }
 
   async getBranchByWardId(wardId: string): Promise<EBranch> {
+    // auto select 1 branch if both in same ward
     const branch = await this.branchRepo.findOne({
       where: {
         wardId: wardId,

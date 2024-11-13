@@ -10,6 +10,7 @@ import { AdminDivisionsModule } from './modules/admin-divisions';
 import { BranchesAdminDivisionModule } from './modules/branches-admin-divisions';
 import { CartsModule } from './modules/carts/carts.module';
 import { CartItemsModule } from './modules/cart-items/cart-items.module';
+import { CheckoutModule } from './modules/checkout';
 
 @Module({
   imports: [
@@ -18,10 +19,11 @@ import { CartItemsModule } from './modules/cart-items/cart-items.module';
     DbModule,
 
     // route. should order by name -> swagger show based on name
+    CheckoutModule,
+    AuthModule,
     CartsModule,
     ConfigModule,
     AdminDivisionsModule,
-    AuthModule,
     BranchesModule,
     CategoryModule,
     ProductsModule,

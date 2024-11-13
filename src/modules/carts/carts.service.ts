@@ -1,27 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CartsRepo } from './carts.repo';
-import { EBranch, ECart, ECartItem } from '@/db/entities';
+import { ECart, ECartItem } from '@/db/entities';
 import { CartStatusEnum, DeliveryTypeEnum } from '@/db/enum';
-import { CheckoutBody, MutateCartItem } from '@/db/input/cart.input';
+import { MutateCartItem } from '@/db/input/cart.input';
 import { SignedTokenUser } from '../auth/auth.type';
 import { CustomException } from '@/guard';
 import { CartItemsService } from '../cart-items';
-import { CartCalculationDto, CartDto, CheckoutDto } from '@/db/dto';
+import { CartCalculationDto, CartDto } from '@/db/dto';
 import {
   calculateCartTotalAmount,
   calculateShippingFee,
   calculateSubTotal,
-  convertCartItemsToMutateCartItems,
 } from './shared';
-import { Transactional } from 'typeorm-transactional';
-import { BranchesService } from '../branches';
 
 @Injectable()
 export class CartsService {
   constructor(
     private readonly repo: CartsRepo,
     private readonly cartItemSrv: CartItemsService,
-    private readonly branchesSrv: BranchesService,
   ) {}
 
   // only use this function to get/create user cart -> avoid dup cart
@@ -161,6 +157,33 @@ export class CartsService {
     return resultCart;
   }
 
+  async getUserCart(cartId: string, userId: string): Promise<ECart> {
+    const userCart = await this.repo.findOne({
+      relations: {
+        cartItems: {
+          product: true,
+        },
+      },
+
+      where: {
+        id: cartId,
+        user: {
+          id: userId,
+        },
+      },
+    });
+
+    if (!userCart) {
+      throw new CustomException(
+        'USER_CART_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+        `userId: ${userId}, cartId: ${cartId}`,
+      );
+    }
+
+    return userCart;
+  }
+
   calculateCart(
     cartItems: ECartItem[] | undefined,
     { deliveryType }: { deliveryType: DeliveryTypeEnum },
@@ -184,63 +207,6 @@ export class CartsService {
       subTotal,
       shippingFee,
       totalAmount,
-    };
-  }
-
-  // GUIDE: MUST not use try catch because transactional already have try catch to rollback
-  @Transactional()
-  async checkout(
-    cartId: string,
-    body: CheckoutBody,
-    user: SignedTokenUser,
-  ): Promise<CheckoutDto> {
-    if (!cartId || !body || !user?.id) {
-      throw new CustomException(
-        'PARAMS_NOT_FOUND',
-        HttpStatus.NOT_FOUND,
-        `param cartId, body or user: ${user} not found`,
-      );
-    }
-
-    const userCart = await this.repo.findOne({
-      relations: {
-        cartItems: {
-          product: true,
-        },
-      },
-
-      where: {
-        id: cartId,
-        user: {
-          id: user.id,
-        },
-      },
-    });
-
-    if (!userCart) {
-      throw new CustomException(
-        'USER_CART_NOT_FOUND',
-        HttpStatus.NOT_FOUND,
-        `userId: ${user.id}, cartId: ${cartId}`,
-      );
-    }
-
-    const mutateCartItems: MutateCartItem[] = convertCartItemsToMutateCartItems(
-      userCart.cartItems,
-    );
-
-    await this.cartItemSrv.addMultiCartItems(mutateCartItems, userCart, user);
-
-    this.calculateCart(userCart.cartItems, {
-      deliveryType: body.deliveryType,
-    });
-
-    const deliveryBranch: EBranch = await this.branchesSrv.getBranchByWardId(
-      body.deliveryWardId,
-    );
-
-    return {
-      order: { id: 'random' },
     };
   }
 }
