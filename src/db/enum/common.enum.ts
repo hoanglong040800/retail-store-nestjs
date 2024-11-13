@@ -14,7 +14,7 @@ export enum ProductUnitEnum {
 }
 
 export enum OrderStatusEnum {
-  pending = 'pending', // DEFAULT
+  pending = 'pending', // DEFAULT status when first checkout
   awaitingFulfillment = 'awaiting_fulfillment', // wait for store clerks to prepare order
   awaitingPayment = 'awaiting_payment', // wait for customer to pay in order to process. Its depend on delivery type
   awaitingShipment = 'awaiting_shipment', // finish fulfillment, wait for delivery. Customer may or may not need to pay at this step

@@ -1,1 +1,1 @@
-export * from './checkout.swagger'
+export * from './checkout.swagger';

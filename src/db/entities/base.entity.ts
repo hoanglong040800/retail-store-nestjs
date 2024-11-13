@@ -7,6 +7,7 @@ export abstract class EBase implements IBase {
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
     select: false,
+    update: false,
   })
   createdAt: Date;
 
@@ -23,6 +24,7 @@ export abstract class EBase implements IBase {
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
     select: false,
+    update: false,
   })
   updatedAt: Date;
 

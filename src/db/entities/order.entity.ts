@@ -31,7 +31,38 @@ export class EOrder extends EBase implements IOrder {
   })
   deliveryType?: DeliveryTypeEnum;
 
+  // ---- RELATIONSHIP FIELDS (need these so typeorm can save) (avoid violate not-null constraint) --------
+
+  @Column({
+    name: 'cart_id',
+    type: 'uuid',
+    nullable: false,
+  })
+  cartId?: string;
+
+  @Column({
+    name: 'user_id',
+    type: 'uuid',
+    nullable: false,
+  })
+  userId?: string;
+
+  @Column({
+    name: 'delivery_ward_id',
+    type: 'uuid',
+    nullable: true,
+  })
+  deliveryWardId?: string;
+
+  @Column({
+    name: 'branch_id',
+    type: 'uuid',
+    nullable: true,
+  })
+  branchId?: string;
+
   // ------- Relationships -------
+
   @OneToOne(() => EUser, (user) => user.id, { nullable: false })
   user?: EUser;
 

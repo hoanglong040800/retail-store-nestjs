@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CartsRepo } from './carts.repo';
-import { ECart, ECartItem } from '@/db/entities';
+import { AuditUser, ECart, ECartItem } from '@/db/entities';
 import { CartStatusEnum, DeliveryTypeEnum } from '@/db/enum';
 import { MutateCartItem } from '@/db/input/cart.input';
 import { SignedTokenUser } from '../auth/auth.type';
@@ -8,10 +8,12 @@ import { CustomException } from '@/guard';
 import { CartItemsService } from '../cart-items';
 import { CartCalculationDto, CartDto } from '@/db/dto';
 import {
+  UpdateCartDto,
   calculateCartTotalAmount,
   calculateShippingFee,
   calculateSubTotal,
 } from './shared';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class CartsService {
@@ -36,22 +38,22 @@ export class CartsService {
       where: {
         ...(cartId ? { id: cartId } : {}),
 
-        status: CartStatusEnum.new,
         user: {
           id: userId,
         },
       },
     });
 
-    if (userActiveCart) {
-      return userActiveCart;
-    }
-
     // if cartId + userId and not found -> meaning these values are not matched -> throw error instead of creating new cart -> avoid dup cart
-    if (cartId && userId) {
+    if (cartId && userId && !userActiveCart) {
       throw new CustomException('USER_CART_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
+    if (userActiveCart?.status === CartStatusEnum.new) {
+      return userActiveCart;
+    }
+
+    // old cart was checkout, first login -> create new cart
     return this.repo.save(
       {
         user: {
@@ -63,6 +65,7 @@ export class CartsService {
     );
   }
 
+  @Transactional()
   async addCartItems(
     cartId: string,
     cartItemInputs: MutateCartItem[],
@@ -182,6 +185,13 @@ export class CartsService {
     }
 
     return userCart;
+  }
+
+  async updateCart(
+    updateDto: UpdateCartDto,
+    auditUser: AuditUser,
+  ): Promise<ECart> {
+    return this.repo.update(updateDto.id, updateDto, auditUser);
   }
 
   calculateCart(
