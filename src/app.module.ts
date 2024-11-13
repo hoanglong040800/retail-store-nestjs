@@ -11,6 +11,7 @@ import { BranchesAdminDivisionModule } from './modules/branches-admin-divisions'
 import { CartsModule } from './modules/carts/carts.module';
 import { CartItemsModule } from './modules/cart-items/cart-items.module';
 import { CheckoutModule } from './modules/checkout';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CheckoutModule } from './modules/checkout';
     UsersModule,
     BranchesAdminDivisionModule,
     CartItemsModule,
+    OrdersModule,
   ],
   controllers: [],
   providers: [],
