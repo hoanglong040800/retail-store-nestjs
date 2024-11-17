@@ -1,6 +1,7 @@
 import { CartStatusEnum } from '../enum';
 import { ICart } from '../interface';
 import { BaseDto } from './base.dto';
+import { BranchDto } from './branch.dto';
 import { CartItemDto } from './cart-item.dto';
 import { OrderDto } from './order.dto';
 
@@ -21,4 +22,5 @@ export class CartDto extends BaseDto implements ICart {
 
 export class CheckoutDto {
   order: OrderDto;
+  selectedBranch: BranchDto;
 }

@@ -70,6 +70,7 @@ export class CheckoutService {
 
     return {
       order: checkoutOrder,
+      selectedBranch: deliveryBranch,
     };
   }
 }

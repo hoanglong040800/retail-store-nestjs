@@ -19,6 +19,7 @@ import { CheckoutDto } from '@/db/dto';
 export class CheckoutController {
   constructor(private readonly checkoutSrv: CheckoutService) {}
 
+  // TODO refactor remove cartId from params
   @Post('/checkout')
   @UseGuards(AuthGuard)
   @ApiBody(checkoutBodyOptions)
