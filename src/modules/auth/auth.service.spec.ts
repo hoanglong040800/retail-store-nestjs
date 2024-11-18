@@ -9,6 +9,7 @@ import { SignedTokenData, SignedTokenUser } from './auth.type';
 import { LoginDto, TokenDto } from '@/db/dto';
 import * as bcrypt from 'bcrypt';
 import { CartsService } from '../carts';
+import { ENV } from '@/constants';
 
 jest.mock('bcrypt', () => ({
   compareSync: jest.fn().mockImplementation(() => true),
@@ -70,7 +71,28 @@ describe('AuthService', () => {
     expect(srv).toBeDefined();
   });
 
+  // UT: mock constant
   describe('genJwtToken', () => {
+    let originalEnvJwt = ENV.jwt;
+
+    beforeEach(() => {
+      ENV.jwt = {
+        access: {
+          secret: 'secret',
+          expire: '60',
+        },
+
+        refresh: {
+          secret: 'secret',
+          expire: '60',
+        },
+      };
+    });
+
+    afterAll(() => {
+      ENV.jwt = originalEnvJwt;
+    });
+
     it('should throw error when user is null', async () => {
       await expect(
         srv.genJwtToken(null as unknown as SignedTokenUser, 'access'),
@@ -90,7 +112,7 @@ describe('AuthService', () => {
 
       expect(result).toStrictEqual({
         token,
-        expireAt: new Date('2024-06-16T06:00:00.000Z'),
+        expireAt: new Date('2024-06-15T07:00:00.000Z'),
       });
     });
   });
