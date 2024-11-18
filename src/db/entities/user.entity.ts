@@ -47,12 +47,12 @@ export class EUser extends EBase implements IUser {
   refreshToken?: string;
 
   // ------ RELATIONS ------
-  @OneToMany(() => ECart, (cart) => cart.user)
+  @OneToMany(() => ECart, (cart) => cart.user, { nullable: true })
   @JoinColumn({ name: 'id', referencedColumnName: 'user_id' })
-  carts: ECart[];
+  carts?: ECart[];
 
-  @OneToMany(() => EOrder, (order) => order.user)
-  orders: EOrder[];
+  @OneToMany(() => EOrder, (order) => order.user, { nullable: true })
+  orders?: EOrder[];
 }
 
 export class AuditUser implements IUser {
