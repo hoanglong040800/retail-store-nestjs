@@ -160,7 +160,7 @@ export class CartsService {
     return resultCart;
   }
 
-  async getUserCart(cartId: string, userId: string): Promise<ECart> {
+  async getUserCart(userId: string): Promise<ECart> {
     const userCart = await this.repo.findOne({
       relations: {
         cartItems: {
@@ -169,7 +169,7 @@ export class CartsService {
       },
 
       where: {
-        id: cartId,
+        status: CartStatusEnum.new,
         user: {
           id: userId,
         },
@@ -180,7 +180,7 @@ export class CartsService {
       throw new CustomException(
         'USER_CART_NOT_FOUND',
         HttpStatus.NOT_FOUND,
-        `userId: ${userId}, cartId: ${cartId}`,
+        `userId: ${userId}`,
       );
     }
 

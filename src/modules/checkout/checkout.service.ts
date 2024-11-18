@@ -25,11 +25,10 @@ export class CheckoutService {
   // GUIDE: MUST not use try catch because transactional already have try catch to rollback
   @Transactional()
   async checkout(
-    cartId: string,
     body: CheckoutBody,
     user: SignedTokenUser,
   ): Promise<CheckoutDto> {
-    if (!cartId || !body || !user?.id) {
+    if (!body || !user?.id) {
       throw new CustomException(
         'PARAMS_NOT_FOUND',
         HttpStatus.NOT_FOUND,
@@ -37,7 +36,7 @@ export class CheckoutService {
       );
     }
 
-    const userCart = await this.cartsSrv.getUserCart(cartId, user.id);
+    const userCart = await this.cartsSrv.getUserCart(user.id);
 
     const mutateCartItems: MutateCartItem[] = convertCartItemsToMutateCartItems(
       userCart.cartItems,
