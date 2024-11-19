@@ -84,7 +84,7 @@ describe('AuthService', () => {
 
         refresh: {
           secret: 'secret',
-          expire: '60',
+          expire: '120',
         },
       };
     });
@@ -118,6 +118,26 @@ describe('AuthService', () => {
   });
 
   describe('genRefreshToken', () => {
+    let originalEnvJwt = ENV.jwt;
+
+    beforeEach(() => {
+      ENV.jwt = {
+        access: {
+          secret: 'secret',
+          expire: '60',
+        },
+
+        refresh: {
+          secret: 'secret',
+          expire: '120',
+        },
+      };
+    });
+
+    afterAll(() => {
+      ENV.jwt = originalEnvJwt;
+    });
+
     it('should throw error when userId is empty', async () => {
       await expect(srv.genRefreshToken('')).rejects.toThrow(CustomException);
     });
@@ -133,7 +153,7 @@ describe('AuthService', () => {
 
       expect(result).toStrictEqual({
         token,
-        expireAt: new Date('2024-07-15T06:00:00.000Z'),
+        expireAt: new Date('2024-06-15T08:00:00.000Z'),
       });
     });
   });
