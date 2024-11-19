@@ -6,8 +6,8 @@ import { CartItemsRepo } from './cart-items.repo';
 describe('CartItemsService', () => {
   let service: CartItemsService;
 
-  let cartItemsRepo: CartItemsRepo;
-  let productRepo: ProductsRepo;
+  // let cartItemsRepo: CartItemsRepo;
+  // let productRepo: ProductsRepo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,8 +35,8 @@ describe('CartItemsService', () => {
     }).compile();
 
     service = module.get<CartItemsService>(CartItemsService);
-    cartItemsRepo = module.get<CartItemsRepo>(CartItemsRepo);
-    productRepo = module.get<ProductsRepo>(ProductsRepo);
+    // cartItemsRepo = module.get<CartItemsRepo>(CartItemsRepo);
+    // productRepo = module.get<ProductsRepo>(ProductsRepo);
   });
 
   it('should be defined', () => {

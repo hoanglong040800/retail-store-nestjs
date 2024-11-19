@@ -155,7 +155,9 @@ describe('Cart Utils', () => {
 
     testCases.forEach(({ cartItems, expected, condition }) =>
       it(`should return correct when ${condition}`, () => {
-        const result = convertCartItemsToMutateCartItems(cartItems as ECartItem[]);
+        const result = convertCartItemsToMutateCartItems(
+          cartItems as ECartItem[],
+        );
 
         expect(result).toStrictEqual(expected);
       }),

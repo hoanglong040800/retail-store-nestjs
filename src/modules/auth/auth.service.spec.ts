@@ -73,7 +73,7 @@ describe('AuthService', () => {
 
   // UT: mock constant
   describe('genJwtToken', () => {
-    let originalEnvJwt = ENV.jwt;
+    const originalEnvJwt = ENV.jwt;
 
     beforeEach(() => {
       ENV.jwt = {
@@ -118,7 +118,7 @@ describe('AuthService', () => {
   });
 
   describe('genRefreshToken', () => {
-    let originalEnvJwt = ENV.jwt;
+    const originalEnvJwt = ENV.jwt;
 
     beforeEach(() => {
       ENV.jwt = {

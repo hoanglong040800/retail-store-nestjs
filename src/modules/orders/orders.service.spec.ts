@@ -5,8 +5,8 @@ import { CartsService } from '../carts';
 
 describe('OrdersService', () => {
   let service: OrdersService;
-  let cartsSrv: CartsService;
-  let repo: OrdersRepo;
+  // let cartsSrv: CartsService;
+  // let repo: OrdersRepo;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,8 +31,8 @@ describe('OrdersService', () => {
     }).compile();
 
     service = module.get<OrdersService>(OrdersService);
-    repo = module.get<OrdersRepo>(OrdersRepo);
-    cartsSrv = module.get<CartsService>(CartsService);
+    // repo = module.get<OrdersRepo>(OrdersRepo);
+    // cartsSrv = module.get<CartsService>(CartsService);
   });
 
   it('should be defined', () => {

@@ -4,7 +4,7 @@ import { DeliveryTypeEnum } from '@/db/enum';
 import { MutateCartItem } from '@/db/input';
 
 export const calculateSubTotal = (cartItems: ECartItem[]): number => {
-  if(!cartItems || cartItems.length === 0) {
+  if (!cartItems || cartItems.length === 0) {
     return 0;
   }
 
