@@ -1,6 +1,11 @@
 import { ECartItem } from '@/db/entities';
 import { ICartItem } from '@/db/interface';
-import { calculateSubTotal } from './carts.util';
+import {
+  calculateCartTotalAmount,
+  calculateShippingFee,
+  calculateSubTotal,
+} from './carts.util';
+import { DeliveryTypeEnum } from '@/db/enum';
 
 describe('Cart Utils', () => {
   describe('calculateSubTotal', () => {
@@ -51,9 +56,53 @@ describe('Cart Utils', () => {
         expect(result).toBe(expected);
       }),
     );
-
-
   });
 
-  
+  describe('calculateShippingFee', () => {
+    const testCases = [
+      {
+        deliveryType: DeliveryTypeEnum.delivery,
+        expected: 10000,
+      },
+      {
+        deliveryType: DeliveryTypeEnum.pickup,
+        expected: 0,
+      },
+      {
+        deliveryType: null,
+        expected: 0,
+      },
+    ];
+
+    testCases.forEach(({ deliveryType, expected }) =>
+      it(`should return ${expected} when deliveryType is ${deliveryType}`, () => {
+        const result = calculateShippingFee(deliveryType as DeliveryTypeEnum);
+
+        expect(result).toBe(expected);
+      }),
+    );
+  });
+
+  describe('calculateCartTotalAmount', () => {
+    const testCases = [
+      {
+        subTotal: 0,
+        shippingFee: 0,
+        expected: 0,
+      },
+      {
+        subTotal: 10000,
+        shippingFee: 15000,
+        expected: 25000,
+      },
+    ];
+
+    testCases.forEach(({ subTotal, shippingFee, expected }) =>
+      it(`should return ${expected} when subTotal is ${subTotal} and shippingFee is ${shippingFee}`, () => {
+        const result = calculateCartTotalAmount({ subTotal, shippingFee });
+
+        expect(result).toBe(expected);
+      }),
+    );
+  });
 });
