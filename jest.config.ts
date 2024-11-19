@@ -12,7 +12,18 @@ const config: Config.InitialOptions = {
   moduleNameMapper: {
     '@/(.*)': '<rootDir>/$1',
   },
-  collectCoverageFrom: ['**/*.(t|j)s'],
+  collectCoverageFrom: [
+    'modules/**/*.ts',
+    'utils/**/*.ts',
+    '!modules/**/*.(repo|module|swagger|const|dto).ts',
+    '!**/index.ts',
+  ],
+  coverageThreshold: {
+    global: {
+      statements: 90,
+      lines: 90,
+    },
+  },
   coverageDirectory: '../coverage',
 };
 
