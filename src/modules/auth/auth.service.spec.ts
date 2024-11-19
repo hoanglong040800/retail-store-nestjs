@@ -310,6 +310,7 @@ describe('AuthService', () => {
   });
 
   describe('refreshToken', () => {
+    // UT: mock throw exception
     it('should throw error when extractAndValdiateAccessToken return null', async () => {
       jest
         .spyOn(srv, 'extractAndValdiateAccessToken')

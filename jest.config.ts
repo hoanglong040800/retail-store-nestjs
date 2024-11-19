@@ -25,6 +25,7 @@ const config: Config.InitialOptions = {
     },
   },
   coverageDirectory: '../coverage',
+  setupFilesAfterEnv: ['<rootDir>/config/jest.setup.ts'],
 };
 
 export default config;
