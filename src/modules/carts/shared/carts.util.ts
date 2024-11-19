@@ -4,6 +4,10 @@ import { DeliveryTypeEnum } from '@/db/enum';
 import { MutateCartItem } from '@/db/input';
 
 export const calculateSubTotal = (cartItems: ECartItem[]): number => {
+  if(!cartItems || cartItems.length === 0) {
+    return 0;
+  }
+
   const subTotal: number = cartItems.reduce((prev, cartItem) => {
     if (isNaN(cartItem.totalPrice)) {
       return prev;
