@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { EBase } from './base.entity';
 import { IBranch } from '../interface';
 import { EAdminDivision } from './admin-division-hierarchy.entity';
+import { EOrder } from './order.entity';
 
 @Entity('branches')
 export class EBranch extends EBase implements IBranch {
@@ -55,4 +56,7 @@ export class EBranch extends EBase implements IBranch {
   @ManyToOne(() => EAdminDivision, (adminDivision) => adminDivision.branches)
   @JoinColumn({ name: 'province_id', referencedColumnName: 'id' })
   province?: EAdminDivision;
+
+  @OneToMany(() => EOrder, (order) => order.branch)
+  orders?: EOrder[];
 }

@@ -22,12 +22,12 @@ export const ENV = {
   jwt: {
     access: {
       secret: process.env.ACCESS_SECRET || '',
-      expire: process.env.ACCESS_EXPIRATION_TIME || '10',
+      expire: process.env.ACCESS_EXPIRATION_TIME || '60',
     },
 
     refresh: {
       secret: process.env.REFRESH_SECRET || '',
-      expire: process.env.REFRESH_EXPIRATION_TIME || '43200',
+      expire: process.env.REFRESH_EXPIRATION_TIME || (7 * 24 * 60).toString(),
     },
   },
 };

@@ -1,13 +1,16 @@
-import { UserDto } from './user.dto';
+import { IUser } from '../interface';
 
 export class RegisterDto {
   result: boolean;
 }
 
-export type LoginUserDto = Pick<
-  UserDto,
-  'id' | 'email' | 'firstName' | 'lastName'
->;
+export class LoginUserDto implements IUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  cartId: string;
+}
 
 export class LoginDto {
   accessToken: TokenDto;

@@ -21,7 +21,7 @@ export class AuthController {
         summary: 'Normal Login',
         value: {
           email: 'asdf@gmail.com',
-          password: '12345678',
+          password: 'qwer1234',
         },
       },
     },

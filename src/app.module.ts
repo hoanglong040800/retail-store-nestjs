@@ -8,6 +8,10 @@ import { ProductsModule } from './modules/products/products.module';
 import { BranchesModule } from './modules/branches';
 import { AdminDivisionsModule } from './modules/admin-divisions';
 import { BranchesAdminDivisionModule } from './modules/branches-admin-divisions';
+import { CartsModule } from './modules/carts/carts.module';
+import { CartItemsModule } from './modules/cart-items/cart-items.module';
+import { CheckoutModule } from './modules/checkout';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -15,15 +19,19 @@ import { BranchesAdminDivisionModule } from './modules/branches-admin-divisions'
     AppConfigModule,
     DbModule,
 
-    // route. should order by name -> swagger show based on name
-    ConfigModule,
-    AdminDivisionsModule,
+    // route. should order by name -> swagger show based on order
+    CheckoutModule,
     AuthModule,
+    AdminDivisionsModule,
+    BranchesAdminDivisionModule,
     BranchesModule,
+    CartsModule,
+    CartItemsModule,
+    ConfigModule,
     CategoryModule,
+    OrdersModule,
     ProductsModule,
     UsersModule,
-    BranchesAdminDivisionModule,
   ],
   controllers: [],
   providers: [],

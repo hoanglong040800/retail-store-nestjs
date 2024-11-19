@@ -19,7 +19,6 @@ export class CategoriesRepo extends BaseRepo<ECategory> {
   }
 
   @TryCatch()
-  // todo decorator catch null options, null value throw error
   async findOne(options: FindOneOptions<ECategory>): Promise<ECategory> {
     if (!options) {
       throw new CustomException(

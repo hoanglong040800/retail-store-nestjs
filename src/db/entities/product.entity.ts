@@ -1,7 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { IProduct } from '../interface';
 import { EBase } from './base.entity';
 import { ECategory } from './category.entity';
+import { ProductUnitEnum } from '../enum';
+import { ECartItem } from './cart-item.entity';
 
 @Entity('products')
 export class EProduct extends EBase implements IProduct {
@@ -36,8 +38,7 @@ export class EProduct extends EBase implements IProduct {
 
   @Column({
     name: 'price',
-    type: 'numeric',
-    scale: 2,
+    type: 'integer',
     nullable: false,
   })
   price: number;
@@ -48,6 +49,14 @@ export class EProduct extends EBase implements IProduct {
     nullable: true,
   })
   image?: string;
+
+  @Column({
+    name: 'unit',
+    type: 'enum',
+    enum: ProductUnitEnum,
+    nullable: true,
+  })
+  unit?: ProductUnitEnum;
 
   // add reference column to insert data
   @Column({
@@ -64,4 +73,10 @@ export class EProduct extends EBase implements IProduct {
   })
   @JoinColumn({ name: 'leaf_category_id', referencedColumnName: 'id' }) // use @JoinColumb when field define different from table column
   category: ECategory;
+
+  @OneToMany(() => ECartItem, (cartItem) => cartItem.product, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'id', referencedColumnName: 'product_id' })
+  cartItems?: ECartItem[];
 }

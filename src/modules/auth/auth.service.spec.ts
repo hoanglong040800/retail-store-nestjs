@@ -3,11 +3,13 @@ import { CustomException } from '@/guard';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
-import { EUser } from '@/db/entities';
+import { ECart, EUser } from '@/db/entities';
 import { AuthService } from './auth.service';
 import { SignedTokenData, SignedTokenUser } from './auth.type';
 import { LoginDto, TokenDto } from '@/db/dto';
 import * as bcrypt from 'bcrypt';
+import { CartsService } from '../carts';
+import { ENV } from '@/constants';
 
 jest.mock('bcrypt', () => ({
   compareSync: jest.fn().mockImplementation(() => true),
@@ -22,6 +24,7 @@ describe('AuthService', () => {
   let usersRepo: Repository<EUser>;
   let usersSrv: UsersService;
   let jwtSrv: JwtService;
+  let cartsSrv: CartsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +51,12 @@ describe('AuthService', () => {
             decode: jest.fn(),
           },
         },
+        {
+          provide: CartsService,
+          useValue: {
+            getOrCreateUserCart: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -55,19 +64,42 @@ describe('AuthService', () => {
     usersRepo = module.get<Repository<EUser>>(UsersRepo);
     usersSrv = module.get<UsersService>(UsersService);
     jwtSrv = module.get<JwtService>(JwtService);
+    cartsSrv = module.get<CartsService>(CartsService);
   });
 
   it('should be defined', () => {
     expect(srv).toBeDefined();
   });
 
+  // UT: mock constant
   describe('genJwtToken', () => {
+    let originalEnvJwt = ENV.jwt;
+
+    beforeEach(() => {
+      ENV.jwt = {
+        access: {
+          secret: 'secret',
+          expire: '60',
+        },
+
+        refresh: {
+          secret: 'secret',
+          expire: '120',
+        },
+      };
+    });
+
+    afterAll(() => {
+      ENV.jwt = originalEnvJwt;
+    });
+
     it('should throw error when user is null', async () => {
       await expect(
         srv.genJwtToken(null as unknown as SignedTokenUser, 'access'),
       ).rejects.toThrow();
     });
 
+    // UT: mock time
     it('should return token', async () => {
       const user = { id: '1', email: 'test@test.com' };
       const token = 'token';
@@ -80,12 +112,32 @@ describe('AuthService', () => {
 
       expect(result).toStrictEqual({
         token,
-        expireAt: new Date('2024-06-15T06:10:00.000Z'),
+        expireAt: new Date('2024-06-15T07:00:00.000Z'),
       });
     });
   });
 
   describe('genRefreshToken', () => {
+    let originalEnvJwt = ENV.jwt;
+
+    beforeEach(() => {
+      ENV.jwt = {
+        access: {
+          secret: 'secret',
+          expire: '60',
+        },
+
+        refresh: {
+          secret: 'secret',
+          expire: '120',
+        },
+      };
+    });
+
+    afterAll(() => {
+      ENV.jwt = originalEnvJwt;
+    });
+
     it('should throw error when userId is empty', async () => {
       await expect(srv.genRefreshToken('')).rejects.toThrow(CustomException);
     });
@@ -101,7 +153,7 @@ describe('AuthService', () => {
 
       expect(result).toStrictEqual({
         token,
-        expireAt: new Date('2024-07-15T06:00:00.000Z'),
+        expireAt: new Date('2024-06-15T08:00:00.000Z'),
       });
     });
   });
@@ -214,15 +266,24 @@ describe('AuthService', () => {
         user: {
           id: '1',
           email: 'test@test.com',
-          firstName: 'test',
-          lastName: 'test',
+          firstName: 'firstName',
+          lastName: 'lastName',
+          cartId: 'cartId',
         },
       };
 
       const mockUserByEmail = {
         ...expectedResult.user,
         password: 'abc',
+        createdAt: new Date(),
+        updatedAt: new Date(),
       } as EUser;
+
+      const mockGetOrCreateUserCart: ECart = {
+        id: expectedResult.user.cartId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
       // UT: mock library
       jest.spyOn(bcrypt, 'compareSync').mockReturnValueOnce(true);
@@ -237,6 +298,10 @@ describe('AuthService', () => {
       jest
         .spyOn(srv, 'genRefreshToken')
         .mockResolvedValueOnce(mockRefreshToken);
+
+      jest
+        .spyOn(cartsSrv, 'getOrCreateUserCart')
+        .mockResolvedValueOnce(mockGetOrCreateUserCart);
 
       const result = await srv.login(body);
 

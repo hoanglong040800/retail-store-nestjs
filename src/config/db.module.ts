@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { postgresOrmOptions } from './data-source';
+import { typeOrmModuleOptions } from './data-source';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(postgresOrmOptions)],
+  imports: [TypeOrmModule.forRootAsync(typeOrmModuleOptions)],
 })
 export class DbModule {}

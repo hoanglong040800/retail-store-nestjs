@@ -3,9 +3,14 @@ import { AppModule } from './app.module';
 import { createSwaggerDocument } from './config';
 import { GlobalExceptionFilter } from './guard';
 import { ValidationPipe } from '@nestjs/common';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // must called before init app
+  initializeTransactionalContext();
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log'],
+  });
 
   createSwaggerDocument(app);
   app.enableCors();

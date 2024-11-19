@@ -1,5 +1,7 @@
 export type ExceptionCode =
+  | 'BRANCH_NOT_FOUND'
   | 'CATEGORY_NOT_FOUND'
+  | 'CART_ITEM_NOT_FOUND'
   | 'INTERNAL_SERVER_ERROR'
   | 'INVALID_DATA'
   | 'INVALID_TOKEN'
@@ -7,4 +9,5 @@ export type ExceptionCode =
   | 'PRODUCT_NOT_FOUND'
   | 'PARAMS_NOT_FOUND'
   | 'USER_EXISTS'
-  | 'USER_NOT_FOUND';
+  | 'USER_NOT_FOUND'
+  | 'USER_CART_NOT_FOUND';

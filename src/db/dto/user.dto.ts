@@ -8,6 +8,7 @@ export class UserDto extends BaseDto implements IUser {
   password: string;
   refreshToken?: string;
   id: string;
+  cartId?: string;
 }
 
 export class UpdateUserDto implements IUser {

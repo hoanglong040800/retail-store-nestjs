@@ -1,7 +1,12 @@
 import { EBranch } from '@/db/entities';
 import { BaseRepo } from '../_base';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -48,5 +53,13 @@ export class BranchesRepo extends BaseRepo<EBranch> {
 
       where: options?.where,
     });
+  }
+
+  findOne(options: FindOneOptions<EBranch>): Promise<EBranch | null> {
+    if (options?.where && !Array.isArray(options.where)) {
+      options.where = this.getWhereClauseFilterBranches(options.where);
+    }
+
+    return this.repo.findOne(options);
   }
 }

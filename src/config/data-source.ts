@@ -1,8 +1,12 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { ENV } from '../constants';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import {
+  TypeOrmModuleAsyncOptions,
+  TypeOrmModuleOptions,
+} from '@nestjs/typeorm';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 
-export const postgresOrmOptions: TypeOrmModuleOptions = {
+const postgresOrmOptions: TypeOrmModuleOptions = {
   type: 'postgres',
   ...ENV.db,
 
@@ -14,11 +18,22 @@ export const postgresOrmOptions: TypeOrmModuleOptions = {
   // settings
   synchronize: false,
   logging: false,
+  migrationsTransactionMode: 'each',
   extra: {
     trustServerCertificate: true,
   },
 };
 
-const AppDataSource = new DataSource(postgresOrmOptions as DataSourceOptions);
+export const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
+  useFactory: () => postgresOrmOptions,
 
-export default AppDataSource;
+  dataSourceFactory: (options) => {
+    if (!options) {
+      throw new Error('Invalid options passed');
+    }
+
+    const AppDataSource = new DataSource(options);
+
+    return Promise.resolve(addTransactionalDataSource(AppDataSource));
+  },
+};

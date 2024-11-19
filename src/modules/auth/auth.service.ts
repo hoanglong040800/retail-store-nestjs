@@ -12,10 +12,11 @@ import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
 import { compareSync } from 'bcrypt';
 import { calculateExpireTime } from './auth.util';
-import { ENV } from '@/constants';
+import { ENV, JwtTokenUnit } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
 import { CustomException } from '@/guard';
 import { SignedTokenData, SignedTokenUser } from './auth.type';
+import { CartsService } from '../carts';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,7 @@ export class AuthService {
     private readonly usersRepo: UsersRepo,
     private readonly usersSrv: UsersService,
     private readonly jwtSrv: JwtService,
+    private readonly cartsSrv: CartsService,
   ) {}
 
   async genJwtToken(
@@ -39,7 +41,7 @@ export class AuthService {
       { user },
       {
         secret: envToken.secret,
-        expiresIn: `1s`,
+        expiresIn: `${envToken.expire}${JwtTokenUnit}`,
       },
     );
 
@@ -123,6 +125,14 @@ export class AuthService {
       throw new CustomException('INCORRECT_PASSWORD', HttpStatus.BAD_REQUEST);
     }
 
+    const userCart = await this.cartsSrv.getOrCreateUserCart({
+      userId: existUser.id,
+    });
+
+    if (!userCart) {
+      throw new CustomException('USER_CART_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
     const accessToken = await this.genJwtToken(existUser, 'access');
     const refreshToken = await this.genRefreshToken(existUser.id);
 
@@ -131,6 +141,7 @@ export class AuthService {
       email: existUser.email,
       firstName: existUser.firstName,
       lastName: existUser.lastName,
+      cartId: userCart.id,
     };
 
     return {

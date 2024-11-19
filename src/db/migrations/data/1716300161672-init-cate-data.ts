@@ -1,5 +1,6 @@
 import { ECategory } from '@/db/entities';
 import { ICategory } from '@/db/interface';
+import { TryCatch } from '@/modules/_base';
 import { In, MigrationInterface, QueryRunner, Repository } from 'typeorm';
 
 const twoLevelCategories = [
@@ -833,9 +834,8 @@ export class InitCateData1716300161672 implements MigrationInterface {
     return categoryRepo.save(newL1Cate);
   }
 
+  @TryCatch()
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // TODO implement reusable function for try catch. Maybe a decorator
-
     const categoryRepo = queryRunner.connection.getRepository(ECategory);
 
     await Promise.all(
