@@ -4,6 +4,7 @@ import {
   calculateCartTotalAmount,
   calculateShippingFee,
   calculateSubTotal,
+  convertCartItemsToMutateCartItems,
 } from './carts.util';
 import { DeliveryTypeEnum } from '@/db/enum';
 
@@ -102,6 +103,61 @@ describe('Cart Utils', () => {
         const result = calculateCartTotalAmount({ subTotal, shippingFee });
 
         expect(result).toBe(expected);
+      }),
+    );
+  });
+
+  describe('convertCartItemsToMutateCartItems', () => {
+    type TestCartItemType = Pick<ICartItem, 'id' | 'quantity' | 'productId'>;
+    type ExpectedMutateCartItem = TestCartItemType;
+
+    type TestCaseType = {
+      condition: string;
+      cartItems: TestCartItemType[] | null;
+      expected: ExpectedMutateCartItem[];
+    };
+
+    const testCases: TestCaseType[] = [
+      {
+        condition: 'cartItems is null',
+        cartItems: null,
+        expected: [],
+      },
+      {
+        condition: 'cartItems is empty',
+        cartItems: [],
+        expected: [],
+      },
+      {
+        condition: 'cartItems has valid data',
+        cartItems: [
+          {
+            id: '1',
+            quantity: 1,
+            productId: '1',
+          },
+          {
+            id: '2',
+            quantity: 0,
+            productId: '2',
+          },
+        ],
+
+        expected: [
+          {
+            id: '1',
+            productId: '1',
+            quantity: 1,
+          },
+        ],
+      },
+    ];
+
+    testCases.forEach(({ cartItems, expected, condition }) =>
+      it(`should return correct when ${condition}`, () => {
+        const result = convertCartItemsToMutateCartItems(cartItems as ECartItem[]);
+
+        expect(result).toStrictEqual(expected);
       }),
     );
   });
