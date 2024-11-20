@@ -1,3 +1,4 @@
+import { RequestType } from '@/modules/_base';
 import { SignedTokenUser } from '@/modules/auth';
 
 export const mockSignedTokenUser: SignedTokenUser = {
@@ -6,3 +7,7 @@ export const mockSignedTokenUser: SignedTokenUser = {
   firstName: 'firstName',
   lastName: 'lastName',
 };
+
+export const mockRequest = {
+  user: mockSignedTokenUser,
+} as RequestType;

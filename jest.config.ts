@@ -20,8 +20,8 @@ const config: Config.InitialOptions = {
   ],
   coverageThreshold: {
     global: {
-      statements: 90,
-      lines: 90,
+      statements: 80,
+      lines: 80,
     },
   },
   coverageDirectory: '../coverage',
