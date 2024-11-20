@@ -243,6 +243,7 @@ describe('AuthService', () => {
         password: 'incorrect',
       });
 
+      // UT: mock util
       jest.spyOn(bcrypt, 'compareSync').mockReturnValueOnce(false);
 
       await expect(srv.login(body)).rejects.toThrow(CustomException);
