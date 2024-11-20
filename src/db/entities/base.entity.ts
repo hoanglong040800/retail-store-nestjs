@@ -9,7 +9,7 @@ export abstract class EBase implements IBase {
     select: false,
     update: false,
   })
-  createdAt: Date;
+  createdAt?: Date;
 
   @Column({
     name: 'created_by',
@@ -26,7 +26,7 @@ export abstract class EBase implements IBase {
     select: false,
     update: false,
   })
-  updatedAt: Date;
+  updatedAt?: Date;
 
   @Column({
     name: 'updated_by',

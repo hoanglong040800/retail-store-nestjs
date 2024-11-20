@@ -12,8 +12,22 @@ const config: Config.InitialOptions = {
   moduleNameMapper: {
     '@/(.*)': '<rootDir>/$1',
   },
-  collectCoverageFrom: ['**/*.(t|j)s'],
+  collectCoverageFrom: [
+    'modules/**/*.ts',
+    'utils/**/*.ts',
+    '!modules/**/*.(repo|module|swagger|const|dto).ts',
+    '!**/index.ts',
+  ],
+
+  // force to reach % in order to pass
+  // coverageThreshold: {
+  //   global: {
+  //     statements: 80,
+  //     lines: 80,
+  //   },
+  // },
   coverageDirectory: '../coverage',
+  setupFilesAfterEnv: ['<rootDir>/config/jest.setup.ts'],
 };
 
 export default config;

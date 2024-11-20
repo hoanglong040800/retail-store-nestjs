@@ -73,7 +73,7 @@ describe('AuthService', () => {
 
   // UT: mock constant
   describe('genJwtToken', () => {
-    let originalEnvJwt = ENV.jwt;
+    const originalEnvJwt = ENV.jwt;
 
     beforeEach(() => {
       ENV.jwt = {
@@ -118,7 +118,7 @@ describe('AuthService', () => {
   });
 
   describe('genRefreshToken', () => {
-    let originalEnvJwt = ENV.jwt;
+    const originalEnvJwt = ENV.jwt;
 
     beforeEach(() => {
       ENV.jwt = {
@@ -243,6 +243,7 @@ describe('AuthService', () => {
         password: 'incorrect',
       });
 
+      // UT: mock util
       jest.spyOn(bcrypt, 'compareSync').mockReturnValueOnce(false);
 
       await expect(srv.login(body)).rejects.toThrow(CustomException);
@@ -310,6 +311,7 @@ describe('AuthService', () => {
   });
 
   describe('refreshToken', () => {
+    // UT: mock throw exception
     it('should throw error when extractAndValdiateAccessToken return null', async () => {
       jest
         .spyOn(srv, 'extractAndValdiateAccessToken')
