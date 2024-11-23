@@ -1,9 +1,21 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { StripeService } from './stripe.service';
-import { StripeController } from './stripe.controller';
+import { ENV } from '@/constants';
 
-@Module({
-  controllers: [StripeController],
-  providers: [StripeService],
-})
-export class StripeModule {}
+@Module({})
+export class StripeModule {
+  static forRootAsync(): DynamicModule {
+    const stripeProvider: Provider = {
+      provide: ENV.stripe.secretKey,
+      useFactory: () => ENV.stripe.secretKey,
+    };
+
+    const providers: Provider[] = [StripeService, stripeProvider];
+
+    return {
+      module: StripeModule,
+      providers,
+      exports: [StripeService],
+    };
+  }
+}

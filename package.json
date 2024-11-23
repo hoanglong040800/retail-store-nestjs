@@ -27,7 +27,6 @@
     "mig-dt:gen": "cd ./src/db/migrations/data && typeorm migration:create",
     "mig-dt:up": "cross-env MIGRATE_FOLDER=data yarn mig:up",
     "mig-dt:down": "cross-env MIGRATE_FOLDER=data yarn mig:down",
-    "postinstall": "node -e \"process.env.NODE_ENV != 'production' && process.exit(1)\" || husky init",
     "prepare": "husky"
   },
   "lint-staged": {
