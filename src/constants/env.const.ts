@@ -30,4 +30,8 @@ export const ENV = {
       expire: process.env.REFRESH_EXPIRATION_TIME || (7 * 24 * 60).toString(),
     },
   },
+
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY || '',
+  },
 };

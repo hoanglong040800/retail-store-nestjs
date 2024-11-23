@@ -12,6 +12,10 @@ import { CartsModule } from './modules/carts/carts.module';
 import { CartItemsModule } from './modules/cart-items/cart-items.module';
 import { CheckoutModule } from './modules/checkout';
 import { OrdersModule } from './modules/orders/orders.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { StripeModule } from './modules/stripe/stripe.module';
+import { StripeModule } from './modules/stripe/stripe.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -32,6 +36,8 @@ import { OrdersModule } from './modules/orders/orders.module';
     OrdersModule,
     ProductsModule,
     UsersModule,
+    PaymentsModule,
+    StripeModule,
   ],
   controllers: [],
   providers: [],
