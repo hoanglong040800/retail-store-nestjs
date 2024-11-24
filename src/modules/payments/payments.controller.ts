@@ -1,19 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { StripeService } from '../stripe';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('payments')
 @ApiTags('Payments')
 export class PaymentsController {
-  constructor(
-    private readonly paymentsService: PaymentsService,
-    private readonly stripeSrv: StripeService,
-  ) {}
+  constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Get('stripe')
-  async testStripe() {
-    const result = await this.stripeSrv.testStripe();
-    return result;
+  @Get('payment-sessions')
+  createSession() {
+    return this.paymentsService.createSession();
   }
 }
