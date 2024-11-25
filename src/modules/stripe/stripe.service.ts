@@ -29,20 +29,59 @@ export class StripeService {
               unit_amount: 20000,
             },
           },
+          {
+            quantity: 1,
+            price_data: {
+              currency: 'vnd',
+              product_data: {
+                name: 'Shorts',
+              },
+              unit_amount: 50000,
+            },
+          },
         ],
+
         mode: 'payment',
+        ui_mode: 'embedded',
         currency: 'vnd',
-        success_url: 'http://localhost:8081/success',
-        cancel_url: 'http://localhost:8081/cancel',
+        return_url: 'http://localhost:',
       });
 
-    if (!session.url) {
+    if (!session.client_secret) {
       throw new CustomException(
         'CANT_CREATE_CHECKOUT_SESSION_STRIPE',
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    return session.url;
+    return session.client_secret;
+  }
+
+  async createPaymentIntent() {
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      amount: 25000,
+      currency: 'vnd',
+      payment_method_types: ['card'],
+      automatic_payment_methods: {
+        enabled: false,
+      },
+    });
+
+    if (!paymentIntent.client_secret) {
+      throw new CustomException(
+        'CANT_CREATE_PAYMENT_INTENT_STRIPE',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return paymentIntent;
+  }
+
+  async confirmPaymentIntent(paymentIntentId: string, paymentMethodId: string) {
+    const result = await this.stripe.paymentIntents.confirm(paymentIntentId, {
+      payment_method: paymentMethodId,
+    });
+
+    return result;
   }
 }

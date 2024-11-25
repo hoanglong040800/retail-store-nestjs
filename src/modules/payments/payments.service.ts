@@ -5,7 +5,7 @@ import { StripeService } from '../stripe';
 export class PaymentsService {
   constructor(private readonly stripeSrv: StripeService) {}
 
-  createSession() {
-    return this.stripeSrv.createCheckoutSession();
+  async createSession() {
+    return await this.stripeSrv.createCheckoutSession();
   }
 }
