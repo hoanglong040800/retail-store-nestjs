@@ -37,7 +37,7 @@ export class CartsService {
 
       where: {
         ...(cartId ? { id: cartId } : {}),
-
+        status: CartStatusEnum.new,
         user: {
           id: userId,
         },
@@ -49,7 +49,7 @@ export class CartsService {
       throw new CustomException('USER_CART_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    if (userActiveCart?.status === CartStatusEnum.new) {
+    if (userActiveCart) {
       return userActiveCart;
     }
 

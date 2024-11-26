@@ -57,9 +57,9 @@ export class StripeService {
     return session.client_secret;
   }
 
-  async createPaymentIntent() {
+  async createPaymentIntent({ amount }: { amount: number }) {
     const paymentIntent = await this.stripe.paymentIntents.create({
-      amount: 25000,
+      amount,
       currency: 'vnd',
       payment_method_types: ['card'],
       automatic_payment_methods: {

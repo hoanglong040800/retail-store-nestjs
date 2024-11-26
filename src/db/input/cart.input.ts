@@ -15,6 +15,7 @@ import { IsNotNegative } from '@/modules/_base';
 import { Type } from 'class-transformer';
 import { DeliveryTypeEnum } from '../enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { StringFieldOptional, UUIDField } from '@/decorators';
 
 export class MutateCartItemProduct implements IProduct {
   @IsOptional()
@@ -70,6 +71,9 @@ export class CheckoutBody {
   @IsString()
   address?: string;
 
-  @IsUUID()
+  @UUIDField()
   deliveryWardId: string;
+
+  @StringFieldOptional()
+  stripePaymentMethodId?: string;
 }

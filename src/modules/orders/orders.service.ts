@@ -33,7 +33,6 @@ export class OrdersService {
 
     await this.cartsSrv.getOrCreateUserCart({
       userId: createOrderDto.userId,
-      cartId: createOrderDto.cartId,
     });
 
     return order;

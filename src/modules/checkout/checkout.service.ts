@@ -2,7 +2,7 @@ import { CheckoutBody, MutateCartItem } from '@/db/input';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional';
 import { SignedTokenUser } from '../auth';
-import { CheckoutDto } from '@/db/dto';
+import { CartCalculationDto, CheckoutDto } from '@/db/dto';
 import { CustomException } from '@/guard';
 import { CartsService } from '../carts';
 import { CartItemsService } from '../cart-items';
@@ -12,6 +12,7 @@ import { EBranch } from '@/db/entities';
 import { CreateOrderDto } from '../orders/shared';
 import { OrderStatusEnum } from '@/db/enum';
 import { OrdersService } from '../orders';
+import { PaymentsService } from '../payments';
 
 @Injectable()
 export class CheckoutService {
@@ -20,6 +21,7 @@ export class CheckoutService {
     private readonly cartItemSrv: CartItemsService,
     private readonly branchesSrv: BranchesService,
     private readonly ordersSrv: OrdersService,
+    private readonly paymentsSrv: PaymentsService,
   ) {}
 
   // GUIDE: MUST not use try catch because transactional already have try catch to rollback
@@ -42,11 +44,28 @@ export class CheckoutService {
       userCart.cartItems,
     );
 
+    if (!mutateCartItems || mutateCartItems.length === 0) {
+      throw new CustomException(
+        'CANT_CHECKOUT_WITH_EMPTY_CART',
+        HttpStatus.BAD_REQUEST,
+        `userId: ${user.id}, cartId: ${userCart.id}`,
+      );
+    }
+
     await this.cartItemSrv.addMultiCartItems(mutateCartItems, userCart, user);
 
-    this.cartsSrv.calculateCart(userCart.cartItems, {
-      deliveryType: body.deliveryType,
-    });
+    const cartCalculation: CartCalculationDto = this.cartsSrv.calculateCart(
+      userCart.cartItems,
+      {
+        deliveryType: body.deliveryType,
+      },
+    );
+
+    const paymentIntent = body.stripePaymentMethodId
+      ? await this.paymentsSrv.preAuth({
+          amount: cartCalculation.totalAmount,
+        })
+      : null;
 
     const deliveryBranch: EBranch = await this.branchesSrv.getBranchByWardId(
       body.deliveryWardId,
@@ -66,6 +85,13 @@ export class CheckoutService {
       createOrderDto,
       user,
     );
+
+    if (body.stripePaymentMethodId && paymentIntent) {
+      await this.paymentsSrv.charge({
+        paymentIntentId: paymentIntent.id,
+        paymentMethodId: body.stripePaymentMethodId,
+      });
+    }
 
     return {
       order: checkoutOrder,
