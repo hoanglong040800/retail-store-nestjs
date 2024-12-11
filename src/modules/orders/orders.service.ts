@@ -1,10 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { OrdersRepo } from './orders.repo';
 import { CreateOrderDto } from './shared';
 import { AuditUser, EOrder } from '@/db/entities';
 import { CartsService } from '../carts';
-import { CartStatusEnum } from '@/db/enum';
+import {
+  CartStatusEnum,
+  OrderActionEnum,
+  OrderStatusEnum,
+  PaymentMethodEnum,
+} from '@/db/enum';
 import { Propagation, Transactional } from 'typeorm-transactional';
+import { CustomException } from '@/guard';
+import { getOrderStatus } from './shared/orders.utils';
 
 @Injectable()
 export class OrdersService {
@@ -36,5 +43,37 @@ export class OrdersService {
     });
 
     return order;
+  }
+
+  async updateOrderStatus({
+    orderId,
+    auditUser,
+    curStatus,
+    orderAction,
+    paymentMethod,
+  }: {
+    orderId: string;
+    auditUser: AuditUser;
+    curStatus: OrderStatusEnum;
+    orderAction: OrderActionEnum;
+    paymentMethod: PaymentMethodEnum;
+  }) {
+    if (!orderId || !auditUser || !curStatus || !orderAction) {
+      throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    const newOrderStatus = getOrderStatus({
+      curStatus,
+      action: orderAction,
+      paymentMethod,
+    });
+
+    return this.repo.update(
+      orderId,
+      {
+        status: newOrderStatus,
+      },
+      auditUser,
+    );
   }
 }

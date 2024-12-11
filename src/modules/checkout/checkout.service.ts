@@ -61,15 +61,19 @@ export class CheckoutService {
       },
     );
 
-    const paymentIntent = body.stripePaymentMethodId
-      ? await this.paymentsSrv.preAuth({
-          amount: cartCalculation.totalAmount,
-        })
-      : null;
+    const paymentIntent = await this.paymentsSrv.preAuth({
+      amount: cartCalculation.totalAmount,
+      orderStatus: OrderStatusEnum.pending,
+      paymentMethod: body.paymentMethod,
+    });
 
     const deliveryBranch: EBranch = await this.branchesSrv.getBranchByWardId(
       body.deliveryWardId,
     );
+
+    const orderStatus: OrderStatusEnum = paymentIntent
+      ? OrderStatusEnum.awaitingPayment
+      : OrderStatusEnum.pending;
 
     const createOrderDto: CreateOrderDto = {
       userId: user.id,
@@ -77,8 +81,9 @@ export class CheckoutService {
       deliveryType: body.deliveryType,
       branchId: deliveryBranch.id,
       address: body.address || '',
-      status: OrderStatusEnum.pending,
+      status: orderStatus,
       deliveryWardId: body.deliveryWardId,
+      paymentMethod: body.paymentMethod,
     };
 
     const checkoutOrder = await this.ordersSrv.createOrder(
@@ -91,6 +96,10 @@ export class CheckoutService {
         paymentIntentId: paymentIntent.id,
         paymentMethodId: body.stripePaymentMethodId,
       });
+
+      // TODO continue this
+      // await this.ordersSrv.update(checkoutOrder.id, {
+      //   status: OrderStatusEnum.awaitingFulfillment,})
     }
 
     return {

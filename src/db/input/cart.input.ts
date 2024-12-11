@@ -13,7 +13,7 @@ import {
 import { ICartItem, IProduct } from '../interface';
 import { IsNotNegative } from '@/modules/_base';
 import { Type } from 'class-transformer';
-import { DeliveryTypeEnum } from '../enum';
+import { DeliveryTypeEnum, PaymentMethodEnum } from '../enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { StringFieldOptional, UUIDField } from '@/decorators';
 
@@ -76,4 +76,8 @@ export class CheckoutBody {
 
   @StringFieldOptional()
   stripePaymentMethodId?: string;
+
+  @IsNotEmpty()
+  @IsEnum(PaymentMethodEnum)
+  paymentMethod: PaymentMethodEnum;
 }

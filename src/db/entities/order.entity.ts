@@ -1,6 +1,6 @@
 import { Column, Entity, OneToOne } from 'typeorm';
 import { IOrder } from '../interface';
-import { DeliveryTypeEnum, OrderStatusEnum } from '../enum';
+import { DeliveryTypeEnum, OrderStatusEnum, PaymentMethodEnum } from '../enum';
 import { ECart } from './cart.entity';
 import { EBase } from './base.entity';
 import { EUser } from './user.entity';
@@ -60,6 +60,15 @@ export class EOrder extends EBase implements IOrder {
     nullable: true,
   })
   branchId?: string;
+
+  @Column({
+    name: 'payment_method',
+    type: 'enum',
+    enum: PaymentMethodEnum,
+    default: PaymentMethodEnum.cash,
+    nullable: false,
+  })
+  paymentMethod?: PaymentMethodEnum;
 
   // ------- Relationships -------
 

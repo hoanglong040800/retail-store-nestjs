@@ -32,3 +32,20 @@ export enum CartStatusEnum {
   new = 'new', // DEFAULT. not checkout yet, can add item
   checkout = 'checkout', // already checkouted, CAN'T alter cart items or cart
 }
+
+export enum PaymentMethodEnum {
+  cash = 'cash',
+  creditCard = 'credit_card',
+}
+
+export enum PaymentActionEnum {
+  preAuth = 'preAuth',
+  charge = 'charge',
+  chargeManual = 'chargeManual',
+}
+
+export enum OrderActionEnum {
+  charge = 'charge',
+  collected = 'collected',
+  shipped = 'shipped',
+}

@@ -1,4 +1,4 @@
-import { DeliveryTypeEnum, OrderStatusEnum } from '../enum';
+import { DeliveryTypeEnum, OrderStatusEnum, PaymentMethodEnum } from '../enum';
 import { IOrder } from '../interface';
 import { AdminDivisionDto } from './admin-division.dto';
 import { BaseDto } from './base.dto';
@@ -14,4 +14,5 @@ export class OrderDto extends BaseDto implements IOrder {
   cartId?: string;
   branch?: BranchDto;
   deliveryWard?: AdminDivisionDto;
+  paymentMethod?: PaymentMethodEnum;
 }
