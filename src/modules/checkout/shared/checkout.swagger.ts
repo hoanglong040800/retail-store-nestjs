@@ -5,7 +5,7 @@ import { ApiBodyOptions } from '@nestjs/swagger';
 const exampleCheckoutBody: CheckoutBody = {
   deliveryType: DeliveryTypeEnum.delivery,
   address: '123 Bob Street',
-  deliveryWardId: 'aaf69b41-12e9-4daa-ba61-946e1bd227a4',
+  deliveryWardId: '948d4394-b842-4359-b407-54c49b2f0443',
   stripePaymentMethodId: 'pm_1QPDuv07tguiF49HkXctxEwl',
   paymentMethod: PaymentMethodEnum.creditCard,
 };

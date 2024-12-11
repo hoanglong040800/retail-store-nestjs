@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { StripeService } from '../stripe';
 import {
   OrderStatusEnum,
@@ -6,7 +6,7 @@ import {
   PaymentMethodEnum,
 } from '@/db/enum';
 import { checkCanProcessPayment } from './shared';
-import { CustomException } from '@/guard';
+import Stripe from 'stripe';
 
 // should make this as abstract class
 @Injectable()
@@ -21,7 +21,7 @@ export class PaymentsService {
     amount: number;
     paymentMethod: PaymentMethodEnum;
     orderStatus: OrderStatusEnum;
-  }) {
+  }): Promise<Stripe.Response<Stripe.PaymentIntent> | null> {
     const isCanProcessPayment = checkCanProcessPayment(
       paymentMethod,
       orderStatus,
@@ -29,7 +29,7 @@ export class PaymentsService {
     );
 
     if (!isCanProcessPayment) {
-      throw new CustomException('CANT_PRE_AUTH', HttpStatus.BAD_REQUEST);
+      return null;
     }
 
     const paymentIntent = await this.stripeSrv.createPaymentIntent({ amount });

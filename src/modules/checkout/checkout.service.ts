@@ -8,11 +8,13 @@ import { CartsService } from '../carts';
 import { CartItemsService } from '../cart-items';
 import { BranchesService } from '../branches';
 import { convertCartItemsToMutateCartItems } from '../carts/shared';
-import { EBranch } from '@/db/entities';
+import { EBranch, EOrder } from '@/db/entities';
 import { CreateOrderDto } from '../orders/shared';
-import { OrderStatusEnum } from '@/db/enum';
-import { OrdersService } from '../orders';
+import { OrderStatusEnum, PaymentMethodEnum } from '@/db/enum';
+import { OrdersRepo, OrdersService } from '../orders';
 import { PaymentsService } from '../payments';
+import { getOrderStatus } from '../orders/shared/orders.utils';
+import Stripe from 'stripe';
 
 @Injectable()
 export class CheckoutService {
@@ -22,6 +24,7 @@ export class CheckoutService {
     private readonly branchesSrv: BranchesService,
     private readonly ordersSrv: OrdersService,
     private readonly paymentsSrv: PaymentsService,
+    private readonly ordersRepo: OrdersRepo,
   ) {}
 
   // GUIDE: MUST not use try catch because transactional already have try catch to rollback
@@ -61,19 +64,21 @@ export class CheckoutService {
       },
     );
 
-    const paymentIntent = await this.paymentsSrv.preAuth({
-      amount: cartCalculation.totalAmount,
-      orderStatus: OrderStatusEnum.pending,
-      paymentMethod: body.paymentMethod,
-    });
+    const paymentIntent: Stripe.Response<Stripe.PaymentIntent> | null =
+      await this.paymentsSrv.preAuth({
+        amount: cartCalculation.totalAmount,
+        orderStatus: OrderStatusEnum.pending,
+        paymentMethod: body.paymentMethod,
+      });
 
     const deliveryBranch: EBranch = await this.branchesSrv.getBranchByWardId(
       body.deliveryWardId,
     );
 
-    const orderStatus: OrderStatusEnum = paymentIntent
-      ? OrderStatusEnum.awaitingPayment
-      : OrderStatusEnum.pending;
+    const orderStatus: OrderStatusEnum = getOrderStatus({
+      curStatus: OrderStatusEnum.pending,
+      paymentMethod: body.paymentMethod,
+    });
 
     const createOrderDto: CreateOrderDto = {
       userId: user.id,
@@ -91,20 +96,59 @@ export class CheckoutService {
       user,
     );
 
-    if (body.stripePaymentMethodId && paymentIntent) {
-      await this.paymentsSrv.charge({
-        paymentIntentId: paymentIntent.id,
-        paymentMethodId: body.stripePaymentMethodId,
-      });
-
-      // TODO continue this
-      // await this.ordersSrv.update(checkoutOrder.id, {
-      //   status: OrderStatusEnum.awaitingFulfillment,})
-    }
+    const orderAfterCharge: EOrder | null = await this.chargeAfterCheckout({
+      orderId: checkoutOrder.id,
+      curStatus: orderStatus,
+      paymentMethod: body.paymentMethod,
+      auditUser: user,
+      paymentIntentId: paymentIntent?.id,
+      stripePaymentMethodId: body.stripePaymentMethodId,
+    });
 
     return {
-      order: checkoutOrder,
+      order: orderAfterCharge || checkoutOrder,
       selectedBranch: deliveryBranch,
     };
+  }
+
+  async chargeAfterCheckout({
+    orderId,
+    curStatus,
+    paymentMethod,
+    auditUser,
+    paymentIntentId,
+    stripePaymentMethodId,
+  }: {
+    orderId: string;
+    curStatus: OrderStatusEnum;
+    paymentMethod: PaymentMethodEnum;
+    auditUser: SignedTokenUser;
+    paymentIntentId?: string;
+    stripePaymentMethodId?: string;
+  }): Promise<EOrder | null> {
+    if (
+      !orderId ||
+      !curStatus ||
+      !paymentMethod ||
+      !auditUser ||
+      !stripePaymentMethodId ||
+      !paymentIntentId
+    ) {
+      return null;
+    }
+
+    await this.paymentsSrv.charge({
+      paymentIntentId,
+      paymentMethodId: stripePaymentMethodId,
+    });
+
+    const newOrder: EOrder = await this.ordersSrv.updateOrderStatus({
+      orderId,
+      curStatus,
+      paymentMethod,
+      auditUser,
+    });
+
+    return newOrder;
   }
 }

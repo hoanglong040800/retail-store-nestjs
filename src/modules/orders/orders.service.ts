@@ -3,12 +3,7 @@ import { OrdersRepo } from './orders.repo';
 import { CreateOrderDto } from './shared';
 import { AuditUser, EOrder } from '@/db/entities';
 import { CartsService } from '../carts';
-import {
-  CartStatusEnum,
-  OrderActionEnum,
-  OrderStatusEnum,
-  PaymentMethodEnum,
-} from '@/db/enum';
+import { CartStatusEnum, OrderStatusEnum, PaymentMethodEnum } from '@/db/enum';
 import { Propagation, Transactional } from 'typeorm-transactional';
 import { CustomException } from '@/guard';
 import { getOrderStatus } from './shared/orders.utils';
@@ -49,22 +44,19 @@ export class OrdersService {
     orderId,
     auditUser,
     curStatus,
-    orderAction,
     paymentMethod,
   }: {
     orderId: string;
     auditUser: AuditUser;
     curStatus: OrderStatusEnum;
-    orderAction: OrderActionEnum;
     paymentMethod: PaymentMethodEnum;
   }) {
-    if (!orderId || !auditUser || !curStatus || !orderAction) {
+    if (!orderId || !auditUser || !curStatus) {
       throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
     const newOrderStatus = getOrderStatus({
       curStatus,
-      action: orderAction,
       paymentMethod,
     });
 
