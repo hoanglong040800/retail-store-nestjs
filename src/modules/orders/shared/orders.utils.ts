@@ -1,18 +1,26 @@
-import { OrderActionEnum, OrderStatusEnum, PaymentMethodEnum } from '@/db/enum';
+import { NextStatusByCondition, orderStatusProgress } from '@/constants';
+import { OrderStatusEnum, PaymentMethodEnum } from '@/db/enum';
 
 export const getOrderStatus = ({
   curStatus,
-  action,
   paymentMethod,
 }: {
   curStatus: OrderStatusEnum;
-  action: OrderActionEnum;
   paymentMethod: PaymentMethodEnum;
 }): OrderStatusEnum => {
-  if (!curStatus || !action || !paymentMethod) {
+  if (!curStatus || !paymentMethod) {
     return curStatus;
   }
 
-  // TODO continue
-  return curStatus;
+  const nextStatusByCondition: NextStatusByCondition[] =
+    orderStatusProgress[curStatus];
+
+  const nextStatusObj: NextStatusByCondition | undefined =
+    nextStatusByCondition.find(
+      (statusByCondition) =>
+        statusByCondition.paymentMethod === undefined ||
+        statusByCondition.paymentMethod.includes(paymentMethod),
+    );
+
+  return nextStatusObj?.next || curStatus;
 };

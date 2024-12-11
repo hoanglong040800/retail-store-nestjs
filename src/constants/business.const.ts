@@ -22,16 +22,76 @@ export const paymentActionAllowance: Record<
   },
 
   [PaymentActionEnum.charge]: {
-    orderStatus: [
-      OrderStatusEnum.pending,
-      OrderStatusEnum.awaitingPayment,
-      OrderStatusEnum.shipped,
-    ],
+    orderStatus: [OrderStatusEnum.pending, OrderStatusEnum.awaitingPayment],
     paymentMethod: [PaymentMethodEnum.creditCard],
   },
 
   [PaymentActionEnum.chargeManual]: {
-    orderStatus: [OrderStatusEnum.shipped, OrderStatusEnum.awaitingShipment],
+    orderStatus: [OrderStatusEnum.awaitingShipment],
     paymentMethod: [PaymentMethodEnum.cash],
   },
+};
+
+const onlinePayments = [PaymentMethodEnum.creditCard];
+const offlinePayments = [PaymentMethodEnum.cash];
+
+export type NextStatusByCondition = {
+  paymentMethod?: PaymentMethodEnum[];
+  next: OrderStatusEnum;
+};
+
+export const orderStatusProgress: Record<
+  OrderStatusEnum,
+  NextStatusByCondition[]
+> = {
+  [OrderStatusEnum.pending]: [
+    {
+      paymentMethod: onlinePayments,
+      next: OrderStatusEnum.awaitingPayment,
+    },
+    {
+      paymentMethod: offlinePayments,
+      next: OrderStatusEnum.awaitingFulfillment,
+    },
+  ],
+
+  [OrderStatusEnum.awaitingPayment]: [
+    {
+      paymentMethod: onlinePayments,
+      next: OrderStatusEnum.awaitingFulfillment,
+    },
+    {
+      paymentMethod: offlinePayments,
+      next: OrderStatusEnum.done,
+    },
+  ],
+
+  [OrderStatusEnum.awaitingFulfillment]: [
+    {
+      next: OrderStatusEnum.awaitingShipment,
+    },
+  ],
+
+  [OrderStatusEnum.awaitingShipment]: [
+    {
+      paymentMethod: onlinePayments,
+      next: OrderStatusEnum.done,
+    },
+    {
+      paymentMethod: offlinePayments,
+      next: OrderStatusEnum.awaitingPayment,
+    },
+  ],
+
+  [OrderStatusEnum.done]: [
+    {
+      next: OrderStatusEnum.done,
+    },
+  ],
+
+  [OrderStatusEnum.cancelled]: [
+    {
+      next: OrderStatusEnum.cancelled,
+    },
+  ],
 };

@@ -8,7 +8,7 @@ import {
 import { checkCanProcessPayment } from './shared';
 import { CustomException } from '@/guard';
 
-// TODO make this as abstract class
+// should make this as abstract class
 @Injectable()
 export class PaymentsService {
   constructor(private readonly stripeSrv: StripeService) {}
