@@ -20,7 +20,7 @@ export class AuthController {
       a: {
         summary: 'Normal Login',
         value: {
-          email: 'asdf@gmail.com',
+          email: 'qwer@gmail.com',
           password: 'qwer1234',
         },
       },

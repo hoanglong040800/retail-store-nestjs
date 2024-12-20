@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsObject,
-  IsOptional,
   IsString,
 } from 'class-validator';
 import { TokenDto } from '../dto';
@@ -17,13 +16,11 @@ export class RegisterBody implements IUser {
   @IsNotEmpty()
   password: string;
 
-  @IsOptional()
   @IsString()
-  firstName?: string;
+  firstName: string;
 
-  @IsOptional()
   @IsString()
-  lastName?: string;
+  lastName: string;
 }
 
 export class LoginBody implements IUser {
