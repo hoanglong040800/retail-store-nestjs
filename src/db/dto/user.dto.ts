@@ -7,7 +7,6 @@ export class UserDto extends BaseDto implements IUser {
   lastName?: string;
   password: string;
   refreshToken?: string;
-  id: string;
   cartId?: string;
 }
 
