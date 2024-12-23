@@ -2,7 +2,7 @@ import { OrderDto } from './order.dto';
 import { IBase } from '@/db/interface';
 
 export type UserOrderDto = Pick<
-  OrderDto,
+  Required<OrderDto>,
   'id' | 'deliveryType' | 'cart' | 'status'
 > &
   Pick<IBase, 'createdAt'>;

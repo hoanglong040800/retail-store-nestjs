@@ -103,6 +103,6 @@ export class OrdersRepo extends BaseRepo<EOrder> {
       },
     });
 
-    return userOrders;
+    return userOrders as UserOrderDto[];
   }
 }
