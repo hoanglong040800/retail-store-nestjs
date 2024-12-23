@@ -14,6 +14,7 @@ import { CheckoutModule } from './modules/checkout';
 import { OrdersModule } from './modules/orders/orders.module';
 import { StripeModule } from './modules/stripe/stripe.module';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { UsersOrdersModule } from './modules/users-orders/users-orders.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
     DbModule,
 
     // route. should order by name -> swagger show based on order
+    UsersOrdersModule,
     PaymentsModule,
     CheckoutModule,
     AuthModule,

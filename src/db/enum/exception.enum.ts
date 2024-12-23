@@ -13,6 +13,7 @@ export type ExceptionCode =
   | 'ORDER_NOT_FOUND'
   | 'PRODUCT_NOT_FOUND'
   | 'PARAMS_NOT_FOUND'
+  | 'PARAMS_NOT_MATCH_WITH_TOKEN'
   | 'USER_EXISTS'
   | 'USER_NOT_FOUND'
   | 'USER_CART_NOT_FOUND';
