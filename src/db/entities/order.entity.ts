@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { IOrder } from '../interface';
 import { DeliveryTypeEnum, OrderStatusEnum, PaymentMethodEnum } from '../enum';
 import { ECart } from './cart.entity';
@@ -76,6 +76,7 @@ export class EOrder extends EBase implements IOrder {
   user?: EUser;
 
   @OneToOne(() => ECart, (cart) => cart.order, { nullable: false })
+  @JoinColumn({ name: 'cart_id', referencedColumnName: 'id' })
   cart?: ECart;
 
   @OneToOne(() => EBranch, (branch) => branch.orders, { nullable: false })

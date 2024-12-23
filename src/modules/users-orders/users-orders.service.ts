@@ -1,10 +1,17 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { SignedTokenUser } from '../auth';
 import { CustomException } from '@/guard';
+import { GetUserOrdersDto, UserOrderDto } from '@/db/dto';
+import { OrdersRepo } from '../orders';
 
 @Injectable()
 export class UsersOrdersService {
-  getOrdersByUser(userId: string, auditUser: SignedTokenUser) {
+  constructor(private readonly ordersRepo: OrdersRepo) {}
+
+  async getOrdersByUser(
+    userId: string,
+    auditUser: SignedTokenUser,
+  ): Promise<GetUserOrdersDto> {
     // TODO move to util
     if (userId !== auditUser.id) {
       throw new CustomException(
@@ -14,6 +21,11 @@ export class UsersOrdersService {
       );
     }
 
-    return 'long';
+    const userOrders: UserOrderDto[] =
+      await this.ordersRepo.getOrdersByUser(userId);
+
+    return {
+      orders: userOrders,
+    };
   }
 }

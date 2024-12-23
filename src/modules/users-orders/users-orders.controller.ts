@@ -4,6 +4,7 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@/guard';
 import { RequestType } from '../_base';
 import { getUserOrdersParamsOptions } from './shared';
+import { GetUserOrdersDto } from '@/db/dto';
 
 @Controller('users')
 @ApiTags("User's Orders")
@@ -16,7 +17,7 @@ export class UsersOrdersController {
   getOrdersByUser(
     @Param('userId') userId: string,
     @Request() req: RequestType,
-  ) {
+  ): Promise<GetUserOrdersDto> {
     return this.usersOrdersService.getOrdersByUser(userId, req.user);
   }
 }

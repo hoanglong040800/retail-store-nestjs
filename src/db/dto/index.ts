@@ -9,3 +9,4 @@ export * from './admin-division.dto';
 export * from './branch.dto';
 export * from './cart.dto';
 export * from './cart-item.dto';
+export * from './users-orders.dto';

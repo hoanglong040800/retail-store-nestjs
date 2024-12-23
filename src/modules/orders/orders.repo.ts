@@ -1,10 +1,16 @@
 import { AuditUser, EOrder } from '@/db/entities';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Repository, UpdateResult } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { BaseRepo } from '../_base';
 import { CreateOrderDto, UpdateOrderDto } from './shared';
 import { CustomException } from '@/guard';
+import { UserOrderDto } from '@/db/dto';
 
 @Injectable()
 export class OrdersRepo extends BaseRepo<EOrder> {
@@ -13,6 +19,10 @@ export class OrdersRepo extends BaseRepo<EOrder> {
     private readonly repo: Repository<EOrder>,
   ) {
     super();
+  }
+
+  find(options?: FindManyOptions<EOrder>): Promise<EOrder[]> {
+    return this.repo.find(options);
   }
 
   findOne(options: FindOneOptions<EOrder>): Promise<EOrder | null> {
@@ -59,5 +69,40 @@ export class OrdersRepo extends BaseRepo<EOrder> {
     }
 
     return updatedRecord;
+  }
+
+  async getOrdersByUser(userId: string): Promise<UserOrderDto[]> {
+    if (!userId) {
+      return [];
+    }
+
+    const userOrders: EOrder[] = await this.find({
+      select: {
+        id: true,
+        createdAt: true,
+        deliveryType: true,
+        status: true,
+
+        cart: {
+          id: true,
+          cartItems: {
+            totalPrice: true,
+            productId: true,
+          },
+        },
+      },
+
+      relations: {
+        cart: {
+          cartItems: true,
+        },
+      },
+
+      where: {
+        userId,
+      },
+    });
+
+    return userOrders;
   }
 }

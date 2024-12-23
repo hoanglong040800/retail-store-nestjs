@@ -3,7 +3,9 @@ import { ECartItem } from '@/db/entities';
 import { DeliveryTypeEnum } from '@/db/enum';
 import { MutateCartItem } from '@/db/input';
 
-export const calculateSubTotal = (cartItems: ECartItem[]): number => {
+export const calculateSubTotal = (
+  cartItems: Pick<ECartItem, 'totalPrice'>[],
+): number => {
   if (!cartItems || cartItems.length === 0) {
     return 0;
   }
