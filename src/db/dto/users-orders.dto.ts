@@ -1,5 +1,5 @@
 import { OrderDto } from './order.dto';
-import { IBase } from '@/db/interface';
+import { IBase } from '../interface';
 
 export type UserOrderDto = Pick<
   Required<OrderDto>,
