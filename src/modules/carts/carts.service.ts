@@ -7,12 +7,7 @@ import { SignedTokenUser } from '../auth/auth.type';
 import { CustomException } from '@/guard';
 import { CartItemsService } from '../cart-items';
 import { CartCalculationDto, CartDto } from '@/db/dto';
-import {
-  UpdateCartDto,
-  calculateCartTotalAmount,
-  calculateShippingFee,
-  calculateSubTotal,
-} from './shared';
+import { UpdateCartDto, calculateCart } from './shared';
 import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
@@ -198,25 +193,6 @@ export class CartsService {
     cartItems: ECartItem[] | undefined,
     { deliveryType }: { deliveryType: DeliveryTypeEnum },
   ): CartCalculationDto {
-    if (!cartItems) {
-      return {
-        subTotal: 0,
-        shippingFee: 0,
-        totalAmount: 0,
-      };
-    }
-
-    const subTotal = calculateSubTotal(cartItems);
-    const shippingFee = calculateShippingFee(deliveryType);
-    const totalAmount = calculateCartTotalAmount({
-      subTotal,
-      shippingFee,
-    });
-
-    return {
-      subTotal,
-      shippingFee,
-      totalAmount,
-    };
+    return calculateCart(cartItems, { deliveryType });
   }
 }

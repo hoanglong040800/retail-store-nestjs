@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { AfterLoad, Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { IOrder } from '../interface';
 import { DeliveryTypeEnum, OrderStatusEnum, PaymentMethodEnum } from '../enum';
 import { ECart } from './cart.entity';
@@ -6,6 +6,9 @@ import { EBase } from './base.entity';
 import { EUser } from './user.entity';
 import { EBranch } from './branch.entity';
 import { EAdminDivision } from './admin-division-hierarchy.entity';
+import { CartCalculationDto } from '../dto';
+import { calculateCart } from '@/modules/carts/shared';
+import { ECartItem } from './cart-item.entity';
 
 @Entity('orders')
 export class EOrder extends EBase implements IOrder {
@@ -30,6 +33,14 @@ export class EOrder extends EBase implements IOrder {
     enum: DeliveryTypeEnum,
   })
   deliveryType?: DeliveryTypeEnum;
+
+  calculation?: CartCalculationDto;
+  @AfterLoad()
+  getCartCalculation() {
+    this.calculation = calculateCart(this.cart?.cartItems as ECartItem[], {
+      deliveryType: this.deliveryType as DeliveryTypeEnum,
+    });
+  }
 
   // ---- RELATIONSHIP FIELDS (need these so typeorm can save) (avoid violate not-null constraint) --------
 
@@ -83,5 +94,6 @@ export class EOrder extends EBase implements IOrder {
   branch: EBranch;
 
   @OneToOne(() => EAdminDivision, (adminDivision) => adminDivision.orders)
+  @JoinColumn({ name: 'delivery_ward_id', referencedColumnName: 'id' })
   deliveryWard?: EAdminDivision;
 }

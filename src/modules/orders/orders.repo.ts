@@ -11,6 +11,7 @@ import { BaseRepo } from '../_base';
 import { CreateOrderDto, UpdateOrderDto } from './shared';
 import { CustomException } from '@/guard';
 import { UserOrderDto } from '@/db/dto';
+import { OrderDto } from '@/db/dto/order.dto';
 
 @Injectable()
 export class OrdersRepo extends BaseRepo<EOrder> {
@@ -104,5 +105,46 @@ export class OrdersRepo extends BaseRepo<EOrder> {
     });
 
     return userOrders as UserOrderDto[];
+  }
+
+  async getOrderByUser({
+    userId,
+    orderId,
+  }: {
+    userId: string;
+    orderId: string;
+  }): Promise<OrderDto> {
+    if (!userId || !orderId) {
+      throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    const result = await this.findOne({
+      relations: {
+        cart: {
+          cartItems: {
+            product: {
+              category: true,
+            },
+          },
+        },
+
+        deliveryWard: {
+          parentDivision: {
+            parentDivision: true,
+          },
+        },
+      },
+
+      where: {
+        userId,
+        id: orderId,
+      },
+    });
+
+    if (!result) {
+      throw new CustomException('ORDER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    return result;
   }
 }
