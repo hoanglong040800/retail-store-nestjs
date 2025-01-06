@@ -45,5 +45,6 @@ export enum PaymentActionEnum {
 }
 
 export enum OrderActionEnum {
+  editCart = 'editCart',
   cancel = 'cancel',
 }
