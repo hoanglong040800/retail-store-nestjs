@@ -7,6 +7,8 @@ import { CartDto } from './cart.dto';
 import { UserDto } from './user.dto';
 
 export class OrderDto extends BaseDto implements IOrder {
+  createdAt?: Date;
+
   status?: OrderStatusEnum;
   address?: string;
   deliveryType?: DeliveryTypeEnum;

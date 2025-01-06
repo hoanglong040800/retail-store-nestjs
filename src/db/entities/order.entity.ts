@@ -2,7 +2,7 @@ import { AfterLoad, Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { IOrder } from '../interface';
 import { DeliveryTypeEnum, OrderStatusEnum, PaymentMethodEnum } from '../enum';
 import { ECart } from './cart.entity';
-import { EBase } from './base.entity';
+import { EBaseFull } from './base.entity';
 import { EUser } from './user.entity';
 import { EBranch } from './branch.entity';
 import { EAdminDivision } from './admin-division-hierarchy.entity';
@@ -11,7 +11,7 @@ import { calculateCart } from '@/modules/carts/shared';
 import { ECartItem } from './cart-item.entity';
 
 @Entity('orders')
-export class EOrder extends EBase implements IOrder {
+export class EOrder extends EBaseFull implements IOrder {
   @Column({
     name: 'status',
     type: 'enum',
