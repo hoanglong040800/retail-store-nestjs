@@ -10,7 +10,11 @@ import { BranchesService } from '../branches';
 import { convertCartItemsToMutateCartItems } from '../carts/shared';
 import { EOrder } from '@/db/entities';
 import { CreateOrderDto } from '../orders/shared';
-import { OrderStatusEnum, PaymentMethodEnum } from '@/db/enum';
+import {
+  DeliveryTypeEnum,
+  OrderStatusEnum,
+  PaymentMethodEnum,
+} from '@/db/enum';
 import { OrdersService } from '../orders';
 import { PaymentsService } from '../payments';
 import { getOrderStatus } from '../orders/shared/orders.utils';
@@ -66,6 +70,11 @@ export class CheckoutService {
         {
           deliveryWardId: body.deliveryWardId,
           branchId: deliveryBranch.id,
+
+          address:
+            body.deliveryType === DeliveryTypeEnum.delivery
+              ? body.address
+              : undefined,
         },
         user,
       ),
