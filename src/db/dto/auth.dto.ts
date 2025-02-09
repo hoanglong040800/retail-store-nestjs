@@ -10,10 +10,10 @@ export class LoginUserDto implements IUser {
   email: string;
   firstName?: string;
   lastName?: string;
+  address?: string;
   cartId: string;
   branchId?: string;
   deliveryWard?: AdminDivisionDto;
-  address?: string;
 }
 
 export class LoginDto {

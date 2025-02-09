@@ -161,6 +161,7 @@ export class AuthService {
       cartId: userCart.id,
       branchId: existUser.branchId,
       deliveryWard: existUser.deliveryWard,
+      address: existUser.address,
     };
 
     return {
