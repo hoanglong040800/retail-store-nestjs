@@ -23,9 +23,9 @@ import { UsersOrdersModule } from './modules/users-orders/users-orders.module';
     DbModule,
 
     // route. should order by name -> swagger show based on order
+    CheckoutModule,
     UsersOrdersModule,
     PaymentsModule,
-    CheckoutModule,
     AuthModule,
     AdminDivisionsModule,
     BranchesAdminDivisionModule,

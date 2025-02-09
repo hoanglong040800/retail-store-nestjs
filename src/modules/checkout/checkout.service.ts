@@ -8,13 +8,14 @@ import { CartsService } from '../carts';
 import { CartItemsService } from '../cart-items';
 import { BranchesService } from '../branches';
 import { convertCartItemsToMutateCartItems } from '../carts/shared';
-import { EBranch, EOrder } from '@/db/entities';
+import { EOrder } from '@/db/entities';
 import { CreateOrderDto } from '../orders/shared';
 import { OrderStatusEnum, PaymentMethodEnum } from '@/db/enum';
-import { OrdersRepo, OrdersService } from '../orders';
+import { OrdersService } from '../orders';
 import { PaymentsService } from '../payments';
 import { getOrderStatus } from '../orders/shared/orders.utils';
 import Stripe from 'stripe';
+import { UsersService } from '../users';
 
 @Injectable()
 export class CheckoutService {
@@ -24,7 +25,7 @@ export class CheckoutService {
     private readonly branchesSrv: BranchesService,
     private readonly ordersSrv: OrdersService,
     private readonly paymentsSrv: PaymentsService,
-    private readonly ordersRepo: OrdersRepo,
+    private readonly usersSrv: UsersService,
   ) {}
 
   // GUIDE: MUST not use try catch because transactional already have try catch to rollback
@@ -41,7 +42,11 @@ export class CheckoutService {
       );
     }
 
-    const userCart = await this.cartsSrv.getUserCart(user.id);
+    const [userCart, deliveryBranch] = await Promise.all([
+      this.cartsSrv.getUserCart(user.id),
+
+      this.branchesSrv.getBranchByWardId(body.deliveryWardId),
+    ]);
 
     const mutateCartItems: MutateCartItem[] = convertCartItemsToMutateCartItems(
       userCart.cartItems,
@@ -55,7 +60,18 @@ export class CheckoutService {
       );
     }
 
-    await this.cartItemSrv.addMultiCartItems(mutateCartItems, userCart, user);
+    await Promise.all([
+      this.usersSrv.update(
+        user.id,
+        {
+          deliveryWardId: body.deliveryWardId,
+          branchId: deliveryBranch.id,
+        },
+        user,
+      ),
+
+      this.cartItemSrv.addMultiCartItems(mutateCartItems, userCart, user),
+    ]);
 
     const cartCalculation: CartCalculationDto = this.cartsSrv.calculateCart(
       userCart.cartItems,
@@ -70,10 +86,6 @@ export class CheckoutService {
         orderStatus: OrderStatusEnum.pending,
         paymentMethod: body.paymentMethod,
       });
-
-    const deliveryBranch: EBranch = await this.branchesSrv.getBranchByWardId(
-      body.deliveryWardId,
-    );
 
     const orderStatus: OrderStatusEnum = getOrderStatus({
       curStatus: OrderStatusEnum.pending,

@@ -1,9 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { UsersRepo } from './users.repo';
-import { ECart, EUser } from '@/db/entities';
+import { AuditUser, ECart, EUser } from '@/db/entities';
 import { FindOneOptions } from 'typeorm';
 import { CartsService } from '../carts';
-import { UserDto } from '@/db/dto';
+import { UpdateUserDto, UserDto } from '@/db/dto';
 import { CustomException } from '@/guard';
 
 @Injectable()
@@ -54,5 +54,17 @@ export class UsersService {
     } catch (error) {
       return null;
     }
+  }
+
+  async update(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+    auditUser: AuditUser,
+  ): Promise<EUser> {
+    if (!userId || !updateUserDto) {
+      throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.usersRepo.update(userId, updateUserDto, auditUser);
   }
 }

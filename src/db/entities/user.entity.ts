@@ -71,11 +71,13 @@ export class EUser extends EBase implements IUser {
   orders?: EOrder[];
 
   @ManyToOne(() => EBranch, (branch) => branch.users, { nullable: true })
+  @JoinColumn({ name: 'branch_id', referencedColumnName: 'id' })
   branch?: EBranch;
 
   @ManyToOne(() => EAdminDivision, (adminDivision) => adminDivision.users, {
     nullable: true,
   })
+  @JoinColumn({ name: 'delivery_ward_id', referencedColumnName: 'id' })
   deliveryWard?: EAdminDivision;
 }
 

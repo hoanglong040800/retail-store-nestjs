@@ -27,7 +27,7 @@ export class AuthController {
     },
   })
   @Post('/login')
-  async regsiter(@Body() body: LoginBody): Promise<LoginDto> {
+  async login(@Body() body: LoginBody): Promise<LoginDto> {
     return await this.authSrv.login(body);
   }
 

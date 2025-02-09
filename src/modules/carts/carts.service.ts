@@ -23,7 +23,7 @@ export class CartsService {
     cartId,
   }: {
     userId: string;
-    cartId?: string;
+    cartId?: string | null;
   }): Promise<ECart> {
     const userActiveCart = await this.repo.findOne({
       relations: {
@@ -84,7 +84,9 @@ export class CartsService {
 
     const userCart: ECart = await this.getOrCreateUserCart({
       userId: user.id,
-      cartId,
+
+      // allow to handle without cart id -> faster testing
+      cartId: cartId === 'null' ? null : cartId,
     });
 
     if (!userCart) {
