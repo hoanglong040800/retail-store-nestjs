@@ -1,8 +1,10 @@
-import { Entity, Column, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
 import { EBase } from './base.entity';
 import { IUser } from '../interface';
 import { ECart } from './cart.entity';
 import { EOrder } from './order.entity';
+import { EBranch } from './branch.entity';
+import { EAdminDivision } from './admin-division-hierarchy.entity';
 
 @Entity('users')
 export class EUser extends EBase implements IUser {
@@ -46,6 +48,20 @@ export class EUser extends EBase implements IUser {
   })
   refreshToken?: string;
 
+  @Column({
+    name: 'branch_id',
+    type: 'uuid',
+    nullable: true,
+  })
+  branchId?: string;
+
+  @Column({
+    name: 'delivery_ward_id',
+    type: 'uuid',
+    nullable: true,
+  })
+  deliveryWardId?: string;
+
   // ------ RELATIONS ------
   @OneToMany(() => ECart, (cart) => cart.user, { nullable: true })
   @JoinColumn({ name: 'id', referencedColumnName: 'user_id' })
@@ -53,6 +69,14 @@ export class EUser extends EBase implements IUser {
 
   @OneToMany(() => EOrder, (order) => order.user, { nullable: true })
   orders?: EOrder[];
+
+  @ManyToOne(() => EBranch, (branch) => branch.users, { nullable: true })
+  branch?: EBranch;
+
+  @ManyToOne(() => EAdminDivision, (adminDivision) => adminDivision.users, {
+    nullable: true,
+  })
+  deliveryWard?: EAdminDivision;
 }
 
 export class AuditUser implements IUser {

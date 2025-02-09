@@ -6,4 +6,6 @@ export interface IUser extends IBase {
   lastName?: string;
   password?: string;
   refreshToken?: string;
+  branchId?: string;
+  deliveryWardId?: string;
 }
