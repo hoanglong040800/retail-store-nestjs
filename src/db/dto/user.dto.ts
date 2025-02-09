@@ -1,7 +1,5 @@
-import { StringFieldOptional, UUIDFieldOptional } from '@/decorators';
 import { IUser } from '../interface';
 import { BaseDto } from './base.dto';
-import { IsEmail } from 'class-validator';
 
 export class UserDto extends BaseDto implements IUser {
   email: string;
@@ -17,24 +15,11 @@ export class UserDto extends BaseDto implements IUser {
 export class UpdateUserDto implements IUser {
   createdBy?: string;
   updatedBy?: string;
-
-  @StringFieldOptional()
-  @IsEmail()
   email?: string;
-
-  @StringFieldOptional()
   firstName?: string;
-
-  @StringFieldOptional()
   lastName?: string;
-
-  @StringFieldOptional()
   refreshToken?: string;
-
-  @UUIDFieldOptional()
   branchId?: string;
-
-  @UUIDFieldOptional()
   deliveryWardId?: string;
 }
 
