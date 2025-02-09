@@ -62,6 +62,14 @@ export class EUser extends EBase implements IUser {
   })
   deliveryWardId?: string;
 
+  @Column({
+    name: 'address',
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  address?: string;
+
   // ------ RELATIONS ------
   @OneToMany(() => ECart, (cart) => cart.user, { nullable: true })
   @JoinColumn({ name: 'id', referencedColumnName: 'user_id' })

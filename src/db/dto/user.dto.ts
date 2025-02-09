@@ -10,6 +10,7 @@ export class UserDto extends BaseDto implements IUser {
   cartId?: string;
   branchId?: string;
   deliveryWardId?: string;
+  address?: string;
 }
 
 export class UpdateUserDto implements IUser {
@@ -21,6 +22,7 @@ export class UpdateUserDto implements IUser {
   refreshToken?: string;
   branchId?: string;
   deliveryWardId?: string;
+  address?: string;
 }
 
 export class CreateUserDto implements IUser {

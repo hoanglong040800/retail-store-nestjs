@@ -8,4 +8,5 @@ export interface IUser extends IBase {
   refreshToken?: string;
   branchId?: string;
   deliveryWardId?: string;
+  address?: string;
 }
