@@ -121,8 +121,16 @@ export class AuthService {
         'firstName',
         'lastName',
         'branchId',
-        'deliveryWardId',
+        'deliveryWard',
       ],
+
+      relations: {
+        deliveryWard: {
+          parentDivision: {
+            parentDivision: true,
+          },
+        },
+      },
     });
 
     if (!existUser?.password || !existUser?.id) {
@@ -151,7 +159,7 @@ export class AuthService {
       lastName: existUser.lastName,
       cartId: userCart.id,
       branchId: existUser.branchId,
-      deliveryWardId: existUser.deliveryWardId,
+      deliveryWard: existUser.deliveryWard,
     };
 
     return {
