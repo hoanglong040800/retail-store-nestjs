@@ -122,6 +122,7 @@ export class AuthService {
         'lastName',
         'branchId',
         'deliveryWard',
+        'address',
       ],
 
       relations: {
