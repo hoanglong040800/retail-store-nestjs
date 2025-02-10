@@ -66,5 +66,23 @@ describe('Orders Utils', () => {
         expect(result).toBe(expected);
       }),
     );
+
+    it('should return curStatus when param is falsy', () => {
+      const result = getOrderStatus({
+        curStatus: undefined as any,
+        paymentMethod: undefined as any,
+      });
+
+      expect(result).toBe(undefined);
+    });
+
+    it('should return curStatus when cant find next status', () => {
+      const result = getOrderStatus({
+        curStatus: OrderStatusEnum.pending,
+        paymentMethod: 'random' as any,
+      });
+
+      expect(result).toBe(OrderStatusEnum.pending);
+    });
   });
 });
