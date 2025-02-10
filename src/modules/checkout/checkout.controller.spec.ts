@@ -3,8 +3,9 @@ import { CheckoutController } from './checkout.controller';
 import { CheckoutService } from './checkout.service';
 import { CheckoutDto } from '@/db/dto';
 import { mockRequest } from '@/constants';
-import { DeliveryTypeEnum } from '@/db/enum';
+import { DeliveryTypeEnum, PaymentMethodEnum } from '@/db/enum';
 import { AuthGuard } from '@/guard';
+import { CheckoutBody } from '@/db/input';
 
 describe('CheckoutController', () => {
   let controller: CheckoutController;
@@ -46,17 +47,16 @@ describe('CheckoutController', () => {
         },
       };
 
+      const body: CheckoutBody = {
+        deliveryType: DeliveryTypeEnum.delivery,
+        address: 'address',
+        deliveryWardId: 'deliveryWardId',
+        paymentMethod: PaymentMethodEnum.cash,
+      };
+
       jest.spyOn(checkoutSrv, 'checkout').mockResolvedValueOnce(expectedResult);
 
-      const result = await controller.checkout(
-        {
-          deliveryType: DeliveryTypeEnum.delivery,
-
-          address: 'address',
-          deliveryWardId: 'deliveryWardId',
-        },
-        mockRequest,
-      );
+      const result = await controller.checkout(body, mockRequest);
 
       expect(result).toEqual(expectedResult);
     });

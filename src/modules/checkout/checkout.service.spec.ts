@@ -6,17 +6,25 @@ import { BranchesService } from '../branches';
 import { CreateOrderDto, OrdersService } from '../orders';
 import { CheckoutBody, MutateCartItem } from '@/db/input';
 import { SignedTokenUser } from '../auth';
-import { DeliveryTypeEnum, OrderStatusEnum } from '@/db/enum';
+import {
+  DeliveryTypeEnum,
+  OrderStatusEnum,
+  PaymentMethodEnum,
+} from '@/db/enum';
 import { mockSignedTokenUser } from '@/constants';
-import { EBranch, ECart, EOrder } from '@/db/entities';
+import { EBranch, ECart, EOrder, EUser } from '@/db/entities';
 import * as cartUtils from '../carts/shared/carts.util';
-import { CheckoutDto } from '@/db/dto';
+import { CartCalculationDto, CheckoutDto } from '@/db/dto';
+import { PaymentsService } from '../payments';
+import { UsersService } from '../users';
 
 describe('CheckoutService', () => {
   let service: CheckoutService;
   let cartsSrv: CartsService;
   let branchesSrv: BranchesService;
   let ordersSrv: OrdersService;
+  let paymentsSrv: PaymentsService;
+  let usersSrv: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -51,6 +59,21 @@ describe('CheckoutService', () => {
             createOrder: jest.fn(),
           },
         },
+
+        {
+          provide: PaymentsService,
+          useValue: {
+            preAuth: jest.fn(),
+            charge: jest.fn(),
+          },
+        },
+
+        {
+          provide: UsersService,
+          useValue: {
+            update: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -58,6 +81,8 @@ describe('CheckoutService', () => {
     cartsSrv = module.get<CartsService>(CartsService);
     branchesSrv = module.get<BranchesService>(BranchesService);
     ordersSrv = module.get<OrdersService>(OrdersService);
+    paymentsSrv = module.get<PaymentsService>(PaymentsService);
+    usersSrv = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
@@ -69,8 +94,11 @@ describe('CheckoutService', () => {
     let spyConvertCartItemsToMutateCartItems: jest.SpyInstance;
     let spyGetBranchByWardId: jest.SpyInstance;
     let spyCreateOrder: jest.SpyInstance;
+    let spyUserUpdate: jest.SpyInstance;
+    let spyCalculateCart: jest.SpyInstance;
 
     const defaultMockBody: CheckoutBody = {
+      paymentMethod: PaymentMethodEnum.cash,
       deliveryType: DeliveryTypeEnum.delivery,
       deliveryWardId: 'aaf69b41-12e9-4daa-ba61-946e1bd227a4',
       address: '123 Bob Street',
@@ -104,9 +132,19 @@ describe('CheckoutService', () => {
       wardId: 'wardId',
     };
 
+    const defaultCartCalculation: CartCalculationDto = {
+      subTotal: 10,
+      shippingFee: 0,
+      totalAmount: 10,
+    };
+
     const defaultCheckoutOrder: EOrder = {
       id: 'orderId',
       branch: defaultDeliveryBranch,
+
+      getCartCalculation: jest.fn(),
+
+      calculation: defaultCartCalculation,
     };
 
     // UT: mock default value
@@ -119,9 +157,17 @@ describe('CheckoutService', () => {
         .spyOn(cartUtils, 'convertCartItemsToMutateCartItems')
         .mockReturnValue(defaultMockMutateCartItems);
 
+      spyUserUpdate = jest
+        .spyOn(usersSrv, 'update')
+        .mockResolvedValue({} as EUser);
+
       spyGetBranchByWardId = jest
         .spyOn(branchesSrv, 'getBranchByWardId')
         .mockResolvedValue(defaultDeliveryBranch);
+
+      spyCalculateCart = jest
+        .spyOn(cartsSrv, 'calculateCart')
+        .mockReturnValue(defaultCartCalculation);
 
       spyCreateOrder = jest
         .spyOn(ordersSrv, 'createOrder')
@@ -153,7 +199,8 @@ describe('CheckoutService', () => {
         branchId: defaultDeliveryBranch.id,
         address: defaultMockBody.address,
         deliveryWardId: defaultMockBody.deliveryWardId,
-        status: OrderStatusEnum.pending,
+        paymentMethod: defaultMockBody.paymentMethod,
+        status: OrderStatusEnum.awaitingFulfillment,
       };
 
       const expectedResult: CheckoutDto = {
@@ -172,12 +219,29 @@ describe('CheckoutService', () => {
         mockSignedTokenUser,
       );
       expect(spyGetUserCart).toHaveBeenCalledWith(mockSignedTokenUser.id);
+
+      expect(spyUserUpdate).toHaveBeenCalledWith(
+        mockSignedTokenUser.id,
+        {
+          deliveryWardId: defaultMockBody.deliveryWardId,
+          address: defaultMockBody.address,
+          branchId: defaultDeliveryBranch.id,
+        },
+        mockSignedTokenUser,
+      );
+
+      expect(spyCalculateCart).toHaveBeenCalledWith(
+        defaultMockUserCart.cartItems,
+        { deliveryType: defaultMockBody.deliveryType },
+      );
+
       expect(spyConvertCartItemsToMutateCartItems).toHaveBeenCalledWith(
         defaultMockUserCart.cartItems,
       );
       expect(spyGetBranchByWardId).toHaveBeenCalledWith(
         defaultMockBody.deliveryWardId,
       );
+
       expect(result).toStrictEqual(expectedResult);
     });
   });
