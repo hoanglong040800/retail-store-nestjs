@@ -5,12 +5,13 @@ import { CartsService } from '../carts';
 
 describe('UsersOrdersService', () => {
   let service: UsersOrdersService;
-  let ordersRepo: OrdersRepo
-  let cartsSrv: CartsService
+  let ordersRepo: OrdersRepo;
+  let cartsSrv: CartsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersOrdersService, 
+      providers: [
+        UsersOrdersService,
         {
           provide: OrdersRepo,
           useValue: {
@@ -19,13 +20,12 @@ describe('UsersOrdersService', () => {
           },
         },
 
-
         {
           provide: CartsService,
           useValue: {
             calculateCart: jest.fn(),
           },
-        }
+        },
       ],
     }).compile();
 
@@ -36,5 +36,7 @@ describe('UsersOrdersService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+    expect(ordersRepo).toBeDefined();
+    expect(cartsSrv).toBeDefined();
   });
 });

@@ -27,5 +27,6 @@ describe('PaymentsService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+    expect(stripeSrv).toBeDefined();
   });
 });

@@ -12,11 +12,12 @@ import {
   PaymentMethodEnum,
 } from '@/db/enum';
 import { mockSignedTokenUser } from '@/constants';
-import { EBranch, ECart, EOrder, EUser } from '@/db/entities';
+import { AuditUser, EBranch, ECart, EOrder, EUser } from '@/db/entities';
 import * as cartUtils from '../carts/shared/carts.util';
-import { CartCalculationDto, CheckoutDto } from '@/db/dto';
+import { CartCalculationDto, CheckoutDto, UpdateUserDto } from '@/db/dto';
 import { PaymentsService } from '../payments';
 import { UsersService } from '../users';
+import { CustomException } from '@/guard';
 
 describe('CheckoutService', () => {
   let service: CheckoutService;
@@ -57,6 +58,7 @@ describe('CheckoutService', () => {
           provide: OrdersService,
           useValue: {
             createOrder: jest.fn(),
+            updateOrderStatus: jest.fn(),
           },
         },
 
@@ -191,6 +193,35 @@ describe('CheckoutService', () => {
       ).rejects.toThrow();
     });
 
+    it('should throw error when cart items empty', async () => {
+      spyConvertCartItemsToMutateCartItems.mockReturnValue([]);
+
+      await expect(
+        service.checkout(defaultMockBody, mockSignedTokenUser),
+      ).rejects.toThrow(CustomException);
+    });
+
+    it('should not save address when not delivery', async () => {
+      const mockBody: CheckoutBody = {
+        ...defaultMockBody,
+        deliveryType: DeliveryTypeEnum.pickup,
+      };
+
+      const expectedResult: [string, UpdateUserDto, AuditUser] = [
+        mockSignedTokenUser.id,
+        {
+          deliveryWardId: mockBody.deliveryWardId,
+          branchId: defaultDeliveryBranch.id,
+          address: undefined,
+        },
+        mockSignedTokenUser,
+      ];
+
+      await service.checkout(mockBody, mockSignedTokenUser);
+
+      expect(spyUserUpdate).toHaveBeenCalledWith(...expectedResult);
+    });
+
     it('should return correct result when all params valid', async () => {
       const createOrderDto: CreateOrderDto = {
         userId: mockSignedTokenUser.id,
@@ -243,6 +274,50 @@ describe('CheckoutService', () => {
       );
 
       expect(result).toStrictEqual(expectedResult);
+    });
+  });
+
+  describe('chargeAfterCheckout', () => {
+    const defaultParams: Parameters<CheckoutService['chargeAfterCheckout']> = [
+      {
+        orderId: 'orderId',
+        curStatus: OrderStatusEnum.awaitingFulfillment,
+        paymentMethod: PaymentMethodEnum.cash,
+        auditUser: mockSignedTokenUser,
+        paymentIntentId: 'paymentIntentId',
+        stripePaymentMethodId: 'stripePaymentMethodId',
+      },
+    ];
+
+    const defaultNewOrder = {
+      id: 'orderId',
+      status: OrderStatusEnum.awaitingFulfillment,
+    } as EOrder;
+
+    beforeEach(() => {
+      jest.spyOn(paymentsSrv, 'charge').mockResolvedValue({} as any);
+
+      jest
+        .spyOn(ordersSrv, 'updateOrderStatus')
+        .mockResolvedValue(defaultNewOrder);
+    });
+
+    it('should return null when params not found', async () => {
+      for (const paramKey in defaultParams[0]) {
+        const newParams = {
+          ...defaultParams[0],
+          [paramKey]: null,
+        };
+
+        const result = await service.chargeAfterCheckout(newParams);
+        expect(result).toBeNull();
+      }
+    });
+
+    it('should return newOrder when params valid', async () => {
+      const result = await service.chargeAfterCheckout(...defaultParams);
+
+      expect(result).toStrictEqual(defaultNewOrder);
     });
   });
 });

@@ -286,7 +286,7 @@ describe('AuthService', () => {
           deliveryWard: {
             id: '789',
             name: 'Ward 1',
-          }
+          },
         },
       };
 
