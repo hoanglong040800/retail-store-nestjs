@@ -27,6 +27,7 @@ const config: Config.InitialOptions = {
   //   },
   // },
   coverageDirectory: '../coverage',
+  setupFiles: ['<rootDir>/config/jest-env.setup.ts'],
   setupFilesAfterEnv: ['<rootDir>/config/jest.setup.ts'],
 };
 
