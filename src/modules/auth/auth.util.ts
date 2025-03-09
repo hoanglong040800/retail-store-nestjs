@@ -7,7 +7,9 @@ export function calculateExpireTime(
   expiresIn: string | number,
   unit: moment.unitOfTime.DurationConstructor = JwtTokenUnit,
 ): Date {
-  if (isNaN(+expiresIn)) {
+  const parsedExpiresIn = Number(expiresIn);
+
+  if (isNaN(parsedExpiresIn)) {
     throw new CustomException(
       'INTERNAL_SERVER_ERROR',
       HttpStatus.INTERNAL_SERVER_ERROR,
@@ -16,7 +18,7 @@ export function calculateExpireTime(
   }
 
   const now = moment();
-  const expireTime = now.add(expiresIn, unit);
+  const expireTime = now.add(parsedExpiresIn, unit);
 
   return expireTime.toDate();
 }

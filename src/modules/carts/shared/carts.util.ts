@@ -3,7 +3,9 @@ import { ECartItem } from '@/db/entities';
 import { DeliveryTypeEnum } from '@/db/enum';
 import { MutateCartItem } from '@/db/input';
 
-export const calculateSubTotal = (cartItems: ECartItem[]): number => {
+export const calculateSubTotal = (
+  cartItems: Pick<ECartItem, 'totalPrice'>[],
+): number => {
   if (!cartItems || cartItems.length === 0) {
     return 0;
   }
@@ -67,4 +69,30 @@ export const convertCartItemsToMutateCartItems = (
   );
 
   return mutateCartItems;
+};
+
+export const calculateCart = (
+  cartItems: ECartItem[] | undefined,
+  { deliveryType }: { deliveryType: DeliveryTypeEnum },
+): CartCalculationDto => {
+  if (!cartItems) {
+    return {
+      subTotal: 0,
+      shippingFee: 0,
+      totalAmount: 0,
+    };
+  }
+
+  const subTotal = calculateSubTotal(cartItems);
+  const shippingFee = calculateShippingFee(deliveryType);
+  const totalAmount = calculateCartTotalAmount({
+    subTotal,
+    shippingFee,
+  });
+
+  return {
+    subTotal,
+    shippingFee,
+    totalAmount,
+  };
 };

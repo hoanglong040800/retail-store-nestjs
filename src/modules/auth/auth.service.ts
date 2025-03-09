@@ -114,7 +114,24 @@ export class AuthService {
 
   async login({ email, password }: LoginBody): Promise<LoginDto> {
     const existUser = await this.usersSrv.findByEmail(email, {
-      select: ['id', 'password', 'email', 'firstName', 'lastName'],
+      select: [
+        'id',
+        'password',
+        'email',
+        'firstName',
+        'lastName',
+        'branchId',
+        'deliveryWard',
+        'address',
+      ],
+
+      relations: {
+        deliveryWard: {
+          parentDivision: {
+            parentDivision: true,
+          },
+        },
+      },
     });
 
     if (!existUser?.password || !existUser?.id) {
@@ -142,6 +159,9 @@ export class AuthService {
       firstName: existUser.firstName,
       lastName: existUser.lastName,
       cartId: userCart.id,
+      branchId: existUser.branchId,
+      deliveryWard: existUser.deliveryWard,
+      address: existUser.address,
     };
 
     return {

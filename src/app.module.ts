@@ -12,6 +12,9 @@ import { CartsModule } from './modules/carts/carts.module';
 import { CartItemsModule } from './modules/cart-items/cart-items.module';
 import { CheckoutModule } from './modules/checkout';
 import { OrdersModule } from './modules/orders/orders.module';
+import { StripeModule } from './modules/stripe/stripe.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { UsersOrdersModule } from './modules/users-orders/users-orders.module';
 
 @Module({
   imports: [
@@ -21,6 +24,8 @@ import { OrdersModule } from './modules/orders/orders.module';
 
     // route. should order by name -> swagger show based on order
     CheckoutModule,
+    UsersOrdersModule,
+    PaymentsModule,
     AuthModule,
     AdminDivisionsModule,
     BranchesAdminDivisionModule,
@@ -32,6 +37,7 @@ import { OrdersModule } from './modules/orders/orders.module';
     OrdersModule,
     ProductsModule,
     UsersModule,
+    StripeModule.forRootAsync(),
   ],
   controllers: [],
   providers: [],

@@ -4,6 +4,7 @@ import { EBase } from './base.entity';
 import { IAdminDivision } from '../interface';
 import { AdminDivisionType } from '../enum';
 import { EOrder } from './order.entity';
+import { EUser } from './user.entity';
 
 @Entity('admin_division_hierarchy')
 export class EAdminDivision extends EBase implements IAdminDivision {
@@ -62,4 +63,7 @@ export class EAdminDivision extends EBase implements IAdminDivision {
 
   @OneToMany(() => EOrder, (order) => order.deliveryWard)
   orders: EOrder[];
+
+  @OneToMany(() => EUser, (user) => user.deliveryWard)
+  users: EUser[];
 }

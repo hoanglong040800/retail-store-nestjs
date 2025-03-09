@@ -3,6 +3,7 @@ import { EBase } from './base.entity';
 import { IBranch } from '../interface';
 import { EAdminDivision } from './admin-division-hierarchy.entity';
 import { EOrder } from './order.entity';
+import { EUser } from './user.entity';
 
 @Entity('branches')
 export class EBranch extends EBase implements IBranch {
@@ -59,4 +60,7 @@ export class EBranch extends EBase implements IBranch {
 
   @OneToMany(() => EOrder, (order) => order.branch)
   orders?: EOrder[];
+
+  @OneToMany(() => EUser, (user) => user.branch)
+  users?: EUser[];
 }

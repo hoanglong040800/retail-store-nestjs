@@ -1,7 +1,11 @@
-import { DeliveryTypeEnum, OrderStatusEnum } from '@/db/enum';
+import {
+  DeliveryTypeEnum,
+  OrderStatusEnum,
+  PaymentMethodEnum,
+} from '@/db/enum';
 import { IOrder } from '@/db/interface';
 import { StringFieldOptional, UUIDField } from '@/decorators';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateOrderDto implements IOrder {
   status: OrderStatusEnum;
@@ -24,8 +28,15 @@ export class CreateOrderDto implements IOrder {
 
   @UUIDField()
   deliveryWardId: string;
+
+  @IsNotEmpty()
+  @IsEnum(PaymentMethodEnum)
+  paymentMethod: PaymentMethodEnum;
 }
 
-export class UpdateOrderDto extends CreateOrderDto {
-  id: string;
+export class UpdateOrderDto {
+  @IsOptional()
+  @IsNotEmpty()
+  @IsEnum(OrderStatusEnum)
+  status?: OrderStatusEnum;
 }

@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { ENV } from '../constants';
 import {
   TypeOrmModuleAsyncOptions,
@@ -23,6 +23,10 @@ const postgresOrmOptions: TypeOrmModuleOptions = {
     trustServerCertificate: true,
   },
 };
+
+const AppDataSource = new DataSource(postgresOrmOptions as DataSourceOptions);
+// MUST export so typeorm can run migration
+export default AppDataSource;
 
 export const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
   useFactory: () => postgresOrmOptions,

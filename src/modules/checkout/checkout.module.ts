@@ -5,9 +5,18 @@ import { CartItemsModule } from '../cart-items';
 import { BranchesModule } from '../branches';
 import { CheckoutController } from './checkout.controller';
 import { OrdersModule } from '../orders';
+import { PaymentsModule } from '@/modules/payments';
+import { UsersModule } from '../users';
 
 @Module({
-  imports: [CartsModule, CartItemsModule, BranchesModule, OrdersModule],
+  imports: [
+    CartsModule,
+    CartItemsModule,
+    BranchesModule,
+    OrdersModule,
+    PaymentsModule,
+    UsersModule,
+  ],
   providers: [CheckoutService],
   controllers: [CheckoutController],
 })

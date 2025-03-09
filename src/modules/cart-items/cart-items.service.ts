@@ -6,7 +6,7 @@ import { CreateUpdateCartItemDto } from './cart-items-repo.dto';
 import { MutateCartItem } from '@/db/input';
 import { ProductsRepo } from '../products';
 import { In } from 'typeorm';
-import { keyBy } from '@/utils';
+import { checkEmptyObject, keyBy } from '@/utils';
 
 @Injectable()
 export class CartItemsService {
@@ -56,6 +56,10 @@ export class CartItemsService {
     const productsGroupById: Record<string, EProduct> =
       await this.getProductsOfCartItems(cartItems);
 
+    if (checkEmptyObject(productsGroupById)) {
+      throw new CustomException('PRODUCT_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
     const promisesAddCartItems = cartItems.map((item) =>
       this.addCartItem(
         item,
@@ -95,8 +99,12 @@ export class CartItemsService {
           },
         });
 
+    // remove fields which not in cart entity so it can insert,...
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { product: cartProduct, ...restCartItem } = cartItem;
+
     const cartItemPayload: CreateUpdateCartItemDto = {
-      ...cartItem,
+      ...restCartItem,
       cartId: cart.id,
       basePrice: product.price,
       totalPrice: this.calculateCartItem(cartItem, product),

@@ -10,6 +10,7 @@ import { LoginDto, TokenDto } from '@/db/dto';
 import * as bcrypt from 'bcrypt';
 import { CartsService } from '../carts';
 import { ENV } from '@/constants';
+import { RegisterBody } from '@/db/input';
 
 jest.mock('bcrypt', () => ({
   compareSync: jest.fn().mockImplementation(() => true),
@@ -205,7 +206,12 @@ describe('AuthService', () => {
 
   describe('register', () => {
     it('should throw error when user exists', async () => {
-      const body = { email: 'test@test.com', password: 'password' };
+      const body: RegisterBody = {
+        email: 'test@test.com',
+        password: 'password',
+        firstName: 'firstName',
+        lastName: 'lastName',
+      };
 
       usersSrv.findByEmail = jest.fn().mockResolvedValue({});
 
@@ -213,7 +219,12 @@ describe('AuthService', () => {
     });
 
     it('should return result', async () => {
-      const body = { email: 'test@test.com', password: 'password' };
+      const body: RegisterBody = {
+        email: 'test@test.com',
+        password: 'password',
+        firstName: 'firstName',
+        lastName: 'lastName',
+      };
 
       usersSrv.findByEmail = jest.fn().mockResolvedValue(null);
       jest
@@ -270,6 +281,12 @@ describe('AuthService', () => {
           firstName: 'firstName',
           lastName: 'lastName',
           cartId: 'cartId',
+          address: '123 Bob Street',
+          branchId: '456',
+          deliveryWard: {
+            id: '789',
+            name: 'Ward 1',
+          },
         },
       };
 

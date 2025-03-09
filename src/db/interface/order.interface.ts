@@ -1,4 +1,4 @@
-import { DeliveryTypeEnum, OrderStatusEnum } from '../enum';
+import { DeliveryTypeEnum, OrderStatusEnum, PaymentMethodEnum } from '../enum';
 import { IBase } from './base.interface';
 
 export interface IOrder extends IBase {
@@ -9,4 +9,5 @@ export interface IOrder extends IBase {
   cartId?: string;
   branchId?: string;
   deliveryWardId?: string;
+  paymentMethod?: PaymentMethodEnum;
 }

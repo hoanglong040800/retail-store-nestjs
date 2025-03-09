@@ -41,3 +41,45 @@ export abstract class EBase implements IBase {
   })
   id: string;
 }
+
+// used for special entity requires fetch all base fields
+export abstract class EBaseFull implements IBase {
+  @Column({
+    name: 'created_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+    select: true,
+    update: false,
+  })
+  createdAt?: Date;
+
+  @Column({
+    name: 'created_by',
+    type: 'uuid',
+    nullable: true,
+    select: false,
+  })
+  createdBy?: string;
+
+  @Column({
+    name: 'updated_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+    select: false,
+    update: false,
+  })
+  updatedAt?: Date;
+
+  @Column({
+    name: 'updated_by',
+    type: 'uuid',
+    nullable: true,
+    select: false,
+  })
+  updatedBy?: string;
+
+  @PrimaryGeneratedColumn('uuid', {
+    name: 'id',
+  })
+  id: string;
+}

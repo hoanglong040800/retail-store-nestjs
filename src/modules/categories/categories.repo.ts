@@ -14,7 +14,7 @@ export class CategoriesRepo extends BaseRepo<ECategory> {
   }
 
   @TryCatch()
-  find(options?: FindManyOptions<ECategory>) {
+  find(options?: FindManyOptions<ECategory>): Promise<ECategory[]> {
     return this.repo.find(options);
   }
 

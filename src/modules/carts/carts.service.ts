@@ -7,12 +7,7 @@ import { SignedTokenUser } from '../auth/auth.type';
 import { CustomException } from '@/guard';
 import { CartItemsService } from '../cart-items';
 import { CartCalculationDto, CartDto } from '@/db/dto';
-import {
-  UpdateCartDto,
-  calculateCartTotalAmount,
-  calculateShippingFee,
-  calculateSubTotal,
-} from './shared';
+import { UpdateCartDto, calculateCart } from './shared';
 import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
@@ -28,7 +23,7 @@ export class CartsService {
     cartId,
   }: {
     userId: string;
-    cartId?: string;
+    cartId?: string | null;
   }): Promise<ECart> {
     const userActiveCart = await this.repo.findOne({
       relations: {
@@ -37,7 +32,7 @@ export class CartsService {
 
       where: {
         ...(cartId ? { id: cartId } : {}),
-
+        status: CartStatusEnum.new,
         user: {
           id: userId,
         },
@@ -49,7 +44,7 @@ export class CartsService {
       throw new CustomException('USER_CART_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    if (userActiveCart?.status === CartStatusEnum.new) {
+    if (userActiveCart) {
       return userActiveCart;
     }
 
@@ -89,7 +84,9 @@ export class CartsService {
 
     const userCart: ECart = await this.getOrCreateUserCart({
       userId: user.id,
-      cartId,
+
+      // allow to handle without cart id -> faster testing
+      cartId: cartId === 'null' ? null : cartId,
     });
 
     if (!userCart) {
@@ -198,25 +195,6 @@ export class CartsService {
     cartItems: ECartItem[] | undefined,
     { deliveryType }: { deliveryType: DeliveryTypeEnum },
   ): CartCalculationDto {
-    if (!cartItems) {
-      return {
-        subTotal: 0,
-        shippingFee: 0,
-        totalAmount: 0,
-      };
-    }
-
-    const subTotal = calculateSubTotal(cartItems);
-    const shippingFee = calculateShippingFee(deliveryType);
-    const totalAmount = calculateCartTotalAmount({
-      subTotal,
-      shippingFee,
-    });
-
-    return {
-      subTotal,
-      shippingFee,
-      totalAmount,
-    };
+    return calculateCart(cartItems, { deliveryType });
   }
 }
