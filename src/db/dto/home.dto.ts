@@ -1,9 +1,9 @@
 import { CategoryDto } from './category.dto';
 import { ProductDto } from './product.dto';
 
-export type ProductCarouselDto = {
+export type ProductByCateDto = {
   category: CategoryDto;
-  products: ProductDto[];
+  products: TopProduct[];
 };
 
 export type TopProduct = Pick<
@@ -12,5 +12,5 @@ export type TopProduct = Pick<
 >;
 
 export type GetHomeDataDto = {
-  productCarousels: ProductCarouselDto[];
+  productCarousels: ProductByCateDto[];
 };

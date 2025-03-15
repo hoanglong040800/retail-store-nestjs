@@ -1,5 +1,5 @@
 import AppDataSource from '@/config/data-source';
-import { GetHomeDataDto, ProductCarouselDto } from '@/db/dto/home.dto';
+import { GetHomeDataDto, ProductByCateDto } from '@/db/dto/home.dto';
 import { ECategory, EProduct } from '@/db/entities';
 import { Injectable } from '@nestjs/common';
 import { TopCategory } from './shared';
@@ -18,7 +18,7 @@ export class HomeService {
     };
   }
 
-  async getProductCarousels(): Promise<ProductCarouselDto[]> {
+  async getProductCarousels(): Promise<ProductByCateDto[]> {
     // Get top 4 categories by total products sold
     const topCategories: TopCategory[] = await AppDataSource.getRepository(
       ECategory,
@@ -33,7 +33,7 @@ export class HomeService {
       .limit(4)
       .getRawMany();
 
-    const productCarousels: ProductCarouselDto[] =
+    const productCarousels: ProductByCateDto[] =
       await this.getTopProductsByCate(topCategories);
 
     return productCarousels;
@@ -42,7 +42,7 @@ export class HomeService {
   // For each category, get top 8 products
   async getTopProductsByCate(
     topCate: TopCategory[],
-  ): Promise<ProductCarouselDto[]> {
+  ): Promise<ProductByCateDto[]> {
     if (!topCate?.length) {
       return [];
     }
@@ -73,7 +73,7 @@ export class HomeService {
     fullCate: ECategory[],
     topProducts: EProduct[][],
   ) {
-    const result: ProductCarouselDto[] = topCate.map((cate, index) => {
+    const result: ProductByCateDto[] = topCate.map((cate, index) => {
       const curCate = fullCate.find((i) => i.id === cate.id);
       const producstByCate = topProducts[index];
 
@@ -99,7 +99,6 @@ export class HomeService {
         'p.price AS price',
         'p.image AS image',
         'p.unit AS unit',
-        'p.leaf_category_id AS "leafCategoryId"',
         'SUM(ci.quantity) AS totalSold',
       ])
       .innerJoin('p.cartItems', 'ci')
@@ -111,14 +110,6 @@ export class HomeService {
       .limit(8)
       .getRawMany();
 
-    const mappedResult: EProduct[] = rawResult.map((raw) => {
-      const entity = new EProduct();
-
-      Object.assign(entity, raw);
-
-      return entity;
-    });
-
-    return mappedResult;
+    return rawResult;
   }
 }
