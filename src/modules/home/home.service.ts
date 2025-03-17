@@ -47,9 +47,14 @@ export class HomeService {
       return [];
     }
 
-    const fullCate: ECategory[] = await this.cateRepo.find({
+    const fullLeafCate: ECategory[] = await this.cateRepo.find({
+      relations: {
+        parentCategory: true,
+      },
+
       where: {
         id: In(topCate.map((item) => item.id)),
+        isLeaf: true,
       },
     });
 
@@ -61,7 +66,7 @@ export class HomeService {
 
     const productCarousels = this.mapCateAndTopProducts(
       topCate,
-      fullCate,
+      fullLeafCate,
       topProducts,
     );
 
