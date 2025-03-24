@@ -5,6 +5,7 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CustomException } from '@/guard';
 import { HttpStatus } from '@nestjs/common';
 import { mapRawResultToOneEntity } from '@/utils';
+import { SearchProductDto } from '@/db/dto';
 
 export class ProductsRepo extends BaseRepo<EProduct> {
   constructor(
@@ -33,7 +34,7 @@ export class ProductsRepo extends BaseRepo<EProduct> {
   async findByName(
     name: string,
     options: { limit?: number } = {},
-  ): Promise<EProduct[]> {
+  ): Promise<SearchProductDto[]> {
     const formattedName = name.trim();
     const productAlias = 'p';
 
@@ -46,6 +47,7 @@ export class ProductsRepo extends BaseRepo<EProduct> {
       .select([
         'p.id',
         'p.name',
+        'p.image',
         'p.price',
         'p.leaf_category_id',
         `similarity(
@@ -66,6 +68,7 @@ export class ProductsRepo extends BaseRepo<EProduct> {
       productAlias,
     );
 
-    return entityResult;
+    // make sure type match with query builder
+    return entityResult as unknown as SearchProductDto[];
   }
 }
