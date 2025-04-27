@@ -25,6 +25,7 @@ const postgresOrmOptions: TypeOrmModuleOptions = {
 };
 
 const AppDataSource = new DataSource(postgresOrmOptions as DataSourceOptions);
+AppDataSource.initialize();
 // MUST export so typeorm can run migration
 export default AppDataSource;
 
