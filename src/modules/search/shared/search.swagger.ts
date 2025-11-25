@@ -19,7 +19,6 @@ const searchQueryExamples: Record<string, { value: string }> = {
   },
 };
 
-// TODO update swagger
 export const getSearchQueryOptions: ApiQueryOptions = {
   name: 'searchText',
   type: GetSearchQuery,
