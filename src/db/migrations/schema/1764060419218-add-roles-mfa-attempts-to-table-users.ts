@@ -16,7 +16,7 @@ export class AddRolesMfaAttemptsToTableUsers1764060419218
         ADD COLUMN roles user_role_enum NOT NULL DEFAULT 'shopper',
         ADD COLUMN otp_code varchar(20),
         ADD COLUMN login_attempts smallint,
-        ADD COLUMN mfa_sent_at timestamp;
+        ADD COLUMN otp_sent_at timestamp;
       `);
 
       await queryRunner.commitTransaction();
@@ -32,7 +32,7 @@ export class AddRolesMfaAttemptsToTableUsers1764060419218
             DROP COLUMN roles,
             DROP COLUMN otp_code,
             DROP COLUMN login_attempts,
-            DROP COLUMN mfa_sent_at;
+            DROP COLUMN otp_sent_at;
         `);
 
     await queryRunner.query(`

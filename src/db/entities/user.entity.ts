@@ -5,6 +5,7 @@ import { ECart } from './cart.entity';
 import { EOrder } from './order.entity';
 import { EBranch } from './branch.entity';
 import { EAdminDivision } from './admin-division-hierarchy.entity';
+import { UserRoleEnum } from '../enum/user.enum';
 
 @Entity('users')
 export class EUser extends EBase implements IUser {
@@ -69,6 +70,36 @@ export class EUser extends EBase implements IUser {
     nullable: true,
   })
   address?: string;
+
+  @Column({
+    name: 'role',
+    type: 'enum',
+    enum: UserRoleEnum,
+    default: UserRoleEnum.Shopper,
+  })
+  role?: UserRoleEnum;
+
+  @Column({
+    name: 'otp_code',
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+  })
+  otpCode?: string;
+
+  @Column({
+    name: 'login_attempts',
+    type: 'smallint',
+    nullable: true,
+  })
+  loginAttempts?: number;
+
+  @Column({
+    name: 'otp_sent_at',
+    type: 'timestamp',
+    nullable: true,
+  })
+  otpSentAt?: Date;
 
   // ------ RELATIONS ------
   @OneToMany(() => ECart, (cart) => cart.user, { nullable: true })

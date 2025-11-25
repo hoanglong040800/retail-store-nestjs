@@ -1,3 +1,4 @@
+import { UserRoleEnum } from '../enum/user.enum';
 import { IBase } from './base.interface';
 
 export interface IUser extends IBase {
@@ -9,4 +10,8 @@ export interface IUser extends IBase {
   branchId?: string;
   deliveryWardId?: string;
   address?: string;
+  role?: UserRoleEnum;
+  otpCode?: string;
+  loginAttempts?: number;
+  mfaSentAt?: Date;
 }
