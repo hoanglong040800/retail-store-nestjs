@@ -803,7 +803,10 @@ export class InitCateData1716300161672 implements MigrationInterface {
       parentId,
     };
 
-    return categoryRepo.save(payloadCate);
+    return categoryRepo.save({
+      ...payloadCate,
+      parentCategory: { id: parentId },
+    });
   }
 
   async saveLv2Categories(
