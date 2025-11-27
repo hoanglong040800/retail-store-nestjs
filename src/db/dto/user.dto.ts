@@ -1,3 +1,4 @@
+import { UserRoleEnum } from '../enum/user.enum';
 import { IUser } from '../interface';
 import { BaseDto } from './base.dto';
 
@@ -23,6 +24,7 @@ export class UpdateUserDto implements IUser {
   branchId?: string;
   deliveryWardId?: string;
   address?: string;
+  loginAttempts?: number;
 }
 
 export class CreateUserDto implements IUser {
@@ -30,4 +32,5 @@ export class CreateUserDto implements IUser {
   password: string;
   firstName?: string;
   lastName?: string;
+  role: UserRoleEnum;
 }

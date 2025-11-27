@@ -1,8 +1,19 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { LoginDto, RefreshTokenDto, RegisterDto } from '@/db/dto';
-import { LoginBody, RefreshTokenBody, RegisterBody } from '@/db/input';
+import {
+  LoginAdminDto,
+  LoginDto,
+  RefreshTokenDto,
+  RegisterDto,
+} from '@/db/dto';
+import {
+  LoginAdminBody,
+  LoginBody,
+  RefreshTokenBody,
+  RegisterBody,
+} from '@/db/input';
+import { loginBackOfficeParamOptions } from './auth.swagger';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -29,6 +40,12 @@ export class AuthController {
   @Post('/login')
   async login(@Body() body: LoginBody): Promise<LoginDto> {
     return await this.authSrv.login(body);
+  }
+
+  @ApiBody(loginBackOfficeParamOptions)
+  @Post('/login-back-office')
+  async loginBackOffice(@Body() body: LoginAdminBody): Promise<LoginAdminDto> {
+    return await this.authSrv.loginBackOffice(body);
   }
 
   @Post('/refresh-token')

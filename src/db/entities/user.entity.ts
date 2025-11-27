@@ -76,8 +76,9 @@ export class EUser extends EBase implements IUser {
     type: 'enum',
     enum: UserRoleEnum,
     default: UserRoleEnum.Shopper,
+    nullable: false,
   })
-  role?: UserRoleEnum;
+  role: UserRoleEnum;
 
   @Column({
     name: 'otp_code',

@@ -5,6 +5,7 @@ import { FindOneOptions } from 'typeorm';
 import { CartsService } from '../carts';
 import { UpdateUserDto, UserDto } from '@/db/dto';
 import { CustomException } from '@/guard';
+import { UserRoleEnum } from '@/db/enum/user.enum';
 
 @Injectable()
 export class UsersService {
@@ -49,6 +50,7 @@ export class UsersService {
         ...(options || {}),
         where: {
           email,
+          ...(options?.where || {}),
         },
       });
     } catch (error) {
@@ -66,5 +68,33 @@ export class UsersService {
     }
 
     return this.usersRepo.update(userId, updateUserDto, auditUser);
+  }
+
+  async resetLoginAttempts(userId: string): Promise<boolean> {
+    await this.usersRepo.update(userId, { loginAttempts: 0 }, { id: userId });
+    return true;
+  }
+
+  async getAdminUserForLogin(email: string): Promise<EUser> {
+    const user = await this.findByEmail(email, {
+      select: [
+        'id',
+        'password',
+        'email',
+        'firstName',
+        'lastName',
+        'role',
+        'loginAttempts',
+      ],
+      where: {
+        role: UserRoleEnum.Admin,
+      },
+    });
+
+    if (!user) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 }

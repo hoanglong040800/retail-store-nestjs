@@ -32,6 +32,15 @@ export class LoginBody implements IUser {
   password: string;
 }
 
+export class LoginAdminBody implements IUser {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
 export class RefreshTokenBody {
   @IsNotEmptyObject()
   @IsObject()

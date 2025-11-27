@@ -41,7 +41,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       statusCode.toString().startsWith('4') ||
       statusCode === HttpStatus.INTERNAL_SERVER_ERROR
     ) {
-      this.logger.error(`ERROR: ${message}\n`, exception.stack);
+      console.trace(exception);
     }
 
     response.status(statusCode).json({

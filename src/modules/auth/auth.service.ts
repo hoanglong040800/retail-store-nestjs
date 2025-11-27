@@ -1,5 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { LoginBody, RefreshTokenBody, RegisterBody } from '@/db/input';
+import {
+  LoginAdminBody,
+  LoginBody,
+  RefreshTokenBody,
+  RegisterBody,
+} from '@/db/input';
 import {
   LoginDto,
   TokenDto,
@@ -7,6 +12,7 @@ import {
   RegisterDto,
   RefreshTokenDto,
   LoginUserDto,
+  LoginAdminDto,
 } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString } from '@/utils';
@@ -17,6 +23,8 @@ import { JwtService } from '@nestjs/jwt';
 import { CustomException } from '@/guard';
 import { SignedTokenData, SignedTokenUser } from './auth.type';
 import { CartsService } from '../carts';
+import { EUser } from '@/db/entities';
+import { UserRoleEnum } from '@/db/enum/user.enum';
 
 @Injectable()
 export class AuthService {
@@ -106,6 +114,7 @@ export class AuthService {
 
     await this.usersRepo.save({
       ...body,
+      role: UserRoleEnum.Shopper,
       password: encryptString(password),
     });
 
@@ -123,6 +132,7 @@ export class AuthService {
         'branchId',
         'deliveryWard',
         'address',
+        'role',
       ],
 
       relations: {
@@ -150,8 +160,8 @@ export class AuthService {
       throw new CustomException('USER_CART_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    const accessToken = await this.genJwtToken(existUser, 'access');
-    const refreshToken = await this.genRefreshToken(existUser.id);
+    const { accessToken, refreshToken } =
+      await this.generateLoginTokens(existUser);
 
     const loginUser: LoginUserDto = {
       id: existUser.id,
@@ -188,5 +198,63 @@ export class AuthService {
     return {
       accessToken: newAccessToken,
     };
+  }
+
+  async loginBackOffice({
+    email,
+    password,
+  }: LoginAdminBody): Promise<LoginAdminDto> {
+    const user = await this.usersSrv.getAdminUserForLogin(email);
+
+    this.validateLogin({ user, inputPassword: password });
+
+    const [{ accessToken, refreshToken }] = await Promise.all([
+      this.generateLoginTokens(user),
+      this.usersSrv.resetLoginAttempts(user.id),
+    ]);
+
+    const result: LoginAdminDto = {
+      needVerifyOtp: false,
+
+      userOtpToken: null,
+      accessToken,
+      refreshToken,
+      user,
+    };
+
+    return result;
+  }
+
+  // ---- PRIVATE ----
+  private async generateLoginTokens(
+    user: EUser,
+  ): Promise<{ accessToken: TokenDto; refreshToken: TokenDto }> {
+    const accessToken = await this.genJwtToken(user, 'access');
+    const refreshToken = await this.genRefreshToken(user.id);
+
+    return { accessToken, refreshToken };
+  }
+
+  private validateLogin({
+    user,
+    inputPassword,
+  }: {
+    user: EUser;
+    inputPassword: string;
+  }) {
+    if (user.loginAttempts && user.loginAttempts >= 3) {
+      throw new CustomException(
+        'LOGIN_ATTEMPTS_EXCEEDED',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!inputPassword) {
+      throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!compareSync(inputPassword, user.password)) {
+      throw new CustomException('INCORRECT_PASSWORD', HttpStatus.BAD_REQUEST);
+    }
   }
 }

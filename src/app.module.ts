@@ -25,11 +25,11 @@ import { SearchModule } from './modules/search/search.module';
     DbModule,
 
     // route. should order by name -> swagger show based on order
+    AuthModule,
     SearchModule,
     CheckoutModule,
     UsersOrdersModule,
     PaymentsModule,
-    AuthModule,
     AdminDivisionsModule,
     BranchesAdminDivisionModule,
     BranchesModule,

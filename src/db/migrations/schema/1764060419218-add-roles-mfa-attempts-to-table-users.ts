@@ -13,7 +13,7 @@ export class AddRolesMfaAttemptsToTableUsers1764060419218
 
       await queryRunner.query(`
         ALTER TABLE users
-        ADD COLUMN roles user_role_enum NOT NULL DEFAULT 'shopper',
+        ADD COLUMN role user_role_enum NOT NULL DEFAULT 'shopper',
         ADD COLUMN otp_code varchar(20),
         ADD COLUMN login_attempts smallint,
         ADD COLUMN otp_sent_at timestamp;
@@ -29,7 +29,7 @@ export class AddRolesMfaAttemptsToTableUsers1764060419218
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
             ALTER TABLE users
-            DROP COLUMN roles,
+            DROP COLUMN role,
             DROP COLUMN otp_code,
             DROP COLUMN login_attempts,
             DROP COLUMN otp_sent_at;
