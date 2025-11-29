@@ -107,14 +107,6 @@ export class EUser extends EBase implements IUser {
   @Exclude()
   loginAttempts?: number;
 
-  @Column({
-    name: 'last_login_attempt_at',
-    type: 'timestamp',
-    nullable: true,
-  })
-  @Exclude()
-  lastLoginAttemptAt?: Date;
-
   // ------ RELATIONS ------
   @OneToMany(() => ECart, (cart) => cart.user, { nullable: true })
   @JoinColumn({ name: 'id', referencedColumnName: 'user_id' })

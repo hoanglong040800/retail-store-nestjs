@@ -14,5 +14,4 @@ export interface IUser extends IBase {
   otpCode?: string;
   mfaSentAt?: Date;
   loginAttempts?: number;
-  lastLoginAttemptAt?: Date;
 }

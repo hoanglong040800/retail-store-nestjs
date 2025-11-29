@@ -29,9 +29,18 @@ export const ENV = {
       secret: process.env.REFRESH_SECRET || '',
       expire: process.env.REFRESH_EXPIRATION_TIME || (7 * 24 * 60).toString(),
     },
+
+    userOtp: {
+      secret: process.env.USER_OTP_SECRET || '',
+      expire: (10 * 60).toString(), // 10 minutes
+    },
   },
 
   stripe: {
     secretKey: process.env.STRIPE_SECRET_KEY || '',
+  },
+
+  settings: {
+    otpLoginBackOffice: process.env.OTP_LOGIN_BACK_OFFICE || false,
   },
 };

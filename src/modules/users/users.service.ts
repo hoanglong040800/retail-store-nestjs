@@ -6,6 +6,7 @@ import { CartsService } from '../carts';
 import { UpdateUserDto, UserDto } from '@/db/dto';
 import { CustomException } from '@/guard';
 import { UserRoleEnum } from '@/db/enum/user.enum';
+import { generateOtpCode } from '@/utils';
 
 @Injectable()
 export class UsersService {
@@ -74,11 +75,7 @@ export class UsersService {
     userId: string,
     loginAttempts: number,
   ): Promise<boolean> {
-    await this.usersRepo.update(
-      userId,
-      { loginAttempts, lastLoginAttemptAt: new Date() },
-      { id: userId },
-    );
+    await this.usersRepo.update(userId, { loginAttempts }, { id: userId });
     return true;
   }
 
@@ -101,4 +98,6 @@ export class UsersService {
 
     return user;
   }
+
+
 }

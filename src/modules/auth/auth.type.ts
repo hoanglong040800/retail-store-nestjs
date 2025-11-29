@@ -15,3 +15,9 @@ export type ValidateLoginParams = {
   user: EUser;
   inputPassword: string;
 };
+
+export type OtpJwtPayload = {
+  user: {
+    id: string;
+  };
+};

@@ -15,13 +15,14 @@ import {
   LoginAdminDto,
 } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
-import { encryptString, validateResponse } from '@/utils';
+import { encryptString, generateOtpCode, validateResponse } from '@/utils';
 import { compareSync } from 'bcrypt';
 import { calculateExpireTime } from './auth.util';
 import { ENV, JwtTokenUnit } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
 import { CustomException } from '@/guard';
 import {
+  OtpJwtPayload,
   SignedTokenData,
   SignedTokenUser,
   ValidateLoginParams,
@@ -30,8 +31,6 @@ import { CartsService } from '../carts';
 import { EUser } from '@/db/entities';
 import { UserRoleEnum } from '@/db/enum/user.enum';
 import { ExceptionCode } from '@/db/enum';
-import { plainToClass, plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
 
 @Injectable()
 export class AuthService {
@@ -43,7 +42,7 @@ export class AuthService {
   ) {}
 
   async genJwtToken(
-    user: SignedTokenUser,
+    user: SignedTokenUser | OtpJwtPayload,
     type: JwtTokenType,
   ): Promise<TokenDto> {
     if (!user) {
@@ -225,6 +224,28 @@ export class AuthService {
 
     this.validateLogin({ user, inputPassword: password });
 
+    // required OTP Flow
+    if (ENV.settings.otpLoginBackOffice) {
+      const jwtPayload = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      const [, userOtpToken] = await Promise.all([
+        this.generateLoginOtpAndSave(jwtPayload),
+        this.genJwtToken(jwtPayload, 'userOtp'),
+      ]);
+
+      const result = validateResponse(LoginAdminDto, {
+        needVerifyOtp: true,
+        userOtpToken,
+      });
+
+      return result;
+    }
+
+    // Normal Login Flow
     const [{ accessToken, refreshToken }] = await Promise.all([
       this.generateLoginTokens(user),
       this.usersSrv.updateLoginAttempts(user.id, 0),
@@ -233,7 +254,6 @@ export class AuthService {
     const result = validateResponse(LoginAdminDto, {
       needVerifyOtp: false,
 
-      userOtpToken: null,
       accessToken,
       refreshToken,
       // TODO implement auto transform DTO
@@ -258,6 +278,19 @@ export class AuthService {
     const refreshToken = await this.genRefreshToken(user.id);
 
     return { accessToken, refreshToken };
+  }
+
+  private async generateLoginOtpAndSave(payload: OtpJwtPayload): Promise<void> {
+    const otpCode = generateOtpCode();
+
+    await this.usersSrv.update(
+      payload.user.id,
+      {
+        otpCode,
+        otpSentAt: new Date(),
+      },
+      { id: payload.user.id },
+    );
   }
 
   private validateLogin({ user, inputPassword }: ValidateLoginParams) {

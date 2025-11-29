@@ -3,6 +3,17 @@ import { IUser } from '../interface';
 import { AdminDivisionDto } from './admin-division.dto';
 import { UserRoleEnum } from '../enum/user.enum';
 
+export class TokenDto {
+  token: string;
+  expireAt: Date;
+}
+
+export type JwtTokenType = 'access' | 'refresh' | 'userOtp';
+
+export class RefreshTokenDto {
+  accessToken: TokenDto;
+}
+
 export class RegisterDto {
   result: boolean;
 }
@@ -38,8 +49,8 @@ export class VerifyOtpAdminDto {
   user: LoginAdminUserDto;
 }
 
-const needWhenTurnOnOtp = 'required when turn on OTP verification';
-const needWhenNormalLogin = 'required when only normal login';
+const needWhenTurnOnOtp = 'required when turn on OTP Back Office';
+const needWhenNormalLogin = 'required when do normal login';
 
 export class LoginAdminDto {
   @IsBoolean()
@@ -48,29 +59,18 @@ export class LoginAdminDto {
   // need verify OTP - required when needVerifyOtp is true
   @ValidateIf((o) => o.needVerifyOtp === true)
   @IsDefined({ message: needWhenTurnOnOtp })
-  userOtpToken: string | null;
+  userOtpToken?: TokenDto;
 
   // normal login - required when needVerifyOtp is false
   @ValidateIf((o) => o.needVerifyOtp === false)
   @IsDefined({ message: needWhenNormalLogin })
-  accessToken: TokenDto | null;
+  accessToken?: TokenDto;
 
   @ValidateIf((o) => o.needVerifyOtp === false)
   @IsDefined({ message: needWhenNormalLogin })
-  refreshToken: TokenDto | null;
+  refreshToken?: TokenDto;
 
   @ValidateIf((o) => o.needVerifyOtp === false)
   @IsDefined({ message: needWhenNormalLogin })
-  user: LoginAdminUserDto | null;
-}
-
-export class TokenDto {
-  token: string;
-  expireAt: Date;
-}
-
-export type JwtTokenType = 'access' | 'refresh';
-
-export class RefreshTokenDto {
-  accessToken: TokenDto;
+  user?: LoginAdminUserDto;
 }
