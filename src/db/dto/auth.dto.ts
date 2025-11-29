@@ -38,7 +38,8 @@ export class VerifyOtpAdminDto {
   user: LoginAdminUserDto;
 }
 
-const condition = 'required when when OTP verification is needed';
+const needWhenTurnOnOtp = 'required when turn on OTP verification';
+const needWhenNormalLogin = 'required when only normal login';
 
 export class LoginAdminDto {
   @IsBoolean()
@@ -46,20 +47,20 @@ export class LoginAdminDto {
 
   // need verify OTP - required when needVerifyOtp is true
   @ValidateIf((o) => o.needVerifyOtp === true)
-  @IsDefined({ message: condition })
+  @IsDefined({ message: needWhenTurnOnOtp })
   userOtpToken: string | null;
 
-  // skip OTP - required when needVerifyOtp is false
+  // normal login - required when needVerifyOtp is false
   @ValidateIf((o) => o.needVerifyOtp === false)
-  @IsDefined({ message: condition })
+  @IsDefined({ message: needWhenNormalLogin })
   accessToken: TokenDto | null;
 
   @ValidateIf((o) => o.needVerifyOtp === false)
-  @IsDefined({ message: condition })
+  @IsDefined({ message: needWhenNormalLogin })
   refreshToken: TokenDto | null;
 
   @ValidateIf((o) => o.needVerifyOtp === false)
-  @IsDefined({ message: condition })
+  @IsDefined({ message: needWhenNormalLogin })
   user: LoginAdminUserDto | null;
 }
 

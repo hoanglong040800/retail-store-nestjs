@@ -15,7 +15,7 @@ import {
   LoginAdminDto,
 } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
-import { encryptString } from '@/utils';
+import { encryptString, validateResponse } from '@/utils';
 import { compareSync } from 'bcrypt';
 import { calculateExpireTime } from './auth.util';
 import { ENV, JwtTokenUnit } from '@/constants';
@@ -30,6 +30,8 @@ import { CartsService } from '../carts';
 import { EUser } from '@/db/entities';
 import { UserRoleEnum } from '@/db/enum/user.enum';
 import { ExceptionCode } from '@/db/enum';
+import { plainToClass, plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class AuthService {
@@ -228,7 +230,7 @@ export class AuthService {
       this.usersSrv.updateLoginAttempts(user.id, 0),
     ]);
 
-    const result: LoginAdminDto = {
+    const result = validateResponse(LoginAdminDto, {
       needVerifyOtp: false,
 
       userOtpToken: null,
@@ -242,7 +244,7 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
       },
-    };
+    });
 
     return result;
   }
@@ -287,7 +289,7 @@ export class AuthService {
 
       const nextLoginAttempt = (user.loginAttempts || 0) + 1;
       this.usersSrv.updateLoginAttempts(user.id, nextLoginAttempt).catch();
-      
+
       throw e;
     }
   }

@@ -1,3 +1,8 @@
+import { ClassConstructor, plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import { CustomException } from '@/guard/custom.exception';
+import { HttpStatus } from '@nestjs/common';
+
 export const keyBy = (array: any[], key: string): Record<string, any> =>
   (array || []).reduce((r, x) => ({ ...r, [key ? x[key] : x]: x }), {});
 
@@ -10,4 +15,30 @@ export const checkEmptyObject = (obj: object): boolean => {
   }
 
   return false;
+};
+
+export const validateResponse = async <T extends object>(
+  dto: ClassConstructor<T>,
+  response: T,
+): Promise<T> => {
+  const resultDto = plainToInstance(dto, response);
+
+  const errors = await validate(resultDto as object);
+
+  if (errors.length === 0) {
+    return resultDto;
+  }
+
+  const errorMessages = errors
+    .map((err) => {
+      const constraints = Object.values(err.constraints || {});
+      return `${err.property}: ${constraints.join(', ')}`;
+    })
+    .join('; ');
+
+  throw new CustomException(
+    'INVALID_RESPONSE',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+    errorMessages,
+  );
 };

@@ -14,6 +14,7 @@ type GenericExceptionCode =
   | 'INVALID_DATA'
   | 'PARAMS_NOT_FOUND'
   | 'PARAMS_NOT_MATCH_WITH_TOKEN'
+  | 'INVALID_RESPONSE'
   | 'INVALID_TOKEN';
 
 type AuthExceptionCode =
