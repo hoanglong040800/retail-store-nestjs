@@ -82,7 +82,7 @@ export class UsersService {
     return true;
   }
 
-  async getAdminUserForLogin(email: string): Promise<EUser> {
+  async getAdminUserForLogin(email: string): Promise<EUser | null> {
     const user = await this.findByEmail(email, {
       select: [
         'id',
@@ -98,10 +98,6 @@ export class UsersService {
         role: UserRoleEnum.Admin,
       },
     });
-
-    if (!user) {
-      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
-    }
 
     return user;
   }

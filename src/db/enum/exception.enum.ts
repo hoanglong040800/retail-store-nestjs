@@ -17,7 +17,7 @@ type GenericExceptionCode =
   | 'INVALID_TOKEN';
 
 type AuthExceptionCode =
-  | 'INCORRECT_PASSWORD'
+  | 'INCORRECT_EMAIL_OR_PASSWORD'
   | 'USER_EXISTS'
   | 'LOGIN_ATTEMPTS_EXCEEDED';
 

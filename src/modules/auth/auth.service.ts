@@ -29,6 +29,7 @@ import {
 import { CartsService } from '../carts';
 import { EUser } from '@/db/entities';
 import { UserRoleEnum } from '@/db/enum/user.enum';
+import { ExceptionCode } from '@/db/enum';
 
 @Injectable()
 export class AuthService {
@@ -153,7 +154,10 @@ export class AuthService {
     }
 
     if (!compareSync(password, existUser.password)) {
-      throw new CustomException('INCORRECT_PASSWORD', HttpStatus.BAD_REQUEST);
+      throw new CustomException(
+        'INCORRECT_EMAIL_OR_PASSWORD',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const userCart = await this.cartsSrv.getOrCreateUserCart({
@@ -210,6 +214,13 @@ export class AuthService {
   }: LoginAdminBody): Promise<LoginAdminDto> {
     const user = await this.usersSrv.getAdminUserForLogin(email);
 
+    if (!user) {
+      throw new CustomException(
+        'INCORRECT_EMAIL_OR_PASSWORD',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     this.validateLogin({ user, inputPassword: password });
 
     const [{ accessToken, refreshToken }] = await Promise.all([
@@ -248,11 +259,14 @@ export class AuthService {
   }
 
   private validateLogin({ user, inputPassword }: ValidateLoginParams) {
+    const maxLoginAttempts = 5;
+
     try {
-      if (user.loginAttempts && user.loginAttempts >= 3) {
+      if (user.loginAttempts && user.loginAttempts >= maxLoginAttempts) {
         throw new CustomException(
           'LOGIN_ATTEMPTS_EXCEEDED',
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.TOO_MANY_REQUESTS,
+          `Login attempts exceeded`,
         );
       }
 
@@ -261,12 +275,19 @@ export class AuthService {
       }
 
       if (!compareSync(inputPassword, user.password)) {
-        throw new CustomException('INCORRECT_PASSWORD', HttpStatus.BAD_REQUEST);
+        throw new CustomException(
+          'INCORRECT_EMAIL_OR_PASSWORD',
+          HttpStatus.BAD_REQUEST,
+        );
       }
     } catch (e) {
-      const nextLoginAttempt = (user.loginAttempts || 0) + 1;
+      if ((e.errorCode as ExceptionCode) === 'LOGIN_ATTEMPTS_EXCEEDED') {
+        throw e;
+      }
 
+      const nextLoginAttempt = (user.loginAttempts || 0) + 1;
       this.usersSrv.updateLoginAttempts(user.id, nextLoginAttempt).catch();
+      
       throw e;
     }
   }
