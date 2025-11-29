@@ -1,8 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { createSwaggerDocument } from './config';
 import { GlobalExceptionFilter } from './guard';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
@@ -13,9 +13,15 @@ async function bootstrap() {
   });
 
   createSwaggerDocument(app);
+  // middleware
   app.enableCors();
-  app.useGlobalFilters(new GlobalExceptionFilter());
+
   app.useGlobalPipes(new ValidationPipe());
+
+  // pair with @Exclude to hide sensitive data from response
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   await app.listen(5000);
 }

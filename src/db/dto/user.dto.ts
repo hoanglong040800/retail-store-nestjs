@@ -25,6 +25,7 @@ export class UpdateUserDto implements IUser {
   deliveryWardId?: string;
   address?: string;
   loginAttempts?: number;
+  lastLoginAttemptAt?: Date;
 }
 
 export class CreateUserDto implements IUser {

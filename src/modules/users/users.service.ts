@@ -70,8 +70,15 @@ export class UsersService {
     return this.usersRepo.update(userId, updateUserDto, auditUser);
   }
 
-  async resetLoginAttempts(userId: string): Promise<boolean> {
-    await this.usersRepo.update(userId, { loginAttempts: 0 }, { id: userId });
+  async updateLoginAttempts(
+    userId: string,
+    loginAttempts: number,
+  ): Promise<boolean> {
+    await this.usersRepo.update(
+      userId,
+      { loginAttempts, lastLoginAttemptAt: new Date() },
+      { id: userId },
+    );
     return true;
   }
 
@@ -79,11 +86,12 @@ export class UsersService {
     const user = await this.findByEmail(email, {
       select: [
         'id',
-        'password',
         'email',
         'firstName',
         'lastName',
+        'branchId',
         'role',
+        'password',
         'loginAttempts',
       ],
       where: {

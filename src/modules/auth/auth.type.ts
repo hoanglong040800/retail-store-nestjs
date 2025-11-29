@@ -1,3 +1,5 @@
+import { EUser } from '@/db/entities';
+
 export type SignedTokenUser = {
   id: string;
   email?: string;
@@ -7,4 +9,9 @@ export type SignedTokenUser = {
 
 export type SignedTokenData = {
   user: SignedTokenUser;
+};
+
+export type ValidateLoginParams = {
+  user: EUser;
+  inputPassword: string;
 };

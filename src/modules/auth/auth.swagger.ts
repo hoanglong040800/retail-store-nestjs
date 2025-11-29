@@ -12,5 +12,12 @@ export const loginBackOfficeParamOptions: ApiParamOptions = {
         password: 'qwer1234',
       },
     },
+
+    'Login Failed - Exceeded Attempts': {
+      value: {
+        email: 'qwer@gmail.com',
+        password: '11111111111',
+      },
+    },
   },
 };

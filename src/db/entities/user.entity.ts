@@ -6,6 +6,7 @@ import { EOrder } from './order.entity';
 import { EBranch } from './branch.entity';
 import { EAdminDivision } from './admin-division-hierarchy.entity';
 import { UserRoleEnum } from '../enum/user.enum';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class EUser extends EBase implements IUser {
@@ -38,6 +39,7 @@ export class EUser extends EBase implements IUser {
     nullable: false,
     select: false,
   })
+  @Exclude()
   password: string;
 
   @Column({
@@ -86,21 +88,32 @@ export class EUser extends EBase implements IUser {
     length: 20,
     nullable: true,
   })
+  @Exclude()
   otpCode?: string;
-
-  @Column({
-    name: 'login_attempts',
-    type: 'smallint',
-    nullable: true,
-  })
-  loginAttempts?: number;
 
   @Column({
     name: 'otp_sent_at',
     type: 'timestamp',
     nullable: true,
   })
+  @Exclude()
   otpSentAt?: Date;
+
+  @Column({
+    name: 'login_attempts',
+    type: 'smallint',
+    nullable: true,
+  })
+  @Exclude()
+  loginAttempts?: number;
+
+  @Column({
+    name: 'last_login_attempt_at',
+    type: 'timestamp',
+    nullable: true,
+  })
+  @Exclude()
+  lastLoginAttemptAt?: Date;
 
   // ------ RELATIONS ------
   @OneToMany(() => ECart, (cart) => cart.user, { nullable: true })

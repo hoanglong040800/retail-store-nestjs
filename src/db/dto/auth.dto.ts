@@ -1,6 +1,7 @@
 import { IsBoolean, IsDefined, ValidateIf } from 'class-validator';
 import { IUser } from '../interface';
 import { AdminDivisionDto } from './admin-division.dto';
+import { UserRoleEnum } from '../enum/user.enum';
 
 export class RegisterDto {
   result: boolean;
@@ -28,6 +29,7 @@ export class LoginAdminUserDto implements IUser {
   email: string;
   firstName?: string;
   lastName?: string;
+  role: UserRoleEnum;
 }
 
 export class VerifyOtpAdminDto {
