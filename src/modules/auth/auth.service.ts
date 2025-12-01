@@ -4,6 +4,7 @@ import {
   LoginBody,
   RefreshTokenBody,
   RegisterBody,
+  ResendOtpBackOfficeBody,
   VerifyOtpBackOfficeBody,
 } from '@/db/input';
 import {
@@ -24,7 +25,7 @@ import { ENV, JwtTokenUnit } from '@/constants';
 import { JwtService } from '@nestjs/jwt';
 import { CustomException } from '@/guard';
 import {
-  OtpJwtPayload,
+  OtpJwtUserPayload,
   SignedOtpTokenData,
   SignedTokenData,
   SignedTokenUser,
@@ -45,7 +46,7 @@ export class AuthService {
   ) {}
 
   async genJwtToken(
-    user: SignedTokenUser | OtpJwtPayload,
+    user: SignedTokenUser | OtpJwtUserPayload,
     type: JwtTokenType,
   ): Promise<TokenDto> {
     if (!user) {
@@ -68,8 +69,8 @@ export class AuthService {
     };
   }
 
-  async genRefreshToken(userId: string): Promise<TokenDto> {
-    if (!userId) {
+  async genRefreshToken(user: EUser): Promise<TokenDto> {
+    if (!user?.id) {
       throw new CustomException(
         'PARAMS_NOT_FOUND',
         HttpStatus.NOT_FOUND,
@@ -77,12 +78,12 @@ export class AuthService {
       );
     }
 
-    const refreshToken = await this.genJwtToken({ id: userId }, 'refresh');
+    const refreshToken = await this.genJwtToken({ id: user.id }, 'refresh');
 
     await this.usersRepo.update(
-      userId,
+      user.id,
       { refreshToken: refreshToken.token },
-      { id: userId },
+      { id: user.id },
     );
 
     return refreshToken;
@@ -184,6 +185,7 @@ export class AuthService {
       branchId: existUser.branchId,
       deliveryWard: existUser.deliveryWard,
       address: existUser.address,
+      role: existUser.role,
     };
 
     return {
@@ -229,13 +231,15 @@ export class AuthService {
 
     // required OTP Flow
     if (ENV.settings.otpLoginBackOffice) {
-      const jwtPayload: OtpJwtPayload = {
-        userId: user.id,
+      const otpJwtUserPayload: OtpJwtUserPayload = {
+        id: user.id,
+        email: user.email,
+        role: user.role,
       };
 
       const [, userOtpToken] = await Promise.all([
-        this.generateLoginOtpAndSave(jwtPayload),
-        this.genJwtToken(jwtPayload, 'userOtp'),
+        this.generateLoginOtpAndSave(user.id),
+        this.genJwtToken(otpJwtUserPayload, 'userOtp'),
       ]);
 
       const result = validateResponse(LoginAdminDto, {
@@ -277,12 +281,12 @@ export class AuthService {
       body.userOtpToken,
     );
 
-    if (!payload?.user?.userId) {
+    if (!payload?.user?.id) {
       throw new CustomException('INVALID_TOKEN', HttpStatus.BAD_REQUEST);
     }
 
     const user = await this.usersSrv.getAdminUserForLogin({
-      userId: payload.user.userId,
+      userId: payload.user.id,
     });
 
     if (!user) {
@@ -315,27 +319,49 @@ export class AuthService {
     return result;
   }
 
+  async resendOtpBackOffice(body: ResendOtpBackOfficeBody): Promise<boolean> {
+    const payload: SignedOtpTokenData = await this.jwtSrv.decode(
+      body.jwtOtpToken,
+    );
+
+    if (!payload?.user?.id) {
+      throw new CustomException('INVALID_TOKEN', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.usersSrv.getAdminUserForLogin({
+      userId: payload.user.id,
+    });
+
+    if (!user) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    await this.generateLoginOtpAndSave(user.id);
+
+    return true;
+  }
+
   // ---- PRIVATE ----
 
   private async generateLoginTokens(
     user: EUser,
   ): Promise<{ accessToken: TokenDto; refreshToken: TokenDto }> {
     const accessToken = await this.genJwtToken(user, 'access');
-    const refreshToken = await this.genRefreshToken(user.id);
+    const refreshToken = await this.genRefreshToken(user);
 
     return { accessToken, refreshToken };
   }
 
-  private async generateLoginOtpAndSave(payload: OtpJwtPayload): Promise<void> {
+  private async generateLoginOtpAndSave(userId: string): Promise<void> {
     const otpCode = generateOtpCode();
 
     await this.usersSrv.update(
-      payload.userId,
+      userId,
       {
         otpCode,
         otpSentAt: new Date(),
       },
-      { id: payload.userId },
+      { id: userId },
     );
   }
 

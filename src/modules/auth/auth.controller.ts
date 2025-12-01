@@ -13,6 +13,7 @@ import {
   LoginBody,
   RefreshTokenBody,
   RegisterBody,
+  ResendOtpBackOfficeBody,
   VerifyOtpBackOfficeBody,
 } from '@/db/input';
 import { loginBackOfficeParamOptions } from './auth.swagger';
@@ -55,6 +56,13 @@ export class AuthController {
     @Body() body: VerifyOtpBackOfficeBody,
   ): Promise<VerifyOtpBackOfficeDto> {
     return await this.authSrv.verifyOtpBackOffice(body);
+  }
+
+  @Post('/resend-otp-back-office')
+  async resendOtpBackOffice(
+    @Body() body: ResendOtpBackOfficeBody,
+  ): Promise<boolean> {
+    return await this.authSrv.resendOtpBackOffice(body);
   }
 
   @Post('/refresh-token')

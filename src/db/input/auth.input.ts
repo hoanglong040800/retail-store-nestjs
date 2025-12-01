@@ -56,3 +56,9 @@ export class VerifyOtpBackOfficeBody {
   @IsString()
   otpCode: string;
 }
+
+export class ResendOtpBackOfficeBody {
+  @IsNotEmpty()
+  @IsString()
+  jwtOtpToken: string;
+}

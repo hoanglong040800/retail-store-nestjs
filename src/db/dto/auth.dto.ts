@@ -27,6 +27,7 @@ export class LoginUserDto implements IUser {
   cartId: string;
   branchId?: string;
   deliveryWard?: AdminDivisionDto;
+  role: UserRoleEnum;
 }
 
 export class LoginDto {

@@ -1,14 +1,18 @@
 import { EUser } from '@/db/entities';
+import { UserRoleEnum } from '@/db/enum/user.enum';
 
 export type SignedTokenUser = {
   id: string;
   email?: string;
   firstName?: string;
   lastName?: string;
+  role?: UserRoleEnum;
 };
 
-export type OtpJwtPayload = {
-  userId: string;
+export type OtpJwtUserPayload = {
+  id: string;
+  email: string;
+  role: UserRoleEnum;
 };
 
 export type SignedTokenData = {
@@ -16,7 +20,7 @@ export type SignedTokenData = {
 };
 
 export type SignedOtpTokenData = {
-  user: OtpJwtPayload;
+  user: OtpJwtUserPayload;
 };
 
 export type ValidateLoginParams = {
