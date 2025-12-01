@@ -43,7 +43,7 @@ export class LoginAdminUserDto implements IUser {
   role: UserRoleEnum;
 }
 
-export class VerifyOtpAdminDto {
+export class VerifyOtpBackOfficeDto {
   accessToken: TokenDto;
   refreshToken: TokenDto;
   user: LoginAdminUserDto;

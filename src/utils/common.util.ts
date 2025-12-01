@@ -46,4 +46,3 @@ export const validateResponse = async <T extends object>(
 export const generateOtpCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
-

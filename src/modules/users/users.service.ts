@@ -5,8 +5,6 @@ import { FindOneOptions } from 'typeorm';
 import { CartsService } from '../carts';
 import { UpdateUserDto, UserDto } from '@/db/dto';
 import { CustomException } from '@/guard';
-import { UserRoleEnum } from '@/db/enum/user.enum';
-import { generateOtpCode } from '@/utils';
 
 @Injectable()
 export class UsersService {
@@ -79,8 +77,18 @@ export class UsersService {
     return true;
   }
 
-  async getAdminUserForLogin(email: string): Promise<EUser | null> {
-    const user = await this.findByEmail(email, {
+  async getAdminUserForLogin({
+    email,
+    userId,
+  }: {
+    email?: string;
+    userId?: string;
+  }): Promise<EUser | null> {
+    if (!email && !userId) {
+      throw new CustomException('PARAMS_NOT_FOUND', HttpStatus.BAD_REQUEST);
+    }
+
+    const result = await this.usersRepo.findOne({
       select: [
         'id',
         'email',
@@ -90,14 +98,14 @@ export class UsersService {
         'role',
         'password',
         'loginAttempts',
+        'otpCode',
       ],
       where: {
-        role: UserRoleEnum.Admin,
+        email,
+        id: userId,
       },
     });
 
-    return user;
+    return result;
   }
-
-
 }

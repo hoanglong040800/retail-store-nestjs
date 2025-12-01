@@ -7,17 +7,19 @@ export type SignedTokenUser = {
   lastName?: string;
 };
 
+export type OtpJwtPayload = {
+  userId: string;
+};
+
 export type SignedTokenData = {
   user: SignedTokenUser;
+};
+
+export type SignedOtpTokenData = {
+  user: OtpJwtPayload;
 };
 
 export type ValidateLoginParams = {
   user: EUser;
   inputPassword: string;
-};
-
-export type OtpJwtPayload = {
-  user: {
-    id: string;
-  };
 };

@@ -20,6 +20,7 @@ type GenericExceptionCode =
 type AuthExceptionCode =
   | 'INCORRECT_EMAIL_OR_PASSWORD'
   | 'USER_EXISTS'
+  | 'INVALID_OTP_CODE'
   | 'LOGIN_ATTEMPTS_EXCEEDED';
 
 type UserExceptionCode = 'USER_NOT_FOUND';

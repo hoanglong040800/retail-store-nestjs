@@ -46,3 +46,13 @@ export class RefreshTokenBody {
   @IsObject()
   accessToken: TokenDto;
 }
+
+export class VerifyOtpBackOfficeBody {
+  @IsNotEmpty()
+  @IsString()
+  userOtpToken: string;
+
+  @IsNotEmpty()
+  @IsString()
+  otpCode: string;
+}

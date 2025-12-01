@@ -4,6 +4,7 @@ import {
   LoginBody,
   RefreshTokenBody,
   RegisterBody,
+  VerifyOtpBackOfficeBody,
 } from '@/db/input';
 import {
   LoginDto,
@@ -13,6 +14,7 @@ import {
   RefreshTokenDto,
   LoginUserDto,
   LoginAdminDto,
+  VerifyOtpBackOfficeDto,
 } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString, generateOtpCode, validateResponse } from '@/utils';
@@ -23,6 +25,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CustomException } from '@/guard';
 import {
   OtpJwtPayload,
+  SignedOtpTokenData,
   SignedTokenData,
   SignedTokenUser,
   ValidateLoginParams,
@@ -213,7 +216,7 @@ export class AuthService {
     email,
     password,
   }: LoginAdminBody): Promise<LoginAdminDto> {
-    const user = await this.usersSrv.getAdminUserForLogin(email);
+    const user = await this.usersSrv.getAdminUserForLogin({ email });
 
     if (!user) {
       throw new CustomException(
@@ -226,10 +229,8 @@ export class AuthService {
 
     // required OTP Flow
     if (ENV.settings.otpLoginBackOffice) {
-      const jwtPayload = {
-        user: {
-          id: user.id,
-        },
+      const jwtPayload: OtpJwtPayload = {
+        userId: user.id,
       };
 
       const [, userOtpToken] = await Promise.all([
@@ -269,6 +270,51 @@ export class AuthService {
     return result;
   }
 
+  async verifyOtpBackOffice(
+    body: VerifyOtpBackOfficeBody,
+  ): Promise<VerifyOtpBackOfficeDto> {
+    const payload: SignedOtpTokenData = await this.jwtSrv.decode(
+      body.userOtpToken,
+    );
+
+    if (!payload?.user?.userId) {
+      throw new CustomException('INVALID_TOKEN', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.usersSrv.getAdminUserForLogin({
+      userId: payload.user.userId,
+    });
+
+    if (!user) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    if (user.otpCode !== body.otpCode) {
+      throw new CustomException('INVALID_OTP_CODE', HttpStatus.UNAUTHORIZED);
+    }
+
+    const [{ accessToken, refreshToken }] = await Promise.all([
+      this.generateLoginTokens(user),
+      this.usersSrv.updateLoginAttempts(user.id, 0),
+    ]);
+
+    const result = await validateResponse(VerifyOtpBackOfficeDto, {
+      accessToken,
+      refreshToken,
+
+      // TODO implement auto transform DTO
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+    });
+
+    return result;
+  }
+
   // ---- PRIVATE ----
 
   private async generateLoginTokens(
@@ -284,12 +330,12 @@ export class AuthService {
     const otpCode = generateOtpCode();
 
     await this.usersSrv.update(
-      payload.user.id,
+      payload.userId,
       {
         otpCode,
         otpSentAt: new Date(),
       },
-      { id: payload.user.id },
+      { id: payload.userId },
     );
   }
 

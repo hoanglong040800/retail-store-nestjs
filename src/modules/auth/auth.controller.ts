@@ -6,12 +6,14 @@ import {
   LoginDto,
   RefreshTokenDto,
   RegisterDto,
+  VerifyOtpBackOfficeDto,
 } from '@/db/dto';
 import {
   LoginAdminBody,
   LoginBody,
   RefreshTokenBody,
   RegisterBody,
+  VerifyOtpBackOfficeBody,
 } from '@/db/input';
 import { loginBackOfficeParamOptions } from './auth.swagger';
 
@@ -46,6 +48,13 @@ export class AuthController {
   @Post('/login-back-office')
   async loginBackOffice(@Body() body: LoginAdminBody): Promise<LoginAdminDto> {
     return await this.authSrv.loginBackOffice(body);
+  }
+
+  @Post('/verify-otp-back-office')
+  async verifyOtpBackOffice(
+    @Body() body: VerifyOtpBackOfficeBody,
+  ): Promise<VerifyOtpBackOfficeDto> {
+    return await this.authSrv.verifyOtpBackOffice(body);
   }
 
   @Post('/refresh-token')
