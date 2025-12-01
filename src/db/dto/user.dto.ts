@@ -14,6 +14,7 @@ export class UserDto extends BaseDto implements IUser {
   address?: string;
 }
 
+// TODO replace with Partial<EUser>
 export class UpdateUserDto implements IUser {
   createdBy?: string;
   updatedBy?: string;
@@ -27,6 +28,7 @@ export class UpdateUserDto implements IUser {
   loginAttempts?: number;
   otpCode?: string;
   otpSentAt?: Date;
+  password?: string;
 }
 
 export class CreateUserDto implements IUser {

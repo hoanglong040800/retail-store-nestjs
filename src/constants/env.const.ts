@@ -30,7 +30,7 @@ export const ENV = {
       expire: process.env.REFRESH_EXPIRATION_TIME || (7 * 24 * 60).toString(),
     },
 
-    userOtp: {
+    otp: {
       secret: process.env.USER_OTP_SECRET || '',
       expire: (10 * 60).toString(), // 10 minutes
     },

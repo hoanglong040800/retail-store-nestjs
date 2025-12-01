@@ -62,3 +62,23 @@ export class ResendOtpBackOfficeBody {
   @IsString()
   jwtOtpToken: string;
 }
+
+export class ForgotPasswordBody {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}
+
+export class ResetPasswordBody {
+  @IsNotEmpty()
+  @IsString()
+  jwtToken: string;
+
+  @IsNotEmpty()
+  @IsString()
+  otpCode: string;
+
+  @IsNotEmpty()
+  @IsString()
+  newPassword: string;
+}

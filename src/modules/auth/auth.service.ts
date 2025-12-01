@@ -1,10 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import {
+  ForgotPasswordBody,
   LoginAdminBody,
   LoginBody,
   RefreshTokenBody,
   RegisterBody,
   ResendOtpBackOfficeBody,
+  ResetPasswordBody,
   VerifyOtpBackOfficeBody,
 } from '@/db/input';
 import {
@@ -16,6 +18,7 @@ import {
   LoginUserDto,
   LoginAdminDto,
   VerifyOtpBackOfficeDto,
+  ForgotPasswordDto,
 } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
 import { encryptString, generateOtpCode, validateResponse } from '@/utils';
@@ -238,8 +241,8 @@ export class AuthService {
       };
 
       const [, userOtpToken] = await Promise.all([
-        this.generateLoginOtpAndSave(user.id),
-        this.genJwtToken(otpJwtUserPayload, 'userOtp'),
+        this.generateUserOtpAndSave(user.id),
+        this.genJwtToken(otpJwtUserPayload, 'otp'),
       ]);
 
       const result = validateResponse(LoginAdminDto, {
@@ -294,7 +297,7 @@ export class AuthService {
     }
 
     if (user.otpCode !== body.otpCode) {
-      throw new CustomException('INVALID_OTP_CODE', HttpStatus.UNAUTHORIZED);
+      throw new CustomException('INVALID_OTP_CODE', HttpStatus.BAD_REQUEST);
     }
 
     const [{ accessToken, refreshToken }] = await Promise.all([
@@ -336,7 +339,58 @@ export class AuthService {
       throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    await this.generateLoginOtpAndSave(user.id);
+    await this.generateUserOtpAndSave(user.id);
+
+    return true;
+  }
+
+  async forgotPassword(body: ForgotPasswordBody): Promise<ForgotPasswordDto> {
+    const user = await this.usersSrv.findByEmail(body.email, {
+      select: ['id', 'email', 'firstName', 'lastName', 'role'],
+    });
+
+    if (!user) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    await this.generateUserOtpAndSave(user.id);
+
+    const jwtToken = await this.genJwtToken(
+      { id: user.id, email: user.email, role: user.role },
+      'otp',
+    );
+
+    return {
+      jwtToken,
+    };
+  }
+
+  async resetPassword(body: ResetPasswordBody): Promise<boolean> {
+    const payload: SignedOtpTokenData = await this.jwtSrv.decode(body.jwtToken);
+
+    if (!payload?.user?.id) {
+      throw new CustomException('INVALID_TOKEN', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.usersSrv.findByEmail(payload.user.email, {
+      select: ['id', 'password'],
+    });
+
+    if (!user?.password || !user?.id) {
+      throw new CustomException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    if (compareSync(body.newPassword, user.password)) {
+      throw new CustomException(
+        'NEW_PASSWORD_SAME_WITH_OLD',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.usersSrv.updatePassword({
+      id: user.id,
+      password: encryptString(body.newPassword),
+    });
 
     return true;
   }
@@ -352,7 +406,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  private async generateLoginOtpAndSave(userId: string): Promise<void> {
+  private async generateUserOtpAndSave(userId: string): Promise<void> {
     const otpCode = generateOtpCode();
 
     await this.usersSrv.update(

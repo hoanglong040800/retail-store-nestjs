@@ -5,6 +5,7 @@ import { FindOneOptions } from 'typeorm';
 import { CartsService } from '../carts';
 import { UpdateUserDto, UserDto } from '@/db/dto';
 import { CustomException } from '@/guard';
+import { UpdatePasswordParams } from './users.type';
 
 @Injectable()
 export class UsersService {
@@ -107,5 +108,13 @@ export class UsersService {
     });
 
     return result;
+  }
+
+  async updatePassword({
+    id,
+    password,
+  }: UpdatePasswordParams): Promise<boolean> {
+    await this.usersRepo.update(id, { password }, { id: id });
+    return true;
   }
 }

@@ -2,6 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
+  ForgotPasswordDto,
   LoginAdminDto,
   LoginDto,
   RefreshTokenDto,
@@ -9,11 +10,13 @@ import {
   VerifyOtpBackOfficeDto,
 } from '@/db/dto';
 import {
+  ForgotPasswordBody,
   LoginAdminBody,
   LoginBody,
   RefreshTokenBody,
   RegisterBody,
   ResendOtpBackOfficeBody,
+  ResetPasswordBody,
   VerifyOtpBackOfficeBody,
 } from '@/db/input';
 import { loginBackOfficeParamOptions } from './auth.swagger';
@@ -68,5 +71,17 @@ export class AuthController {
   @Post('/refresh-token')
   async refreshToken(@Body() body: RefreshTokenBody): Promise<RefreshTokenDto> {
     return await this.authSrv.refreshToken(body);
+  }
+
+  @Post('/forgot-password')
+  async forgotPassword(
+    @Body() body: ForgotPasswordBody,
+  ): Promise<ForgotPasswordDto> {
+    return await this.authSrv.forgotPassword(body);
+  }
+
+  @Post('/reset-password')
+  async resetPassword(@Body() body: ResetPasswordBody): Promise<boolean> {
+    return await this.authSrv.resetPassword(body);
   }
 }

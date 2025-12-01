@@ -8,7 +8,7 @@ export class TokenDto {
   expireAt: Date;
 }
 
-export type JwtTokenType = 'access' | 'refresh' | 'userOtp';
+export type JwtTokenType = 'access' | 'refresh' | 'otp';
 
 export class RefreshTokenDto {
   accessToken: TokenDto;
@@ -74,4 +74,8 @@ export class LoginAdminDto {
   @ValidateIf((o) => o.needVerifyOtp === false)
   @IsDefined({ message: needWhenNormalLogin })
   user?: LoginAdminUserDto;
+}
+
+export class ForgotPasswordDto {
+  jwtToken: TokenDto;
 }
