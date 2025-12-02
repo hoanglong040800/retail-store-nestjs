@@ -409,7 +409,7 @@ export class AuthService {
   private async generateUserOtpAndSave(userId: string): Promise<void> {
     const otpCode = generateOtpCode();
 
-    await this.usersSrv.update(
+    await this.usersRepo.update(
       userId,
       {
         otpCode,

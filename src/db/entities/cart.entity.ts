@@ -26,7 +26,7 @@ export class ECart extends EBase implements ICart {
   // ------- RELATION --------
   @ManyToOne(() => EUser, (u) => u.carts, { nullable: false })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' }) // MUST have join column because TypeORM will auto convert column user_id -> userId
-  user?: EUser;
+  user: EUser;
 
   @OneToOne(() => EOrder, (o) => o.cart, { nullable: true })
   order?: EOrder;

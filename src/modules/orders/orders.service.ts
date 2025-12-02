@@ -25,8 +25,8 @@ export class OrdersService {
     const order = await this.repo.save(createOrderDto, auditUser);
 
     await this.cartsSrv.updateCart(
+      createOrderDto.cartId,
       {
-        id: createOrderDto.cartId,
         status: CartStatusEnum.checkout,
       },
 

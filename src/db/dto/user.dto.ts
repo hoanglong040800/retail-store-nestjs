@@ -1,4 +1,3 @@
-import { UserRoleEnum } from '../enum/user.enum';
 import { IUser } from '../interface';
 import { BaseDto } from './base.dto';
 
@@ -12,29 +11,4 @@ export class UserDto extends BaseDto implements IUser {
   branchId?: string;
   deliveryWardId?: string;
   address?: string;
-}
-
-// TODO replace with Partial<EUser>
-export class UpdateUserDto implements IUser {
-  createdBy?: string;
-  updatedBy?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  refreshToken?: string;
-  branchId?: string;
-  deliveryWardId?: string;
-  address?: string;
-  loginAttempts?: number;
-  otpCode?: string;
-  otpSentAt?: Date;
-  password?: string;
-}
-
-export class CreateUserDto implements IUser {
-  email: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
-  role: UserRoleEnum;
 }

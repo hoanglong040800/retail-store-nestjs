@@ -8,9 +8,12 @@ import {
 } from 'typeorm';
 import { AuditUser, EUser } from '@/db/entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseRepo, TryCatch } from '@/modules/_base';
-import { DEFAULT_USER_ID } from '@/constants';
-import { CreateUserDto, UpdateUserDto } from '@/db/dto';
+import {
+  BaseRepo,
+  RepoCreatePayload,
+  RepoUpdatePayload,
+  TryCatch,
+} from '@/modules/_base';
 import { CustomException } from '@/guard';
 
 @Injectable()
@@ -46,22 +49,20 @@ export class UsersRepo extends BaseRepo<EUser> {
   }
 
   @TryCatch()
-  async save(createDto: CreateUserDto): Promise<EUser> {
+  async save(createPayload: RepoCreatePayload<EUser>): Promise<EUser> {
     return this.repo.save({
-      ...createDto,
-      createdBy: DEFAULT_USER_ID,
-      updatedBy: DEFAULT_USER_ID,
+      ...createPayload,
     });
   }
 
   @TryCatch()
   async update(
     id: string,
-    updateDto: UpdateUserDto,
+    updatePayload: RepoUpdatePayload<EUser>,
     auditUser: AuditUser,
   ): Promise<EUser> {
     const updateResult: UpdateResult = await this.repo.update(id, {
-      ...updateDto,
+      ...updatePayload,
       updatedBy: auditUser.id,
     });
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuditUser } from '@/db/entities';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { RepoCreatePayload, RepoUpdatePayload } from './base.type';
 
 @Injectable()
 export abstract class BaseRepo<T> {
@@ -8,9 +9,13 @@ export abstract class BaseRepo<T> {
 
   findOne?(options: FindOneOptions<T>): Promise<T | null>;
 
-  save?(createDto: any, auditUser: AuditUser): Promise<T>;
+  save?(createPayload: RepoCreatePayload<T>, auditUser: AuditUser): Promise<T>;
 
-  update?(id: string, updateDto: any, auditUser: AuditUser): Promise<T>;
+  update?(
+    id: string,
+    updatePayload: RepoUpdatePayload<T>,
+    auditUser: AuditUser,
+  ): Promise<T>;
 
   delete?(id: string, auditUser?: AuditUser): Promise<boolean>;
 }

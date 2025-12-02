@@ -19,7 +19,7 @@ import { OrdersService } from '../orders';
 import { PaymentsService } from '../payments';
 import { getOrderStatus } from '../orders/shared/orders.utils';
 import Stripe from 'stripe';
-import { UsersService } from '../users';
+import { UsersRepo } from '../users';
 
 @Injectable()
 export class CheckoutService {
@@ -29,7 +29,7 @@ export class CheckoutService {
     private readonly branchesSrv: BranchesService,
     private readonly ordersSrv: OrdersService,
     private readonly paymentsSrv: PaymentsService,
-    private readonly usersSrv: UsersService,
+    private readonly usersRepo: UsersRepo,
   ) {}
 
   // GUIDE: MUST not use try catch because transactional already have try catch to rollback
@@ -65,7 +65,7 @@ export class CheckoutService {
     }
 
     await Promise.all([
-      this.usersSrv.update(
+      this.usersRepo.update(
         user.id,
         {
           deliveryWardId: body.deliveryWardId,

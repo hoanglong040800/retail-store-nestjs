@@ -1,10 +1,13 @@
 import { AuditUser, ECart } from '@/db/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository, UpdateResult } from 'typeorm';
-import { BaseRepo } from '@/modules/_base';
+import {
+  BaseRepo,
+  RepoCreatePayload,
+  RepoUpdatePayload,
+} from '@/modules/_base';
 import { CartStatusEnum } from '@/db/enum';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CreateCartDto, UpdateCartDto } from './shared/carts-repo.dto';
 import { CustomException } from '@/guard';
 
 @Injectable()
@@ -15,9 +18,12 @@ export class CartsRepo extends BaseRepo<ECart> {
     super();
   }
 
-  save(createDto: CreateCartDto, auditUser: AuditUser): Promise<ECart> {
+  save(
+    createPayload: RepoCreatePayload<ECart>,
+    auditUser: AuditUser,
+  ): Promise<ECart> {
     return this.repo.save({
-      ...createDto,
+      ...createPayload,
 
       status: CartStatusEnum.new,
       createdBy: auditUser.id,
@@ -31,16 +37,13 @@ export class CartsRepo extends BaseRepo<ECart> {
 
   async update(
     id: string,
-    updateDto: UpdateCartDto,
+    updatePayload: RepoUpdatePayload<ECart>,
     auditUser: AuditUser,
   ): Promise<ECart> {
-    const updateResult: UpdateResult = await this.repo.update(
-      id || updateDto.id,
-      {
-        ...updateDto,
-        updatedBy: auditUser.id,
-      },
-    );
+    const updateResult: UpdateResult = await this.repo.update(id, {
+      ...updatePayload,
+      updatedBy: auditUser.id,
+    });
 
     const updatedRecord = await this.findOne({
       where: {

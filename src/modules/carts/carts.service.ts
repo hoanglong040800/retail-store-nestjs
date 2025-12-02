@@ -7,13 +7,14 @@ import { SignedTokenUser } from '../auth/auth.type';
 import { CustomException } from '@/guard';
 import { CartItemsService } from '../cart-items';
 import { CartCalculationDto, CartDto } from '@/db/dto';
-import { UpdateCartDto, calculateCart } from './shared';
+import { calculateCart } from './shared';
 import { Transactional } from 'typeorm-transactional';
+import { RepoUpdatePayload } from '../_base';
 
 @Injectable()
 export class CartsService {
   constructor(
-    private readonly repo: CartsRepo,
+    private readonly cartsRepo: CartsRepo,
     private readonly cartItemSrv: CartItemsService,
   ) {}
 
@@ -25,7 +26,7 @@ export class CartsService {
     userId: string;
     cartId?: string | null;
   }): Promise<ECart> {
-    const userActiveCart = await this.repo.findOne({
+    const userActiveCart = await this.cartsRepo.findOne({
       relations: {
         user: true,
       },
@@ -49,7 +50,7 @@ export class CartsService {
     }
 
     // old cart was checkout, first login -> create new cart
-    return this.repo.save(
+    return this.cartsRepo.save(
       {
         user: {
           id: userId,
@@ -124,7 +125,7 @@ export class CartsService {
       );
     }
 
-    const cart = await this.repo.findOne({
+    const cart = await this.cartsRepo.findOne({
       relations: {
         cartItems: {
           product: true,
@@ -158,7 +159,7 @@ export class CartsService {
   }
 
   async getUserCart(userId: string): Promise<ECart> {
-    const userCart = await this.repo.findOne({
+    const userCart = await this.cartsRepo.findOne({
       relations: {
         cartItems: {
           product: true,
@@ -185,10 +186,11 @@ export class CartsService {
   }
 
   async updateCart(
-    updateDto: UpdateCartDto,
+    cartId: string,
+    updatePayload: RepoUpdatePayload<ECart>,
     auditUser: AuditUser,
   ): Promise<ECart> {
-    return this.repo.update(updateDto.id, updateDto, auditUser);
+    return this.cartsRepo.update(cartId, updatePayload, auditUser);
   }
 
   calculateCart(
