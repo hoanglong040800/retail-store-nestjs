@@ -19,7 +19,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  // response: validate & transform using @ResponseDto decorator
+  // response: validate & transform using @TransformDto decorator
   app.useGlobalInterceptors(
     new ResponseTransformInterceptor(app.get(Reflector)),
   );

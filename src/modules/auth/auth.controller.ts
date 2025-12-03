@@ -20,6 +20,7 @@ import {
   VerifyOtpBackOfficeBody,
 } from '@/db/input';
 import { loginBackOfficeParamOptions } from './auth.swagger';
+import { TransformDto } from '@/interceptors/response-transform.interceptor';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -44,17 +45,20 @@ export class AuthController {
     },
   })
   @Post('/login')
+  @TransformDto(LoginDto)
   async login(@Body() body: LoginBody): Promise<LoginDto> {
     return await this.authSrv.login(body);
   }
 
   @ApiBody(loginBackOfficeParamOptions)
   @Post('/login-back-office')
+  @TransformDto(LoginAdminDto)
   async loginBackOffice(@Body() body: LoginAdminBody): Promise<LoginAdminDto> {
     return await this.authSrv.loginBackOffice(body);
   }
 
   @Post('/verify-otp-back-office')
+  @TransformDto(VerifyOtpBackOfficeDto)
   async verifyOtpBackOffice(
     @Body() body: VerifyOtpBackOfficeBody,
   ): Promise<VerifyOtpBackOfficeDto> {
@@ -69,11 +73,13 @@ export class AuthController {
   }
 
   @Post('/refresh-token')
+  @TransformDto(RefreshTokenDto)
   async refreshToken(@Body() body: RefreshTokenBody): Promise<RefreshTokenDto> {
     return await this.authSrv.refreshToken(body);
   }
 
   @Post('/forgot-password')
+  @TransformDto(ForgotPasswordDto)
   async forgotPassword(
     @Body() body: ForgotPasswordBody,
   ): Promise<ForgotPasswordDto> {

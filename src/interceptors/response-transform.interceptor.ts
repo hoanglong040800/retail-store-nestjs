@@ -13,8 +13,10 @@ import { validateAndTransformResponse } from '@/utils/common.util';
 
 const RESPONSE_DTO_KEY = 'response_dto';
 
-// Decorator - add to controller methods
-export const ResponseDto = <T>(dto: ClassConstructor<T>) =>
+/**
+ * REQUIRED in order to validate response and transform via DTO class
+ */
+export const TransformDto = <T>(dto: ClassConstructor<T>) =>
   SetMetadata(RESPONSE_DTO_KEY, dto);
 
 @Injectable()

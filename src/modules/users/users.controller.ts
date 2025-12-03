@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@/guard';
 import { UserDto } from '@/db/dto';
-import { ResponseDto } from '@/interceptors/response-transform.interceptor';
+import { TransformDto } from '@/interceptors/response-transform.interceptor';
 
 @Controller('users')
 @ApiTags('Users')
@@ -16,7 +16,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
-  @ResponseDto(UserDto)
+  @TransformDto(UserDto)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<UserDto> {
     return await this.usersService.findOne(id);

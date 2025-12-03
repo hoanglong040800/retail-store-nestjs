@@ -21,11 +21,7 @@ import {
   ForgotPasswordDto,
 } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
-import {
-  encryptString,
-  generateOtpCode,
-  validateAndTransformResponse,
-} from '@/utils';
+import { encryptString, generateOtpCode } from '@/utils';
 import { compareSync } from 'bcrypt';
 import { calculateExpireTime } from './auth.util';
 import { ENV, JwtTokenUnit } from '@/constants';
@@ -249,12 +245,10 @@ export class AuthService {
         this.genJwtToken(otpJwtUserPayload, 'otp'),
       ]);
 
-      const result = validateAndTransformResponse(LoginAdminDto, {
+      return {
         needVerifyOtp: true,
         userOtpToken,
-      });
-
-      return result;
+      };
     }
 
     // Normal Login Flow
@@ -263,7 +257,7 @@ export class AuthService {
       this.usersSrv.updateLoginAttempts(user.id, 0),
     ]);
 
-    const result = validateAndTransformResponse(LoginAdminDto, {
+    return {
       needVerifyOtp: false,
 
       accessToken,
@@ -276,9 +270,7 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
       },
-    });
-
-    return result;
+    };
   }
 
   async verifyOtpBackOffice(
@@ -309,7 +301,7 @@ export class AuthService {
       this.usersSrv.updateLoginAttempts(user.id, 0),
     ]);
 
-    const result = await validateAndTransformResponse(VerifyOtpBackOfficeDto, {
+    return {
       accessToken,
       refreshToken,
 
@@ -321,9 +313,7 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
       },
-    });
-
-    return result;
+    };
   }
 
   async resendOtpBackOffice(body: ResendOtpBackOfficeBody): Promise<boolean> {
