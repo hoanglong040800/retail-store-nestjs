@@ -21,9 +21,10 @@ export const validateAndTransformResponse = async <T extends object>(
   dto: ClassConstructor<T>,
   response: T,
 ): Promise<T> => {
-  // apply class to object + remove field not defined in DTO
+  // apply class to object + remove fields mark @Exclude()
   const resultDto = plainToInstance(dto, response, {
-    strategy: 'exposeAll',
+    strategy: 'exposeAll', // include all fields in the response even don't have @Expose()
+    excludeExtraneousValues: false, // do NOT strictly remove field that don't have @Expose()
   });
 
   const errors = await validate(resultDto as object);

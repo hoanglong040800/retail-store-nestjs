@@ -2,8 +2,9 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { createSwaggerDocument } from './config';
 import { GlobalExceptionFilter } from './guard';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { initializeTransactionalContext } from 'typeorm-transactional';
+import { ResponseTransformInterceptor } from './interceptors/response-transform.interceptor';
 
 async function bootstrap() {
   // must called before init app
@@ -18,8 +19,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  // response: pair with @Exclude to hide sensitive data from response
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  // response: validate & transform using @ResponseDto decorator
+  app.useGlobalInterceptors(
+    new ResponseTransformInterceptor(app.get(Reflector)),
+  );
 
   app.useGlobalFilters(new GlobalExceptionFilter());
 
