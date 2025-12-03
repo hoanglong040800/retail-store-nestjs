@@ -6,6 +6,7 @@ import { CartsService } from '../carts';
 import { UserDto } from '@/db/dto';
 import { CustomException } from '@/guard';
 import { UpdatePasswordParams } from './users.type';
+import { validateAndTransformResponse } from '@/utils/common.util';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +21,7 @@ export class UsersService {
 
   async findOne(id: string): Promise<UserDto> {
     const user: EUser = await this.usersRepo.findOne({
+      select: ['id', 'email', 'lastName', 'otpCode'],
       where: {
         id,
       },
@@ -38,7 +40,7 @@ export class UsersService {
       cartId: userCart.id,
     };
 
-    return userResult;
+    return validateAndTransformResponse(UserDto, userResult);
   }
 
   async findByEmail(

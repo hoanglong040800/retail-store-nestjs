@@ -21,7 +21,11 @@ import {
   ForgotPasswordDto,
 } from '@/db/dto';
 import { UsersRepo, UsersService } from '@/modules/users';
-import { encryptString, generateOtpCode, validateResponse } from '@/utils';
+import {
+  encryptString,
+  generateOtpCode,
+  validateAndTransformResponse,
+} from '@/utils';
 import { compareSync } from 'bcrypt';
 import { calculateExpireTime } from './auth.util';
 import { ENV, JwtTokenUnit } from '@/constants';
@@ -245,7 +249,7 @@ export class AuthService {
         this.genJwtToken(otpJwtUserPayload, 'otp'),
       ]);
 
-      const result = validateResponse(LoginAdminDto, {
+      const result = validateAndTransformResponse(LoginAdminDto, {
         needVerifyOtp: true,
         userOtpToken,
       });
@@ -259,7 +263,7 @@ export class AuthService {
       this.usersSrv.updateLoginAttempts(user.id, 0),
     ]);
 
-    const result = validateResponse(LoginAdminDto, {
+    const result = validateAndTransformResponse(LoginAdminDto, {
       needVerifyOtp: false,
 
       accessToken,
@@ -305,7 +309,7 @@ export class AuthService {
       this.usersSrv.updateLoginAttempts(user.id, 0),
     ]);
 
-    const result = await validateResponse(VerifyOtpBackOfficeDto, {
+    const result = await validateAndTransformResponse(VerifyOtpBackOfficeDto, {
       accessToken,
       refreshToken,
 

@@ -18,7 +18,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  // pair with @Exclude to hide sensitive data from response
+  // response: pair with @Exclude to hide sensitive data from response
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalFilters(new GlobalExceptionFilter());

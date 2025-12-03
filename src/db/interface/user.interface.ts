@@ -12,6 +12,6 @@ export interface IUser extends IBase {
   address?: string;
   role?: UserRoleEnum;
   otpCode?: string;
-  mfaSentAt?: Date;
+  otpSentAt?: Date;
   loginAttempts?: number;
 }

@@ -59,20 +59,20 @@ export class LoginAdminDto {
 
   // need verify OTP - required when needVerifyOtp is true
   @ValidateIf((o) => o.needVerifyOtp === true)
-  @IsDefined({ message: needWhenTurnOnOtp })
+  @IsDefined({ message: `userOtpToken ${needWhenTurnOnOtp}` })
   userOtpToken?: TokenDto;
 
   // normal login - required when needVerifyOtp is false
   @ValidateIf((o) => o.needVerifyOtp === false)
-  @IsDefined({ message: needWhenNormalLogin })
+  @IsDefined({ message: `accessToken ${needWhenNormalLogin}` })
   accessToken?: TokenDto;
 
   @ValidateIf((o) => o.needVerifyOtp === false)
-  @IsDefined({ message: needWhenNormalLogin })
+  @IsDefined({ message: `refreshToken ${needWhenNormalLogin}` })
   refreshToken?: TokenDto;
 
   @ValidateIf((o) => o.needVerifyOtp === false)
-  @IsDefined({ message: needWhenNormalLogin })
+  @IsDefined({ message: `user ${needWhenNormalLogin}` })
   user?: LoginAdminUserDto;
 }
 

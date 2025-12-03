@@ -17,11 +17,14 @@ export const checkEmptyObject = (obj: object): boolean => {
   return false;
 };
 
-export const validateResponse = async <T extends object>(
+export const validateAndTransformResponse = async <T extends object>(
   dto: ClassConstructor<T>,
   response: T,
 ): Promise<T> => {
-  const resultDto = plainToInstance(dto, response);
+  // apply class to object + remove field not defined in DTO
+  const resultDto = plainToInstance(dto, response, {
+    strategy: 'exposeAll',
+  });
 
   const errors = await validate(resultDto as object);
 
@@ -32,7 +35,7 @@ export const validateResponse = async <T extends object>(
   const errorMessages = errors
     .map((err) => {
       const constraints = Object.values(err.constraints || {});
-      return `${err.property}: ${constraints.join(', ')}`;
+      return constraints.join(', ');
     })
     .join('; ');
 
