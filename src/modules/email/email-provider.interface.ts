@@ -11,4 +11,7 @@ export type SendEmailParams = {
 
 export type SendEmailRes = {
   success: boolean;
+  error?: {
+    message: string;
+  };
 };

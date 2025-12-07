@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  BaseEmailProvider,
-  SendEmailRes,
-} from './email-provider.interface';
+import { BaseEmailProvider } from './email-provider.interface';
 import { EMAIL_PROVIDER_NAME } from './init-email-provider';
 import { SendEmailInput } from '@/db/input/email.input';
+import { ENV } from '@/constants/env.const';
+import { SendEmailDto } from '@/db/dto/email.dto';
 
 @Injectable()
 export class EmailService implements BaseEmailProvider {
@@ -17,9 +16,9 @@ export class EmailService implements BaseEmailProvider {
     }
   }
 
-  async send({to}: SendEmailInput): Promise<SendEmailRes> {
+  async send({ to }: SendEmailInput): Promise<SendEmailDto> {
     return this.emailProvider.send({
-      from: 'no-reply@example.com',
+      from: ENV.settings.defaultEmailSender,
       to,
       subject: 'Test Email',
       body: 'This is a test email',

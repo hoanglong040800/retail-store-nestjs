@@ -10,6 +10,7 @@ export function TryCatch(): MethodDecorator {
       try {
         return await originalMethod.apply(this, args);
       } catch (err) {
+        console.error(err);
         throw new Error(err);
       }
     };

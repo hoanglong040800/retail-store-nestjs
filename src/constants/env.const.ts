@@ -42,5 +42,10 @@ export const ENV = {
 
   settings: {
     otpLoginBackOffice: process.env.OTP_LOGIN_BACK_OFFICE || false,
+    defaultEmailSender: process.env.DEFAULT_EMAIL_SENDER || '',
+  },
+
+  sendgrid: {
+    apiKey: process.env.SENDGRID_API_KEY || '',
   },
 };
