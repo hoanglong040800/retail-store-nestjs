@@ -9,7 +9,7 @@ export const InitEmailProvider: Provider = {
 
   useFactory: (sendgridProvider: SendgridProvider) => {
     if (true) {
-      return sendgridProvider
+      return sendgridProvider;
     }
   },
 };
