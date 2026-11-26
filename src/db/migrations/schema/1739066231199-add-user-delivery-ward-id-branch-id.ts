@@ -32,12 +32,8 @@ export class AddUserDeliveryWardIdBranchId1739066231199
         `);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-            ALTER TABLE users
-            DROP COLUMN branch_id,
-            DROP COLUMN delivery_ward_id,
-            DROP COLUMN address;
-        `);
+  // Intentionally empty: 1727099425388 owns these columns and drops them in its own down().
+  public async down(): Promise<void> {
+    return;
   }
 }
