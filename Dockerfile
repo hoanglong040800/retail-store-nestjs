@@ -1,5 +1,5 @@
 # Build dist folder
-FROM node:18-alpine as development
+FROM node:22-alpine as development
 WORKDIR /usr/src/app
 COPY package.json .
 RUN yarn install --frozen-lockfile
@@ -7,7 +7,7 @@ COPY . .
 RUN yarn build
 
 # Run app
-FROM node:18-alpine as production
+FROM node:22-alpine as production
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
 COPY package.json .
